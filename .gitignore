@@ -1,0 +1,84 @@
+## Build
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+out/
+artifacts/
+publish/
+
+## NuGet / restore (when not under obj)
+**/packages/
+
+## Publish profiles
+**/PublishProfiles/*.pubxml.user
+*.Publish.xml
+*.pubxml.user
+
+## User-specific
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.DotSettings.user
+
+## Secrets & local overrides
+**/appsettings.*.local.json
+**/secrets.json
+*.pfx
+*.snk
+*.key
+*.pvk
+.env
+.env.*
+
+## Visual Studio
+.vs/
+
+## JetBrains Rider
+.idea/
+*.sln.iml
+
+## VS Code (optional team settings: track extensions.json / tasks template only)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+!.vscode/tasks.json.example
+
+## EF Core / local databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.mdf
+*.ldf
+
+## Tests
+TestResults/
+*.coverage
+*.coveragexml
+
+## Front-end tooling
+node_modules/
+bower_components/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+## Logs & diagnostics
+logs/
+*.log
+*.tlog
+
+## OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Uploads (keep folder, ignore content)
+wwwroot/uploads/**
+!wwwroot/uploads/.gitkeep
