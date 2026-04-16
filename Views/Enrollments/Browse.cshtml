@@ -1,0 +1,73 @@
+@model List<CourseBrowseRowViewModel>
+@{
+    ViewData["Title"] = "Course catalog";
+}
+
+<h1 class="h3 mb-3">Course catalog</h1>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Course</th>
+                    <th>Credits</th>
+                    <th>Lecturer</th>
+                    <th>Seats</th>
+                    <th>Prerequisite</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="8" class="text-center text-muted p-4">No courses available.</td></tr>
+            }
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Code</td>
+                    <td>@r.Name</td>
+                    <td>@r.Credits</td>
+                    <td>@r.LecturerName</td>
+                    <td>@r.CurrentEnrollmentCount / @r.EnrollmentLimit</td>
+                    <td>@(r.PrerequisiteSummary ?? "—")</td>
+                    <td>
+                        @if (r.IsEnrolled)
+                        {
+                            <span class="badge bg-success">Enrolled</span>
+                        }
+                        else if (r.CanEnroll)
+                        {
+                            <span class="badge bg-secondary">Open</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Blocked</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        @if (r.CanEnroll)
+                        {
+                            <form asp-action="Enroll" asp-route-id="@r.CourseId" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-primary">Enroll</button>
+                            </form>
+                        }
+                        else if (r.IsEnrolled)
+                        {
+                            <span class="text-muted small">Joined</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small" title="@r.BlockReason">@r.BlockReason</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

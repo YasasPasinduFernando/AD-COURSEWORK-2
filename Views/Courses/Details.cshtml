@@ -1,0 +1,85 @@
+@model AD_COURSEWORK_2.Models.Course
+@using AD_COURSEWORK_2.ViewModels
+@{
+    ViewData["Title"] = $"{Model.Code} - Details";
+    var canUpload = (bool)(ViewBag.CanUpload ?? false);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">@Model.Name</h1>
+        <p class="text-muted mb-0">@Model.Code &middot; @Model.Credits credits &middot; Lecturer: @Model.Lecturer.FullName</p>
+    </div>
+    <div class="text-md-end">
+        <a class="btn btn-outline-secondary btn-sm" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@Model.CourseId">Assignments</a>
+        @if (User.IsInRole(AD_COURSEWORK_2.Models.AppRoles.Administrator))
+        {
+            <a class="btn btn-outline-primary btn-sm" asp-action="Index">Back to list</a>
+        }
+        else
+        {
+            <a class="btn btn-outline-primary btn-sm" asp-action="MyCourses">Back</a>
+        }
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Description</h2>
+                <p class="mb-0 text-muted">@(string.IsNullOrWhiteSpace(Model.Description) ? "No description provided." : Model.Description)</p>
+                <hr />
+                <p class="mb-0"><strong>Prerequisite:</strong> @(Model.Prerequisite == null ? "None" : $"{Model.Prerequisite.Code} – {Model.Prerequisite.Name}")</p>
+                <p class="mb-0 mt-2"><strong>Enrollment:</strong> @Model.Enrollments.Count / @Model.EnrollmentLimit</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        @if (canUpload)
+        {
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h6">Upload material</h2>
+                    <form asp-action="UploadMaterial" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CourseId" value="@Model.CourseId" />
+                        <div class="mb-2">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="Title" class="form-control" required maxlength="200" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">File</label>
+                            <input type="file" name="File" class="form-control" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+                    </form>
+                </div>
+            </div>
+        }
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6">Materials</h2>
+                @if (!Model.Materials.Any())
+                {
+                    <p class="text-muted small mb-0">No materials uploaded.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                    @foreach (var m in Model.Materials.OrderByDescending(x => x.UploadedAtUtc))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-semibold">@m.Title</div>
+                                <div class="small text-muted">@m.UploadedBy.FullName &middot; @m.UploadedAtUtc.ToLocalTime().ToString("g")</div>
+                            </div>
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="Submissions" asp-action="CourseMaterialFile" asp-route-id="@m.CourseMaterialId">Download</a>
+                        </li>
+                    }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

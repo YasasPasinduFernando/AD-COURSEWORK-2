@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<h1 class="h3 mb-3">Reports</h1>
+
+<div class="row g-3">
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Course popularity</h2>
+                <p class="text-muted small">Enrollment counts and fill rates by course.</p>
+                <a class="btn btn-primary btn-sm" asp-action="CoursePopularity">Open</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Student performance</h2>
+                <p class="text-muted small">Average outcomes for graded submissions.</p>
+                <a class="btn btn-primary btn-sm" asp-action="StudentPerformance">Open</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Lecturer workload</h2>
+                <p class="text-muted small">Courses, assignments, and submissions per lecturer.</p>
+                <a class="btn btn-primary btn-sm" asp-action="LecturerWorkload">Open</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Enrollment log</h2>
+                <p class="text-muted small">Recent enrollment activity.</p>
+                <a class="btn btn-primary btn-sm" asp-action="Enrollments">Open</a>
+            </div>
+        </div>
+    </div>
+</div>

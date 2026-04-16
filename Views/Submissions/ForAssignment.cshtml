@@ -1,0 +1,57 @@
+@model AD_COURSEWORK_2.Models.Assignment
+@using AD_COURSEWORK_2.Models
+@{
+    ViewData["Title"] = $"Submissions – {Model.Title}";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">Submissions</h1>
+        <p class="text-muted mb-0">@Model.Course.Code &middot; @Model.Title</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@Model.CourseId">Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Student</th>
+                    <th>Submitted</th>
+                    <th>Status</th>
+                    <th>Grade</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @{
+                var rows = Model.Submissions.OrderBy(s => s.Student.FullName).ToList();
+            }
+            @if (!rows.Any())
+            {
+                <tr><td colspan="5" class="text-muted p-4 text-center">No submission records yet.</td></tr>
+            }
+            @foreach (var s in rows)
+            {
+                <tr>
+                    <td>@s.Student.FullName</td>
+                    <td>@(s.SubmittedAtUtc?.ToLocalTime().ToString("g") ?? "—")</td>
+                    <td><span class="badge bg-secondary">@s.Status</span></td>
+                    <td>@(s.Grade?.ToString() ?? "—")</td>
+                    <td class="text-end">
+                        @if (s.Status == SubmissionStatus.NotSubmitted)
+                        {
+                            <span class="text-muted small">Awaiting</span>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-primary" asp-action="Grade" asp-route-id="@s.SubmissionId">@(s.Status == SubmissionStatus.Graded ? "Update" : "Grade")</a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

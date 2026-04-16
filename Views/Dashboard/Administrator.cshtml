@@ -1,0 +1,69 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin dashboard";
+}
+
+<h1 class="h3 mb-3">Administrator dashboard</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6 text-muted">Users</h2>
+                <p class="display-6 mb-0">@Model.UserCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6 text-muted">Courses</h2>
+                <p class="display-6 mb-0">@Model.CourseCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6 text-muted">Enrollments</h2>
+                <p class="display-6 mb-0">@Model.EnrollmentCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6 text-muted">Assignments</h2>
+                <p class="display-6 mb-0">@Model.AssignmentCount</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h5 mb-0">Popular courses</h2>
+            <a class="btn btn-sm btn-outline-primary" asp-controller="Reports" asp-action="CoursePopularity">Full report</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>Code</th><th>Name</th><th>Enrollments</th></tr></thead>
+                <tbody>
+                @if (!Model.PopularCourses.Any())
+                {
+                    <tr><td colspan="3" class="text-muted">No data.</td></tr>
+                }
+                @foreach (var c in Model.PopularCourses)
+                {
+                    <tr>
+                        <td>@c.Code</td>
+                        <td>@c.Name</td>
+                        <td>@c.Enrollments</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

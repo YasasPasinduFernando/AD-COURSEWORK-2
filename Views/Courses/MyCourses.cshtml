@@ -1,0 +1,29 @@
+@model IEnumerable<AD_COURSEWORK_2.Models.Course>
+@{
+    ViewData["Title"] = "My courses";
+}
+
+<h1 class="h3 mb-3">My courses</h1>
+
+<div class="row g-3">
+@if (!Model.Any())
+{
+    <div class="col-12">
+        <div class="alert alert-light border">You are not assigned to any courses yet.</div>
+    </div>
+}
+@foreach (var c in Model)
+{
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+                <span class="badge bg-primary-subtle text-primary-emphasis mb-2">@c.Code</span>
+                <h2 class="h5">@c.Name</h2>
+                <p class="text-muted small mb-3">@c.Enrollments.Count enrolled &middot; Limit @c.EnrollmentLimit</p>
+                <a class="btn btn-primary btn-sm" asp-action="Details" asp-route-id="@c.CourseId">Open</a>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@c.CourseId">Assignments</a>
+            </div>
+        </div>
+    </div>
+}
+</div>

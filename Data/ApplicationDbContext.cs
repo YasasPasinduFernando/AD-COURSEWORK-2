@@ -24,6 +24,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Course>(e =>
         {
+            e.Property(x => x.Description).HasColumnType("longtext");
             e.HasIndex(x => x.Code).IsUnique();
             e.HasOne(x => x.Lecturer)
                 .WithMany(x => x.TeachingCourses)
@@ -50,6 +51,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Assignment>(e =>
         {
+            e.Property(x => x.Description).HasColumnType("longtext");
             e.HasOne(x => x.Course)
                 .WithMany(x => x.Assignments)
                 .HasForeignKey(x => x.CourseId)
@@ -58,6 +60,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Submission>(e =>
         {
+            e.Property(x => x.TextContent).HasColumnType("longtext");
+            e.Property(x => x.Feedback).HasColumnType("longtext");
             e.HasIndex(x => new { x.AssignmentId, x.StudentId }).IsUnique();
             e.HasOne(x => x.Assignment)
                 .WithMany(x => x.Submissions)
@@ -75,6 +79,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Message>(e =>
         {
+            e.Property(x => x.Content).HasColumnType("longtext");
             e.HasIndex(x => new { x.ReceiverId, x.IsRead });
             e.HasIndex(x => x.SentAtUtc);
             e.HasOne(x => x.Sender)

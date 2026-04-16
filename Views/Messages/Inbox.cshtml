@@ -1,0 +1,35 @@
+@model List<MessageInboxRowViewModel>
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Inbox</h1>
+    <a class="btn btn-primary" asp-action="Compose">New message</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="list-group list-group-flush">
+        @if (!Model.Any())
+        {
+            <div class="p-4 text-center text-muted">No conversations yet.</div>
+        }
+        @foreach (var r in Model)
+        {
+            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" asp-action="Thread" asp-route-id="@r.OtherUserId">
+                <div class="me-3">
+                    <div class="fw-semibold">
+                        @r.OtherName
+                        @if (r.Unread)
+                        {
+                            <span class="badge bg-danger ms-2">New</span>
+                        }
+                    </div>
+                    <div class="small text-muted">@r.LastSubject</div>
+                    <div class="small">@r.LastPreview</div>
+                </div>
+                <small class="text-muted text-nowrap">@r.LastAtUtc.ToLocalTime().ToString("g")</small>
+            </a>
+        }
+    </div>
+</div>

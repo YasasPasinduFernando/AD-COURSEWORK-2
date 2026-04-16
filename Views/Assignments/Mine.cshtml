@@ -1,0 +1,45 @@
+@model List<AD_COURSEWORK_2.Models.Assignment>
+@using AD_COURSEWORK_2.Models
+@{
+    ViewData["Title"] = "My assignments";
+    var subs = (Dictionary<int, Submission>)ViewBag.Submissions!;
+}
+
+<h1 class="h3 mb-3">My assignments</h1>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Course</th>
+                    <th>Assignment</th>
+                    <th>Due</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="5" class="text-muted p-4 text-center">No assignments yet. Enroll in a course first.</td></tr>
+            }
+            @foreach (var a in Model)
+            {
+                subs.TryGetValue(a.AssignmentId, out var s);
+                var status = s == null ? "Not started" : s.Status.ToString();
+                var badge = s?.Status == SubmissionStatus.Graded ? "bg-success" : s?.Status == SubmissionStatus.Submitted ? "bg-primary" : "bg-secondary";
+                <tr>
+                    <td>@a.Course.Code</td>
+                    <td>@a.Title</td>
+                    <td>@a.DueDateUtc.ToLocalTime().ToString("g")</td>
+                    <td><span class="badge @badge">@status</span></td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-primary" asp-controller="Submissions" asp-action="Submit" asp-route-id="@a.AssignmentId">Open</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

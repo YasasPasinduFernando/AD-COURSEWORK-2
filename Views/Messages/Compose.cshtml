@@ -1,0 +1,49 @@
+@model MessageComposeViewModel
+@{
+    ViewData["Title"] = "Compose";
+    var recipients = Model.AllowedRecipients
+        .Select(kv => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(kv.Value, kv.Key))
+        .ToList();
+}
+
+<h1 class="h3 mb-3">New message</h1>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        @if (!recipients.Any())
+        {
+            <div class="alert alert-warning">You do not have any eligible recipients yet. Students: enroll in a course. Lecturers: wait for enrollments.</div>
+            <a class="btn btn-outline-secondary" asp-action="Inbox">Back</a>
+        }
+        else
+        {
+            <form asp-action="Compose" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="mb-3">
+                    <label class="form-label">To</label>
+                    <select asp-for="RecipientId" asp-items="recipients" class="form-select">
+                        <option value="">Select recipient</option>
+                    </select>
+                    <span asp-validation-for="RecipientId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Subject" class="form-label"></label>
+                    <input asp-for="Subject" class="form-control" />
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label"></label>
+                    <textarea asp-for="Content" class="form-control" rows="8"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+                <a class="btn btn-outline-secondary" asp-action="Inbox">Cancel</a>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

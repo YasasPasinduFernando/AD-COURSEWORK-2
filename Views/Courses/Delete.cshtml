@@ -1,0 +1,18 @@
+@model AD_COURSEWORK_2.Models.Course
+@{
+    ViewData["Title"] = "Delete course";
+}
+
+<h1 class="h3 mb-3">Delete course</h1>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <p>Delete <strong>@Model.Code – @Model.Name</strong>? This also removes related enrollments and assignments.</p>
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.CourseId" />
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+        </form>
+    </div>
+</div>

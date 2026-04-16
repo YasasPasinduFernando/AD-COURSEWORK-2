@@ -1,0 +1,64 @@
+@model CourseInputViewModel
+@{
+    ViewData["Title"] = "Add course";
+    var lecturers = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Lecturers!;
+    var prereqs = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Prerequisites!;
+}
+
+<h1 class="h3 mb-3">Add course</h1>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="Code" class="form-label"></label>
+                    <input asp-for="Code" class="form-control" />
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </div>
+                <div class="col-md-8">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Credits" class="form-label"></label>
+                    <input asp-for="Credits" class="form-control" />
+                    <span asp-validation-for="Credits" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="EnrollmentLimit" class="form-label"></label>
+                    <input asp-for="EnrollmentLimit" class="form-control" />
+                    <span asp-validation-for="EnrollmentLimit" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="LecturerId" class="form-label"></label>
+                    <select asp-for="LecturerId" asp-items="lecturers" class="form-select"></select>
+                    <span asp-validation-for="LecturerId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PrerequisiteId" class="form-label"></label>
+                    <select asp-for="PrerequisiteId" asp-items="prereqs" class="form-select">
+                        <option value="">— None —</option>
+                    </select>
+                    <span asp-validation-for="PrerequisiteId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

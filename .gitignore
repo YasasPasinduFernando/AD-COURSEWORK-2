@@ -5,6 +5,7 @@
 [Ll]ogs/
 out/
 artifacts/
+artifacts_build/
 publish/
 
 ## NuGet / restore (when not under obj)

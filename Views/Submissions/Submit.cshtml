@@ -1,0 +1,65 @@
+@model SubmissionSubmitViewModel
+@{
+    ViewData["Title"] = $"{Model.CourseCode} – {Model.AssignmentTitle}";
+    var graded = Model.Status == "Graded";
+}
+
+<h1 class="h3 mb-1">@Model.AssignmentTitle</h1>
+<p class="text-muted">@Model.CourseCode &middot; Due @Model.DueDateUtc.ToLocalTime().ToString("g")</p>
+
+@if (graded)
+{
+    <div class="alert alert-info">This assignment has been graded. Feedback is shown below.</div>
+}
+else
+{
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body p-4">
+            <form asp-action="Submit" asp-route-id="@Model.AssignmentId" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="AssignmentId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="mb-3">
+                    <label asp-for="TextContent" class="form-label">Written response</label>
+                    <textarea asp-for="TextContent" class="form-control" rows="8"></textarea>
+                    <span asp-validation-for="TextContent" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="File" class="form-label"></label>
+                    <input asp-for="File" class="form-control" />
+                    <span asp-validation-for="File" class="text-danger"></span>
+                </div>
+                @if (Model.SubmissionId is int sid && sid > 0 && !string.IsNullOrEmpty(Model.ExistingFileName))
+                {
+                    <p class="small text-muted mt-2 mb-0">Current file: <a asp-action="SubmissionFile" asp-route-id="@sid">Download</a> (uploading replaces the file).</p>
+                }
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a class="btn btn-outline-secondary" asp-controller="Assignments" asp-action="Mine">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <h2 class="h6">Status & feedback</h2>
+        <p class="mb-1"><strong>Status:</strong> @Model.Status</p>
+        <p class="mb-1"><strong>Grade:</strong> @(Model.Grade?.ToString() ?? "—")</p>
+        <p class="mb-1"><strong>Feedback:</strong></p>
+        <p class="text-muted mb-3">@(string.IsNullOrWhiteSpace(Model.Feedback) ? "—" : Model.Feedback)</p>
+        @if (Model.SubmissionId is int fileId && fileId > 0 && !string.IsNullOrEmpty(Model.ExistingFileName))
+        {
+            <a class="btn btn-sm btn-outline-primary" asp-action="SubmissionFile" asp-route-id="@fileId">Download attachment</a>
+        }
+        @if (!graded)
+        {
+            <a class="btn btn-sm btn-outline-secondary ms-2" asp-controller="Assignments" asp-action="Mine">Back to list</a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

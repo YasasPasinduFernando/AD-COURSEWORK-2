@@ -1,0 +1,30 @@
+@model MessageThreadViewModel
+@{
+    ViewData["Title"] = $"Thread – {Model.OtherUserName}";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h4 mb-0">@Model.OtherUserName</h1>
+        <p class="text-muted small mb-0">Conversation</p>
+    </div>
+    <div>
+        <a class="btn btn-primary btn-sm" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId">Reply</a>
+        <a class="btn btn-outline-secondary btn-sm" asp-action="Inbox">Inbox</a>
+    </div>
+</div>
+
+<div class="vstack gap-3">
+    @if (!Model.Messages.Any())
+    {
+        <div class="alert alert-light border">No messages in this thread yet.</div>
+    }
+    @foreach (var m in Model.Messages)
+    {
+        var cls = m.IsMine ? "align-self-end bg-primary text-white" : "align-self-start bg-white border";
+        <div class="rounded-3 p-3 shadow-sm @cls" style="max-width: 80%;">
+            <div class="small opacity-75">@m.Subject &middot; @m.SentAtUtc.ToLocalTime().ToString("g")</div>
+            <div class="mt-2" style="white-space: pre-wrap;">@m.Content</div>
+        </div>
+    }
+</div>
