@@ -103,12 +103,26 @@ public class DashboardController : Controller
 
         var unread = await _db.Messages.CountAsync(m => m.ReceiverId == userId && !m.IsRead);
 
+        var calNow = DateTime.Now;
+        var rangeStart = new DateTime(calNow.Year, calNow.Month, 1, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
+        var rangeEnd = rangeStart.AddMonths(1);
+        var assnInMonth = await _db.Assignments
+            .AsNoTracking()
+            .Include(a => a.Course)
+            .Where(a => courseIds.Contains(a.CourseId) && a.DueDateUtc >= rangeStart && a.DueDateUtc < rangeEnd)
+            .OrderBy(a => a.DueDateUtc)
+            .ToListAsync();
+
+        var calItems = assnInMonth.Select(a => (a.DueDateUtc, a.Title, a.Course.Code));
+        var calendar = BuildAssignmentCalendar(calNow.Year, calNow.Month, calItems);
+
         var vm = new StudentDashboardViewModel
         {
             EnrolledCourses = enrolled,
             UpcomingDeadlines = deadlineRows,
             RecentGrades = grades,
-            UnreadMessages = unread
+            UnreadMessages = unread,
+            AssignmentCalendar = calendar
         };
 
         return View(vm);
@@ -152,12 +166,26 @@ public class DashboardController : Controller
 
         var unread = await _db.Messages.CountAsync(m => m.ReceiverId == userId && !m.IsRead);
 
+        var calNow = DateTime.Now;
+        var rangeStart = new DateTime(calNow.Year, calNow.Month, 1, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
+        var rangeEnd = rangeStart.AddMonths(1);
+        var assnInMonth = await _db.Assignments
+            .AsNoTracking()
+            .Include(a => a.Course)
+            .Where(a => courseIds.Contains(a.CourseId) && a.DueDateUtc >= rangeStart && a.DueDateUtc < rangeEnd)
+            .OrderBy(a => a.DueDateUtc)
+            .ToListAsync();
+
+        var calItems = assnInMonth.Select(a => (a.DueDateUtc, a.Title, a.Course.Code));
+        var calendar = BuildAssignmentCalendar(calNow.Year, calNow.Month, calItems);
+
         var vm = new LecturerDashboardViewModel
         {
             Courses = courseRows,
             PendingSubmissions = pending,
             GradedSubmissions = graded,
-            UnreadMessages = unread
+            UnreadMessages = unread,
+            AssignmentCalendar = calendar
         };
         return View(vm);
     }
@@ -191,5 +219,27 @@ public class DashboardController : Controller
             PopularCourses = popular
         };
         return View(vm);
+    }
+
+    private static DashboardCalendarModel BuildAssignmentCalendar(int year, int month, IEnumerable<(DateTime DueDateUtc, string Title, string Detail)> items)
+    {
+        var dict = new Dictionary<DateOnly, List<DashboardCalendarEvent>>();
+        foreach (var it in items)
+        {
+            var local = it.DueDateUtc.ToLocalTime();
+            if (local.Year != year || local.Month != month)
+                continue;
+
+            var d = DateOnly.FromDateTime(local);
+            if (!dict.TryGetValue(d, out var list))
+            {
+                list = new List<DashboardCalendarEvent>();
+                dict[d] = list;
+            }
+
+            list.Add(new DashboardCalendarEvent { Title = it.Title, Detail = it.Detail });
+        }
+
+        return new DashboardCalendarModel { Year = year, Month = month, EventsByDay = dict };
     }
 }

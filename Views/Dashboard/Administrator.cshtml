@@ -3,63 +3,58 @@
     ViewData["Title"] = "Admin dashboard";
 }
 
-<h1 class="h3 mb-3">Administrator dashboard</h1>
+<div class="um-page-header">
+    <h1 class="text-dark">Administrator dashboard</h1>
+    <p class="um-lead">System overview and course popularity.</p>
+</div>
 
 <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Users</h2>
-                <p class="display-6 mb-0">@Model.UserCount</p>
-            </div>
+        <div class="um-dash-stat">
+            <span class="um-dash-stat-label">Users</span>
+            <span class="um-dash-stat-value">@Model.UserCount</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Courses</h2>
-                <p class="display-6 mb-0">@Model.CourseCount</p>
-            </div>
+        <div class="um-dash-stat um-dash-stat-accent">
+            <span class="um-dash-stat-label">Courses</span>
+            <span class="um-dash-stat-value">@Model.CourseCount</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Enrollments</h2>
-                <p class="display-6 mb-0">@Model.EnrollmentCount</p>
-            </div>
+        <div class="um-dash-stat">
+            <span class="um-dash-stat-label">Enrollments</span>
+            <span class="um-dash-stat-value">@Model.EnrollmentCount</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Assignments</h2>
-                <p class="display-6 mb-0">@Model.AssignmentCount</p>
-            </div>
+        <div class="um-dash-stat um-dash-stat-warn">
+            <span class="um-dash-stat-label">Assignments</span>
+            <span class="um-dash-stat-value">@Model.AssignmentCount</span>
         </div>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="um-panel card border-0">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 class="h5 mb-0">Popular courses</h2>
-            <a class="btn btn-sm btn-outline-primary" asp-controller="Reports" asp-action="CoursePopularity">Full report</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h6 mb-0 fw-bold text-dark">Popular courses</h2>
+            <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Reports" asp-action="CoursePopularity">Full report</a>
         </div>
         <div class="table-responsive">
-            <table class="table mb-0">
+            <table class="table table-um mb-0 align-middle">
                 <thead><tr><th>Code</th><th>Name</th><th>Enrollments</th></tr></thead>
                 <tbody>
                 @if (!Model.PopularCourses.Any())
                 {
-                    <tr><td colspan="3" class="text-muted">No data.</td></tr>
+                    <tr><td colspan="3" class="text-muted py-5 text-center">No data.</td></tr>
                 }
                 @foreach (var c in Model.PopularCourses)
                 {
                     <tr>
-                        <td>@c.Code</td>
+                        <td><span class="badge bg-light text-dark border">@c.Code</span></td>
                         <td>@c.Name</td>
-                        <td>@c.Enrollments</td>
+                        <td><span class="fw-semibold">@c.Enrollments</span></td>
                     </tr>
                 }
                 </tbody>

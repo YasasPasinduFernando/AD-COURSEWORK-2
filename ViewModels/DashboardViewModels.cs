@@ -1,11 +1,25 @@
 namespace AD_COURSEWORK_2.ViewModels;
 
+public class DashboardCalendarModel
+{
+    public int Year { get; set; }
+    public int Month { get; set; }
+    public Dictionary<DateOnly, List<DashboardCalendarEvent>> EventsByDay { get; set; } = new();
+}
+
+public class DashboardCalendarEvent
+{
+    public string Title { get; set; } = string.Empty;
+    public string Detail { get; set; } = string.Empty;
+}
+
 public class StudentDashboardViewModel
 {
     public List<EnrolledCourseRow> EnrolledCourses { get; set; } = new();
     public List<DeadlineRow> UpcomingDeadlines { get; set; } = new();
     public List<GradeRow> RecentGrades { get; set; } = new();
     public int UnreadMessages { get; set; }
+    public DashboardCalendarModel AssignmentCalendar { get; set; } = new();
 
     public class EnrolledCourseRow
     {
@@ -40,6 +54,7 @@ public class LecturerDashboardViewModel
     public int PendingSubmissions { get; set; }
     public int GradedSubmissions { get; set; }
     public int UnreadMessages { get; set; }
+    public DashboardCalendarModel AssignmentCalendar { get; set; } = new();
 
     public class CourseSummary
     {

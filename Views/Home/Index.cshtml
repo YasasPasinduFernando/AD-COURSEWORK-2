@@ -1,27 +1,27 @@
-﻿@{
+@{
     ViewData["Title"] = "UniManage";
 }
 
 <section class="hero-section rounded-4 p-4 p-md-5 mb-5 text-white">
     <div class="row align-items-center g-4">
         <div class="col-lg-7">
-            <span class="badge bg-light text-primary mb-3">University Course Management System</span>
-            <h1 class="display-5 fw-bold mb-3">Manage courses, enrollments, assignments, and communication in one platform.</h1>
-            <p class="lead mb-4">UniManage helps students, lecturers, and administrators collaborate with real-time academic workflows and clear reporting.</p>
+            <span class="badge bg-white bg-opacity-25 text-white border border-white border-opacity-25 mb-3 px-3 py-2">University Course Management System</span>
+            <h1 class="display-5 fw-bold mb-3 lh-sm">Courses, enrollments, assignments, and messaging — in one place.</h1>
+            <p class="lead mb-4 opacity-90">UniManage connects students, lecturers, and administrators with clear workflows and reporting.</p>
             <div class="d-flex flex-wrap gap-2">
-                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg">Get Started</a>
-                <a href="#about" class="btn btn-outline-light btn-lg">Learn More</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow">Create account</a>
+                <a href="#about" class="btn btn-outline-light btn-lg px-4">Explore modules</a>
             </div>
         </div>
         <div class="col-lg-5">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4">
-                    <h5 class="fw-semibold mb-3">Platform Highlights</h5>
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2">Course lifecycle management</li>
-                        <li class="mb-2">Enrollment validation and capacity control</li>
-                        <li class="mb-2">Assignment submissions and grading</li>
-                        <li>Messaging and reporting dashboards</li>
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="h5 fw-bold mb-3 text-dark">Why UniManage?</h2>
+                    <ul class="list-unstyled mb-0 text-secondary small">
+                        <li class="d-flex gap-2 mb-3"><span class="text-primary fw-bold">·</span><span>Controlled course lifecycle and enrollment rules</span></li>
+                        <li class="d-flex gap-2 mb-3"><span class="text-primary fw-bold">·</span><span>Assignments with submissions and structured feedback</span></li>
+                        <li class="d-flex gap-2 mb-3"><span class="text-primary fw-bold">·</span><span>Role-based access for every user type</span></li>
+                        <li class="d-flex gap-2"><span class="text-primary fw-bold">·</span><span>Dashboards and analytics for better decisions</span></li>
                     </ul>
                 </div>
             </div>
@@ -29,69 +29,73 @@
     </div>
 </section>
 
-<section class="mb-5">
+<section class="mb-5" aria-labelledby="roles-heading">
+    <h2 id="roles-heading" class="h4 fw-bold mb-4 text-center text-md-start">Built for every role</h2>
     <div class="row g-4">
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 border-0 um-role-card shadow-sm">
                 <div class="card-body p-4">
-                    <h4 class="card-title mb-3">Students</h4>
-                    <p class="card-text text-muted">Browse courses, enroll with prerequisite checks, submit assignments, and track grades and feedback in one place.</p>
+                    <div class="um-role-icon um-role-student" aria-hidden="true">S</div>
+                    <h3 class="h5 card-title fw-bold">Students</h3>
+                    <p class="card-text text-muted small mb-0">Browse the catalog, enroll with prerequisite checks, submit work, and track grades and feedback.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 border-0 um-role-card shadow-sm">
                 <div class="card-body p-4">
-                    <h4 class="card-title mb-3">Lecturers</h4>
-                    <p class="card-text text-muted">Manage assigned courses, upload materials, review submissions, and deliver grading with structured feedback.</p>
+                    <div class="um-role-icon um-role-lecturer" aria-hidden="true">L</div>
+                    <h3 class="h5 card-title fw-bold">Lecturers</h3>
+                    <p class="card-text text-muted small mb-0">Manage courses, share materials, review submissions, and grade with clear feedback.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 border-0 um-role-card shadow-sm">
                 <div class="card-body p-4">
-                    <h4 class="card-title mb-3">Administrators</h4>
-                    <p class="card-text text-muted">Oversee users, course offerings, enrollments, and analytics to maintain an efficient academic system.</p>
+                    <div class="um-role-icon um-role-admin" aria-hidden="true">A</div>
+                    <h3 class="h5 card-title fw-bold">Administrators</h3>
+                    <p class="card-text text-muted small mb-0">Oversee offerings, enrollments, and reports to keep the institution running smoothly.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section id="about" class="mb-5">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-        <h2 class="h3 mb-0">Core Modules</h2>
-        <span class="badge bg-primary-subtle text-primary-emphasis">Integrated Workflow</span>
+<section id="about" class="mb-5" aria-labelledby="modules-heading">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4">
+        <h2 id="modules-heading" class="h4 fw-bold mb-0">Core modules</h2>
+        <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis px-3 py-2">End-to-end workflow</span>
     </div>
     <div class="row g-4">
         <div class="col-md-6" id="courses">
-            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                <h5>Course Management</h5>
-                <p class="text-muted mb-0">Create, update, and organize courses with lecturer allocation, credits, prerequisites, and capacity limits.</p>
+            <div class="p-4 um-module-tile h-100">
+                <h3 class="h5 mb-2">Course management</h3>
+                <p class="text-muted small mb-0">Create and maintain courses with lecturers, credits, prerequisites, and capacity.</p>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                <h5>Enrollment</h5>
-                <p class="text-muted mb-0">Enable students to enroll with duplicate prevention, prerequisite validation, and real-time seat availability checks.</p>
+            <div class="p-4 um-module-tile h-100">
+                <h3 class="h5 mb-2">Enrollment</h3>
+                <p class="text-muted small mb-0">Validate prerequisites, prevent duplicates, and respect seat limits.</p>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                <h5>Assignments</h5>
-                <p class="text-muted mb-0">Manage assignment creation, submission tracking, grading, and feedback with clear status visibility.</p>
+            <div class="p-4 um-module-tile h-100">
+                <h3 class="h5 mb-2">Assignments</h3>
+                <p class="text-muted small mb-0">Publish tasks, collect submissions, and track status through grading.</p>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                <h5>Reporting</h5>
-                <p class="text-muted mb-0">Monitor course popularity, student performance, lecturer workload, and enrollment trends using actionable dashboards.</p>
+            <div class="p-4 um-module-tile h-100">
+                <h3 class="h5 mb-2">Reporting</h3>
+                <p class="text-muted small mb-0">Course popularity, student performance, workload, and enrollment trends.</p>
             </div>
         </div>
         <div class="col-12" id="contact">
-            <div class="p-4 bg-white rounded-4 shadow-sm">
-                <h5>Messaging</h5>
-                <p class="text-muted mb-0">Support direct communication between students and lecturers with conversation-style threads and read status tracking.</p>
+            <div class="p-4 um-module-tile">
+                <h3 class="h5 mb-2">Messaging</h3>
+                <p class="text-muted small mb-0">Conversation-style threads between students and lecturers with read status.</p>
             </div>
         </div>
     </div>

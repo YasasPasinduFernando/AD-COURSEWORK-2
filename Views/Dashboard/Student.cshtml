@@ -3,114 +3,119 @@
     ViewData["Title"] = "Student dashboard";
 }
 
-<h1 class="h3 mb-3">Student dashboard</h1>
+<div class="um-page-header">
+    <h1 class="text-dark">Student dashboard</h1>
+    <p class="um-lead">Your courses, deadlines, and grades at a glance.</p>
+</div>
 
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Courses</h2>
-                <p class="display-6 mb-0">@Model.EnrolledCourses.Count</p>
-            </div>
+        <div class="um-dash-stat">
+            <span class="um-dash-stat-label">Enrolled courses</span>
+            <span class="um-dash-stat-value">@Model.EnrolledCourses.Count</span>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Upcoming deadlines</h2>
-                <p class="display-6 mb-0">@Model.UpcomingDeadlines.Count</p>
-            </div>
+        <div class="um-dash-stat um-dash-stat-accent">
+            <span class="um-dash-stat-label">Tracked deadlines</span>
+            <span class="um-dash-stat-value">@Model.UpcomingDeadlines.Count</span>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Unread messages</h2>
-                <p class="display-6 mb-0">@Model.UnreadMessages</p>
-            </div>
+        <div class="um-dash-stat">
+            <span class="um-dash-stat-label">Unread messages</span>
+            <span class="um-dash-stat-value">@Model.UnreadMessages</span>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h2 class="h5 mb-0">Enrolled courses</h2>
-                    <a class="btn btn-sm btn-outline-primary" asp-controller="Enrollments" asp-action="Browse">Catalog</a>
+<div class="row g-4 align-items-stretch">
+    <div class="col-lg-8 d-flex flex-column gap-4">
+        <div class="row g-4 flex-grow-1">
+            <div class="col-md-6 d-flex">
+                <div class="um-panel card border-0 w-100 d-flex flex-column">
+                    <div class="card-body d-flex flex-column flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h6 mb-0 fw-bold text-dark">Enrolled courses</h2>
+                            <a class="btn btn-sm btn-primary rounded-pill px-3" asp-controller="Enrollments" asp-action="Browse">Catalog</a>
+                        </div>
+                        <div class="table-responsive flex-grow-1">
+                            <table class="table table-sm table-um mb-0 align-middle">
+                                <thead><tr><th>Code</th><th>Course</th><th>Lecturer</th></tr></thead>
+                                <tbody>
+                                @if (!Model.EnrolledCourses.Any())
+                                {
+                                    <tr><td colspan="3" class="text-muted py-4 text-center">No enrollments yet.</td></tr>
+                                }
+                                @foreach (var c in Model.EnrolledCourses)
+                                {
+                                    <tr>
+                                        <td><span class="badge bg-light text-dark border">@c.Code</span></td>
+                                        <td>@c.Name</td>
+                                        <td class="small">@c.Lecturer</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-sm mb-0">
-                        <thead><tr><th>Code</th><th>Course</th><th>Lecturer</th></tr></thead>
-                        <tbody>
-                        @if (!Model.EnrolledCourses.Any())
-                        {
-                            <tr><td colspan="3" class="text-muted">No enrollments.</td></tr>
-                        }
-                        @foreach (var c in Model.EnrolledCourses)
-                        {
-                            <tr>
-                                <td>@c.Code</td>
-                                <td>@c.Name</td>
-                                <td>@c.Lecturer</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="um-panel card border-0 w-100 d-flex flex-column">
+                    <div class="card-body d-flex flex-column flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h6 mb-0 fw-bold text-dark">Deadlines</h2>
+                            <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Assignments" asp-action="Mine">Assignments</a>
+                        </div>
+                        <div class="table-responsive flex-grow-1">
+                            <table class="table table-sm table-um mb-0 align-middle">
+                                <thead><tr><th>Due</th><th>Course</th><th>Task</th><th>Status</th></tr></thead>
+                                <tbody>
+                                @if (!Model.UpcomingDeadlines.Any())
+                                {
+                                    <tr><td colspan="4" class="text-muted py-4 text-center">No upcoming items.</td></tr>
+                                }
+                                @foreach (var d in Model.UpcomingDeadlines)
+                                {
+                                    var badgeClass = d.Status == "Graded" ? "bg-success-subtle text-success-emphasis" : d.Status == "Submitted" ? "bg-primary-subtle text-primary-emphasis" : "bg-secondary-subtle text-secondary-emphasis";
+                                    <tr>
+                                        <td class="small text-nowrap">@d.DueDateUtc.ToLocalTime().ToString("g")</td>
+                                        <td>@d.CourseCode</td>
+                                        <td>@d.Title</td>
+                                        <td><span class="badge rounded-pill @badgeClass">@d.Status</span></td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h2 class="h5 mb-0">Deadlines</h2>
-                    <a class="btn btn-sm btn-outline-primary" asp-controller="Assignments" asp-action="Mine">Assignments</a>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-sm mb-0">
-                        <thead><tr><th>Due</th><th>Course</th><th>Task</th><th>Status</th></tr></thead>
-                        <tbody>
-                        @if (!Model.UpcomingDeadlines.Any())
-                        {
-                            <tr><td colspan="4" class="text-muted">No upcoming items.</td></tr>
-                        }
-                        @foreach (var d in Model.UpcomingDeadlines)
-                        {
-                            <tr>
-                                <td>@d.DueDateUtc.ToLocalTime().ToString("g")</td>
-                                <td>@d.CourseCode</td>
-                                <td>@d.Title</td>
-                                <td><span class="badge bg-secondary">@d.Status</span></td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div class="col-lg-4 d-flex">
+        <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
     </div>
 </div>
 
-<div class="card border-0 shadow-sm mt-4">
+<div class="um-panel card border-0 mt-4">
     <div class="card-body">
-        <h2 class="h5 mb-3">Recent grades</h2>
+        <h2 class="h6 fw-bold text-dark mb-3">Recent grades</h2>
         <div class="table-responsive">
-            <table class="table mb-0">
+            <table class="table table-um mb-0 align-middle">
                 <thead><tr><th>Course</th><th>Assignment</th><th>Grade</th><th>Feedback</th></tr></thead>
                 <tbody>
                 @if (!Model.RecentGrades.Any())
                 {
-                    <tr><td colspan="4" class="text-muted">No graded work yet.</td></tr>
+                    <tr><td colspan="4" class="text-muted py-5 text-center">No graded work yet. Submissions will appear here once marked.</td></tr>
                 }
                 @foreach (var g in Model.RecentGrades)
                 {
                     <tr>
-                        <td>@g.CourseCode</td>
+                        <td><span class="fw-semibold">@g.CourseCode</span></td>
                         <td>@g.Assignment</td>
-                        <td>@g.Grade / @g.MaxPoints</td>
+                        <td><span class="badge bg-light text-dark border">@g.Grade / @g.MaxPoints</span></td>
                         <td class="small text-muted">@(g.FeedbackShort ?? "—")</td>
                     </tr>
                 }

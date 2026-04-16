@@ -1,0 +1,73 @@
+@model DashboardCalendarModel
+@{
+    var first = new DateTime(Model.Year, Model.Month, 1);
+    var daysInMonth = DateTime.DaysInMonth(Model.Year, Model.Month);
+    var startDow = (int)first.DayOfWeek;
+    var today = DateOnly.FromDateTime(DateTime.Now);
+    var dayLabels = new[] { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" };
+}
+
+<div class="um-panel card border-0 h-100 d-flex flex-column">
+    <div class="card-body d-flex flex-column flex-grow-1">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h3 class="h6 mb-0 fw-bold text-dark">@first.ToString("MMMM yyyy")</h3>
+                <p class="small text-muted mb-0">Due dates this month</p>
+            </div>
+            @if (Model.EventsByDay.Count > 0)
+            {
+                <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">@Model.EventsByDay.Values.Sum(l => l.Count)</span>
+            }
+        </div>
+
+        <div class="um-cal-weekdays">
+            @foreach (var dn in dayLabels)
+            {
+                <div class="um-cal-cellhead text-center">@dn</div>
+            }
+        </div>
+        <div class="um-cal-grid mb-2">
+            @for (var i = 0; i < startDow; i++)
+            {
+                <div class="um-cal-day um-cal-empty"></div>
+            }
+            @for (var day = 1; day <= daysInMonth; day++)
+            {
+                var date = new DateOnly(Model.Year, Model.Month, day);
+                var has = Model.EventsByDay.TryGetValue(date, out var evs);
+                var isToday = date == today;
+                var title = has ? string.Join(" · ", evs!.Select(e => e.Title)) : "";
+                <div class="um-cal-day @(has ? "um-cal-has-event" : "") @(isToday ? "um-cal-today" : "")" title="@title">
+                    <span class="um-cal-num">@day</span>
+                    @if (has && evs!.Count > 0)
+                    {
+                        <span class="um-cal-count">@evs.Count</span>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (Model.EventsByDay.Count > 0)
+        {
+            <div class="border-top pt-3 mt-auto">
+                <p class="small fw-semibold text-muted text-uppercase mb-2" style="letter-spacing: .04em;">Upcoming</p>
+                <ul class="list-unstyled small mb-0 um-cal-list">
+                    @foreach (var kv in Model.EventsByDay.OrderBy(k => k.Key).Take(8))
+                    {
+                        foreach (var e in kv.Value)
+                        {
+                            <li class="d-flex gap-2 py-2 border-bottom border-light">
+                                <span class="text-muted text-nowrap flex-shrink-0">@kv.Key.ToString("MMM d")</span>
+                                <span class="text-break"><span class="fw-semibold text-dark">@e.Title</span><span class="text-muted"> — @e.Detail</span></span>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p class="small text-muted mb-0 mt-2">No assignment deadlines in this month.</p>
+        }
+    </div>
+</div>

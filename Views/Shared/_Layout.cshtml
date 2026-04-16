@@ -12,23 +12,24 @@
     <link rel="stylesheet" href="~/AD_COURSEWORK_2.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="um-skip" href="#main-content">Skip to content</a>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-um sticky-top py-2">
             <div class="container">
-                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">UniManage</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index" aria-label="UniManage home">UniManage</a>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
                             @if (User.IsInRole(AppRoles.Student))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Enrollments" asp-action="Browse">Course Catalog</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Assignments" asp-action="Mine">My Assignments</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Enrollments" asp-action="Browse">Catalog</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Assignments" asp-action="Mine">Assignments</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
                             }
                             @if (User.IsInRole(AppRoles.Lecturer))
@@ -39,7 +40,7 @@
                             }
                             @if (User.IsInRole(AppRoles.Administrator))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Courses" asp-action="Index">Manage Courses</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="Index">Reports</a></li>
                             }
                         }
@@ -50,21 +51,23 @@
                             <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact</a></li>
                         }
                     </ul>
-                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="nav-item"><span class="navbar-text me-lg-3 text-white-50 small">@User.Identity?.Name</span></li>
+                            <li class="nav-item px-lg-2 mb-2 mb-lg-0">
+                                <span class="um-user-pill d-inline-block" title="@User.Identity?.Name">@User.Identity?.Name</span>
+                            </li>
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-link nav-link text-white text-decoration-none px-0">Logout</button>
+                                    <button type="submit" class="btn btn-link nav-link btn-logout text-start text-lg-end">Sign out</button>
                                 </form>
                             </li>
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Login</a></li>
-                            <li class="nav-item"><a class="btn btn-light btn-sm ms-lg-2" asp-controller="Account" asp-action="Register">Register</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Sign in</a></li>
+                            <li class="nav-item"><a class="btn btn-light btn-sm btn-register ms-lg-2" asp-controller="Account" asp-action="Register">Register</a></li>
                         }
                     </ul>
                 </div>
@@ -72,17 +75,20 @@
         </nav>
     </header>
 
-    <main class="py-4">
+    <main class="um-main py-4" id="main-content" tabindex="-1">
         <div class="container">
             <partial name="_Alerts" />
             @RenderBody()
         </div>
     </main>
 
-    <footer class="border-top py-4 mt-4 bg-white">
-        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-            <span class="text-muted">&copy; @DateTime.UtcNow.Year UniManage - University Course Management System</span>
-            <a class="text-decoration-none" asp-controller="Home" asp-action="Index">Back to top</a>
+    <footer class="um-footer py-4">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 small">
+            <span class="text-muted">&copy; @DateTime.UtcNow.Year <strong class="text-dark">UniManage</strong> — University Course Management System</span>
+            <div class="d-flex gap-3">
+                <a class="text-decoration-none" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="text-decoration-none" href="#main-content">Top</a>
+            </div>
         </div>
     </footer>
 

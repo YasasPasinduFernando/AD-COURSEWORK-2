@@ -3,64 +3,68 @@
     ViewData["Title"] = "Lecturer dashboard";
 }
 
-<h1 class="h3 mb-3">Lecturer dashboard</h1>
+<div class="um-page-header">
+    <h1 class="text-dark">Lecturer dashboard</h1>
+    <p class="um-lead">Teaching load, submissions, and assignment schedule.</p>
+</div>
 
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Pending submissions</h2>
-                <p class="display-6 mb-0">@Model.PendingSubmissions</p>
-            </div>
+        <div class="um-dash-stat um-dash-stat-warn">
+            <span class="um-dash-stat-label">Pending submissions</span>
+            <span class="um-dash-stat-value">@Model.PendingSubmissions</span>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Graded</h2>
-                <p class="display-6 mb-0">@Model.GradedSubmissions</p>
-            </div>
+        <div class="um-dash-stat um-dash-stat-accent">
+            <span class="um-dash-stat-label">Graded</span>
+            <span class="um-dash-stat-value">@Model.GradedSubmissions</span>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h6 text-muted">Unread messages</h2>
-                <p class="display-6 mb-0">@Model.UnreadMessages</p>
-            </div>
+        <div class="um-dash-stat">
+            <span class="um-dash-stat-label">Unread messages</span>
+            <span class="um-dash-stat-value">@Model.UnreadMessages</span>
         </div>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 class="h5 mb-0">My courses</h2>
-            <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="MyCourses">Open list</a>
+<div class="row g-4 align-items-stretch">
+    <div class="col-lg-8">
+        <div class="um-panel card border-0 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h6 mb-0 fw-bold text-dark">My courses</h2>
+                    <a class="btn btn-sm btn-primary rounded-pill px-3" asp-controller="Courses" asp-action="MyCourses">All courses</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-um mb-0 align-middle">
+                        <thead><tr><th>Code</th><th>Name</th><th>Students</th><th>Assignments</th><th class="text-end">Actions</th></tr></thead>
+                        <tbody>
+                        @if (!Model.Courses.Any())
+                        {
+                            <tr><td colspan="5" class="text-muted py-5 text-center">No assigned courses.</td></tr>
+                        }
+                        @foreach (var c in Model.Courses)
+                        {
+                            <tr>
+                                <td><span class="badge bg-light text-dark border">@c.Code</span></td>
+                                <td class="fw-medium">@c.Name</td>
+                                <td>@c.EnrollmentCount</td>
+                                <td>@c.AssignmentCount</td>
+                                <td class="text-end text-nowrap">
+                                    <a class="btn btn-sm btn-primary" asp-controller="Courses" asp-action="Details" asp-route-id="@c.CourseId">Details</a>
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@c.CourseId">Tasks</a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="table-responsive">
-            <table class="table mb-0">
-                <thead><tr><th>Code</th><th>Name</th><th>Students</th><th>Assignments</th><th></th></tr></thead>
-                <tbody>
-                @if (!Model.Courses.Any())
-                {
-                    <tr><td colspan="5" class="text-muted">No assigned courses.</td></tr>
-                }
-                @foreach (var c in Model.Courses)
-                {
-                    <tr>
-                        <td>@c.Code</td>
-                        <td>@c.Name</td>
-                        <td>@c.EnrollmentCount</td>
-                        <td>@c.AssignmentCount</td>
-                        <td class="text-end">
-                            <a class="btn btn-sm btn-primary" asp-controller="Courses" asp-action="Details" asp-route-id="@c.CourseId">Details</a>
-                            <a class="btn btn-sm btn-outline-primary" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@c.CourseId">Assignments</a>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+    </div>
+    <div class="col-lg-4 d-flex">
+        <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
     </div>
 </div>

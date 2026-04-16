@@ -1,4 +1,10 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.um-alert.alert-success').forEach(function (el) {
+    window.setTimeout(function () {
+      if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+        var instance = bootstrap.Alert.getOrCreateInstance(el);
+        instance.close();
+      }
+    }, 6000);
+  });
+});
