@@ -1,83 +1,138 @@
+@using Microsoft.AspNetCore.Identity
+@using AD_COURSEWORK_2.Models
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = "UniManage";
 }
 
-<section class="hero-section rounded-4 p-4 p-md-5 mb-5 text-white">
-    <div class="row align-items-center g-4">
-        <div class="col-lg-7">
-            <span class="badge bg-white bg-opacity-25 text-white border border-white border-opacity-25 mb-3 px-3 py-2">University Course Management System</span>
-            <h1 class="display-5 fw-bold mb-3 lh-sm">The modern LMS for <span class="um-hero-accent">Sri&nbsp;Lankan</span> universities.</h1>
-            <p class="lead mb-4 opacity-90">Courses, resources, assignments, messaging, and progress analytics — all in one elegant, student‑friendly platform.</p>
-            <div class="d-flex flex-wrap gap-2">
-                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow">Create account</a>
-                <a href="#about" class="btn btn-outline-light btn-lg px-4">Explore modules</a>
+<section class="um-full-bleed um-home-hero" style="background-image: url('/assets/images/lms-campus-2.jpg');" aria-labelledby="hero-title">
+    <div class="hero-inner">
+        <span class="um-hero-eyebrow"><i class="bi bi-mortarboard-fill me-2"></i>Learning management reimagined</span>
+        <h1 id="hero-title">Welcome to <span class="hero-grad">UniManage</span></h1>
+        <p class="hero-lead">A modern, end-to-end Learning Management System built for Sri Lankan universities — courses, assignments, messaging and dashboards in one place.</p>
+        <div class="hero-actions">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-speedometer2 me-1"></i>Open dashboard</a>
+                <a href="#features" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-arrow-down me-1"></i>Explore features</a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-person-plus-fill me-1"></i>Get started</a>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-box-arrow-in-right me-1"></i>Sign in</a>
                 <a asp-controller="Account" asp-action="LoginWithGoogle" class="btn btn-outline-light btn-lg px-4 d-inline-flex align-items-center gap-2">
                     <img src="~/assets/icons/google-color.svg" alt="" width="18" height="18" />
                     <span>Continue with Google</span>
                 </a>
-            </div>
-            <div class="d-flex flex-wrap gap-4 mt-4 small um-hero-stats">
-                <div><span class="h5 fw-bold mb-0 d-block text-white">3</span><span class="opacity-75">User roles</span></div>
-                <div><span class="h5 fw-bold mb-0 d-block text-white">5+</span><span class="opacity-75">Core modules</span></div>
-                <div><span class="h5 fw-bold mb-0 d-block text-white">24/7</span><span class="opacity-75">Dashboard access</span></div>
+            }
+        </div>
+        <div class="hero-stats">
+            <div><span class="h-num">3</span><span class="h-label">User roles</span></div>
+            <div><span class="h-num">5+</span><span class="h-label">Core modules</span></div>
+            <div><span class="h-num">24/7</span><span class="h-label">Dashboard access</span></div>
+            <div><span class="h-num">100%</span><span class="h-label">Cloud ready</span></div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="um-feat-row" aria-label="Key features">
+    <div class="row g-3">
+        <div class="col-md-6 col-lg-3">
+            <div class="um-feat-tile">
+                <div class="feat-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                <h3>Smart enrollment</h3>
+                <p>Prerequisite-aware registration with seat limits and duplicate checks.</p>
             </div>
         </div>
-        <div class="col-lg-5">
-            <div id="homeCampusCarousel" class="carousel slide rounded-4 overflow-hidden shadow-lg um-hero-carousel" data-bs-ride="carousel" data-bs-interval="3500">
-                <div class="carousel-indicators mb-2">
-                    <button type="button" data-bs-target="#homeCampusCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#homeCampusCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#homeCampusCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="~/assets/images/lms-campus-1.jpg" class="d-block w-100" alt="University students collaborating">
-                        <div class="carousel-caption text-start">
-                            <h2 class="h6 fw-bold">Collaborative learning</h2>
-                            <p class="small mb-0">Students and lecturers connected through one platform.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="~/assets/images/lms-campus-2.jpg" class="d-block w-100" alt="University classroom environment">
-                        <div class="carousel-caption text-start">
-                            <h2 class="h6 fw-bold">Organized teaching</h2>
-                            <p class="small mb-0">Manage lessons, assignments, and feedback with clarity.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="~/assets/images/lms-campus-3.jpg" class="d-block w-100" alt="Higher education students on campus">
-                        <div class="carousel-caption text-start">
-                            <h2 class="h6 fw-bold">Progress-focused dashboards</h2>
-                            <p class="small mb-0">Track deadlines, achievements, and academic growth.</p>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#homeCampusCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#homeCampusCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+        <div class="col-md-6 col-lg-3">
+            <div class="um-feat-tile feat-emerald">
+                <div class="feat-icon"><i class="bi bi-journal-check"></i></div>
+                <h3>Assignments &amp; grading</h3>
+                <p>Publish tasks, collect submissions and grade with structured feedback.</p>
             </div>
-            <div class="card border-0 shadow-lg mt-3">
-                <div class="card-body p-4">
-                    <h2 class="h6 fw-bold mb-3 text-dark">Why UniManage?</h2>
-                    <ul class="list-unstyled mb-0 text-secondary small">
-                        <li class="d-flex gap-2 mb-2"><span class="text-primary fw-bold">·</span><span>Controlled course lifecycle and enrollment rules</span></li>
-                        <li class="d-flex gap-2 mb-2"><span class="text-primary fw-bold">·</span><span>Assignments with submissions and structured feedback</span></li>
-                        <li class="d-flex gap-2 mb-2"><span class="text-primary fw-bold">·</span><span>Role-based access for every user type</span></li>
-                        <li class="d-flex gap-2"><span class="text-primary fw-bold">·</span><span>Dashboards and analytics for better decisions</span></li>
-                    </ul>
-                </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="um-feat-tile feat-violet">
+                <div class="feat-icon"><i class="bi bi-speedometer2"></i></div>
+                <h3>Role-based dashboards</h3>
+                <p>Tailored insights for students, lecturers and administrators.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="um-feat-tile feat-amber">
+                <div class="feat-icon"><i class="bi bi-chat-dots-fill"></i></div>
+                <h3>Secure messaging</h3>
+                <p>Thread-based conversations between students, lecturers and admins.</p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="mb-5" aria-labelledby="roles-heading">
-    <h2 id="roles-heading" class="h4 fw-bold mb-4 text-center text-md-start">Built for every role</h2>
+<section class="um-section-intro" id="about">
+    <span class="section-eyebrow">About us</span>
+    <h2>Everything your campus needs, <span class="accent-underline">beautifully organised</span></h2>
+    <p>UniManage brings courses, enrollments, materials, assignments and real-time messaging together — so students, lecturers and administrators stay productive, engaged and informed across every academic term.</p>
+</section>
+
+<section class="um-split-section" aria-labelledby="edu-title">
+    <div class="um-split-image">
+        <img src="~/assets/images/lms-campus-1.jpg" alt="University students collaborating" />
+        <span class="um-split-badge"><i class="bi bi-stars"></i>Built for Sri Lankan unis</span>
+    </div>
+    <div class="um-split-body">
+        <span class="body-eyebrow">Welcome to education</span>
+        <h2 id="edu-title">A learning platform that grows with your institution.</h2>
+        <p class="lead">From first-year intakes to final exams, UniManage supports the full academic journey with role-aware workflows, structured course management and deep analytics.</p>
+        <ul class="um-split-list">
+            <li>
+                <span class="list-icon"><i class="bi bi-shield-check"></i></span>
+                <span><strong>Controlled access</strong>Role-based permissions keep every action safe and auditable.</span>
+            </li>
+            <li class="i-emerald">
+                <span class="list-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                <span><strong>Actionable insights</strong>Live dashboards and reports surface the metrics that matter most.</span>
+            </li>
+            <li class="i-violet">
+                <span class="list-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+                <span><strong>Fast &amp; modern</strong>Built on ASP.NET Core with a clean, responsive UI for every screen.</span>
+            </li>
+        </ul>
+        <a href="#roles" class="btn btn-primary"><i class="bi bi-arrow-down me-1"></i>See it in action</a>
+    </div>
+</section>
+
+<section class="um-split-section reverse" aria-labelledby="workflow-title">
+    <div class="um-split-image">
+        <img src="~/assets/images/lms-campus-3.jpg" alt="Students on campus" />
+        <span class="um-split-badge"><i class="bi bi-clipboard2-check"></i>End-to-end workflow</span>
+    </div>
+    <div class="um-split-body">
+        <span class="body-eyebrow">Why UniManage</span>
+        <h2 id="workflow-title">Every stakeholder gets exactly what they need.</h2>
+        <p class="lead">Stop juggling spreadsheets, emails and file shares. UniManage replaces all of that with one reliable, role-aware hub for the entire academic community.</p>
+        <ul class="um-split-list">
+            <li class="i-amber">
+                <span class="list-icon"><i class="bi bi-person-workspace"></i></span>
+                <span><strong>Students</strong>Enroll in courses, submit assignments and track grades in real time.</span>
+            </li>
+            <li class="i-rose">
+                <span class="list-icon"><i class="bi bi-easel2-fill"></i></span>
+                <span><strong>Lecturers</strong>Publish materials, grade work and message students with one click.</span>
+            </li>
+            <li>
+                <span class="list-icon"><i class="bi bi-building-gear"></i></span>
+                <span><strong>Administrators</strong>Manage courses, users and analytics from a single control centre.</span>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section id="roles" class="mb-5" aria-labelledby="roles-heading">
+    <div class="um-section-intro">
+        <span class="section-eyebrow">Every role covered</span>
+        <h2>Built for <span class="accent-underline">every user</span></h2>
+        <p>Students, lecturers and administrators each get a tailored experience with focused tools, clean navigation and smart defaults.</p>
+    </div>
     <div class="row g-4">
         <div class="col-md-4">
             <div class="card h-100 border-0 um-role-card role-student shadow-sm">
@@ -109,41 +164,76 @@
     </div>
 </section>
 
-<section id="about" class="mb-5" aria-labelledby="modules-heading">
-    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4">
-        <h2 id="modules-heading" class="h4 fw-bold mb-0">Core modules</h2>
-        <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis px-3 py-2">End-to-end workflow</span>
+<section class="mb-5" aria-labelledby="modules-heading">
+    <div class="um-section-intro">
+        <span class="section-eyebrow">Core modules</span>
+        <h2>An <span class="accent-underline">end-to-end</span> academic workflow</h2>
+        <p>Every module is tightly integrated — enrollments flow into assignments, assignments become submissions, submissions produce grades, and grades power dashboards.</p>
     </div>
-    <div class="row g-4">
-        <div class="col-md-6" id="courses">
-            <div class="p-4 um-module-tile h-100">
-                <h3 class="h5 mb-2">Course management</h3>
-                <p class="text-muted small mb-0">Create and maintain courses with lecturers, credits, prerequisites, and capacity.</p>
+    <div class="row g-3" id="courses">
+        <div class="col-md-6 col-lg-4">
+            <div class="um-feat-tile">
+                <div class="feat-icon"><i class="bi bi-collection-fill"></i></div>
+                <h3>Course management</h3>
+                <p>Create courses with lecturers, credits, prerequisites and capacity limits.</p>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="p-4 um-module-tile h-100">
-                <h3 class="h5 mb-2">Enrollment</h3>
-                <p class="text-muted small mb-0">Validate prerequisites, prevent duplicates, and respect seat limits.</p>
+        <div class="col-md-6 col-lg-4">
+            <div class="um-feat-tile feat-emerald">
+                <div class="feat-icon"><i class="bi bi-ui-checks-grid"></i></div>
+                <h3>Enrollment</h3>
+                <p>Validated prerequisite checks, duplicate protection and seat enforcement.</p>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="p-4 um-module-tile h-100">
-                <h3 class="h5 mb-2">Assignments</h3>
-                <p class="text-muted small mb-0">Publish tasks, collect submissions, and track status through grading.</p>
+        <div class="col-md-6 col-lg-4">
+            <div class="um-feat-tile feat-violet">
+                <div class="feat-icon"><i class="bi bi-journal-text"></i></div>
+                <h3>Assignments</h3>
+                <p>Tasks flow from publishing to submissions to graded feedback seamlessly.</p>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="p-4 um-module-tile h-100">
-                <h3 class="h5 mb-2">Reporting</h3>
-                <p class="text-muted small mb-0">Course popularity, student performance, workload, and enrollment trends.</p>
+        <div class="col-md-6 col-lg-4">
+            <div class="um-feat-tile feat-amber">
+                <div class="feat-icon"><i class="bi bi-bar-chart-line-fill"></i></div>
+                <h3>Reporting</h3>
+                <p>Enrollment trends, performance analytics and workload tracking at a glance.</p>
             </div>
         </div>
-        <div class="col-12" id="contact">
-            <div class="p-4 um-module-tile">
-                <h3 class="h5 mb-2">Messaging</h3>
-                <p class="text-muted small mb-0">Conversation-style threads between students and lecturers with read status.</p>
+        <div class="col-md-6 col-lg-4" id="contact">
+            <div class="um-feat-tile feat-rose">
+                <div class="feat-icon"><i class="bi bi-chat-left-dots-fill"></i></div>
+                <h3>Messaging</h3>
+                <p>Threaded conversations between students, lecturers and administrators.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="um-feat-tile">
+                <div class="feat-icon"><i class="bi bi-envelope-paper-fill"></i></div>
+                <h3>Email alerts</h3>
+                <p>Welcome, login, password reset and material upload notifications out of the box.</p>
             </div>
         </div>
     </div>
 </section>
+
+@if (!SignInManager.IsSignedIn(User))
+{
+    <section class="um-cta-strip" aria-labelledby="cta-title">
+        <h2 id="cta-title">Ready to modernise your learning experience?</h2>
+        <p>Join UniManage today and get instant access to courses, assignments, messaging and a dashboard tailored to your role.</p>
+        <div class="cta-actions">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-rocket-takeoff me-1"></i>Create your account</a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-box-arrow-in-right me-1"></i>I already have an account</a>
+        </div>
+    </section>
+}
+else
+{
+    <section class="um-cta-strip" aria-labelledby="cta-title-signed">
+        <h2 id="cta-title-signed">Welcome back, @((User.Identity?.Name ?? "friend").Split('@','.')[0])!</h2>
+        <p>Jump right into your personalised dashboard or start exploring your latest courses and messages.</p>
+        <div class="cta-actions">
+            <a asp-controller="Dashboard" asp-action="Index" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-speedometer2 me-1"></i>Go to dashboard</a>
+        </div>
+    </section>
+}
