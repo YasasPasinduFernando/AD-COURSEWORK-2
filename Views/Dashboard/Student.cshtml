@@ -1,126 +1,266 @@
 @model StudentDashboardViewModel
 @{
     ViewData["Title"] = "Student dashboard";
+    var firstName = (User.Identity?.Name ?? "Student").Split(' ', '@')[0];
+    var greeting = DateTime.Now.Hour < 12 ? "Good morning" : DateTime.Now.Hour < 18 ? "Good afternoon" : "Good evening";
+    var pending = Model.UpcomingDeadlines.Count(d => d.Status == "Pending" || d.Status == "Not started");
+    var submitted = Model.UpcomingDeadlines.Count(d => d.Status == "Submitted" || d.Status == "Graded");
+    var totalTracked = Math.Max(Model.UpcomingDeadlines.Count, 1);
+    var progress = Math.Min(100, (int)Math.Round(submitted * 100.0 / totalTracked));
+    var circumference = 2 * Math.PI * 54;
+    var dashOffset = circumference - (circumference * progress / 100.0);
+    var avgGrade = Model.RecentGrades.Where(g => g.Grade.HasValue && g.MaxPoints > 0)
+                                      .Select(g => (double)(g.Grade!.Value / g.MaxPoints) * 100)
+                                      .DefaultIfEmpty(0).Average();
+    var accents = new[] { "", "accent-violet", "accent-emerald", "accent-amber", "accent-rose" };
 }
 
-<div class="um-page-header">
-    <h1 class="text-dark">Student dashboard</h1>
-    <p class="um-lead">Your courses, deadlines, and grades at a glance.</p>
-</div>
+<section class="um-welcome">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <div class="um-welcome-eyebrow">Student workspace</div>
+            <h1>@greeting, @firstName</h1>
+            <p class="um-welcome-sub">Stay on top of your @Model.EnrolledCourses.Count @(Model.EnrolledCourses.Count == 1 ? "course" : "courses"), upcoming deadlines, and feedback — all in one place.</p>
+            <div class="um-welcome-chips">
+                <span class="um-chip"><i class="bi bi-calendar-event"></i>@DateTime.Now.ToString("dddd, MMM d")</span>
+                <span class="um-chip"><i class="bi bi-inbox"></i>@Model.UnreadMessages unread</span>
+                <span class="um-chip"><i class="bi bi-mortarboard"></i>Avg @avgGrade.ToString("0")%</span>
+            </div>
+            <div class="um-welcome-cta">
+                <a class="btn btn-light" asp-controller="Enrollments" asp-action="Browse"><i class="bi bi-journal-plus me-1"></i> Browse catalog</a>
+                <a class="btn btn-outline-light" asp-controller="Assignments" asp-action="Mine"><i class="bi bi-list-check me-1"></i> My assignments</a>
+            </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+            <div class="text-center text-white-50 small">
+                <div style="font-size:3.5rem; line-height:1;"><i class="bi bi-mortarboard-fill"></i></div>
+                <div class="mt-2">UniManage</div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="um-dash-stat">
-            <span class="um-dash-stat-label">Enrolled courses</span>
-            <span class="um-dash-stat-value">@Model.EnrolledCourses.Count</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card">
+            <div class="um-stat-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Enrolled</span>
+                <span class="um-stat-value">@Model.EnrolledCourses.Count</span>
+                <span class="um-stat-hint neutral"><i class="bi bi-bookmark"></i> Active courses</span>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="um-dash-stat um-dash-stat-accent">
-            <span class="um-dash-stat-label">Tracked deadlines</span>
-            <span class="um-dash-stat-value">@Model.UpcomingDeadlines.Count</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-amber">
+            <div class="um-stat-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Pending</span>
+                <span class="um-stat-value">@pending</span>
+                <span class="um-stat-hint @(pending > 0 ? "down" : "up")"><i class="bi bi-@(pending > 0 ? "exclamation-circle" : "check-circle")"></i> Needs action</span>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="um-dash-stat">
-            <span class="um-dash-stat-label">Unread messages</span>
-            <span class="um-dash-stat-value">@Model.UnreadMessages</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-emerald">
+            <div class="um-stat-icon"><i class="bi bi-check2-square"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Submitted</span>
+                <span class="um-stat-value">@submitted</span>
+                <span class="um-stat-hint up"><i class="bi bi-arrow-up-right"></i> @progress% complete</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-violet">
+            <div class="um-stat-icon"><i class="bi bi-chat-dots-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Messages</span>
+                <span class="um-stat-value">@Model.UnreadMessages</span>
+                <span class="um-stat-hint neutral"><i class="bi bi-envelope"></i> Unread</span>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4 align-items-stretch">
-    <div class="col-lg-8 d-flex flex-column gap-4">
-        <div class="row g-4 flex-grow-1">
-            <div class="col-md-6 d-flex">
-                <div class="um-panel card border-0 w-100 d-flex flex-column">
-                    <div class="card-body d-flex flex-column flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h6 mb-0 fw-bold text-dark">Enrolled courses</h2>
-                            <a class="btn btn-sm btn-primary rounded-pill px-3" asp-controller="Enrollments" asp-action="Browse">Catalog</a>
-                        </div>
-                        <div class="table-responsive flex-grow-1">
-                            <table class="table table-sm table-um mb-0 align-middle">
-                                <thead><tr><th>Code</th><th>Course</th><th>Lecturer</th></tr></thead>
-                                <tbody>
-                                @if (!Model.EnrolledCourses.Any())
-                                {
-                                    <tr><td colspan="3" class="text-muted py-4 text-center">No enrollments yet.</td></tr>
-                                }
-                                @foreach (var c in Model.EnrolledCourses)
-                                {
-                                    <tr>
-                                        <td><span class="badge bg-light text-dark border">@c.Code</span></td>
-                                        <td>@c.Name</td>
-                                        <td class="small">@c.Lecturer</td>
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0">My courses</div>
+                    <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Enrollments" asp-action="Browse"><i class="bi bi-plus-lg me-1"></i>Browse more</a>
                 </div>
-            </div>
-            <div class="col-md-6 d-flex">
-                <div class="um-panel card border-0 w-100 d-flex flex-column">
-                    <div class="card-body d-flex flex-column flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h6 mb-0 fw-bold text-dark">Deadlines</h2>
-                            <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Assignments" asp-action="Mine">Assignments</a>
-                        </div>
-                        <div class="table-responsive flex-grow-1">
-                            <table class="table table-sm table-um mb-0 align-middle">
-                                <thead><tr><th>Due</th><th>Course</th><th>Task</th><th>Status</th></tr></thead>
-                                <tbody>
-                                @if (!Model.UpcomingDeadlines.Any())
-                                {
-                                    <tr><td colspan="4" class="text-muted py-4 text-center">No upcoming items.</td></tr>
-                                }
-                                @foreach (var d in Model.UpcomingDeadlines)
-                                {
-                                    var badgeClass = d.Status == "Graded" ? "bg-success-subtle text-success-emphasis" : d.Status == "Submitted" ? "bg-primary-subtle text-primary-emphasis" : "bg-secondary-subtle text-secondary-emphasis";
-                                    <tr>
-                                        <td class="small text-nowrap">@d.DueDateUtc.ToLocalTime().ToString("g")</td>
-                                        <td>@d.CourseCode</td>
-                                        <td>@d.Title</td>
-                                        <td><span class="badge rounded-pill @badgeClass">@d.Status</span></td>
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
+                @if (!Model.EnrolledCourses.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-journal-x"></i>
+                        <div class="um-empty-title">No enrollments yet</div>
+                        <div class="small">Head to the catalog to join your first course.</div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @for (var i = 0; i < Model.EnrolledCourses.Count; i++)
+                        {
+                            var c = Model.EnrolledCourses[i];
+                            var accent = accents[i % accents.Length];
+                            <div class="col-sm-6 col-lg-4">
+                                <a class="um-course-pill @accent" asp-controller="Courses" asp-action="Details" asp-route-id="@c.CourseId">
+                                    <span class="course-code">@c.Code</span>
+                                    <div class="course-name">@c.Name</div>
+                                    <div class="course-meta"><i class="bi bi-person-badge"></i>@c.Lecturer</div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
-    </div>
-    <div class="col-lg-4 d-flex">
-        <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
-    </div>
-</div>
 
-<div class="um-panel card border-0 mt-4">
-    <div class="card-body">
-        <h2 class="h6 fw-bold text-dark mb-3">Recent grades</h2>
-        <div class="table-responsive">
-            <table class="table table-um mb-0 align-middle">
-                <thead><tr><th>Course</th><th>Assignment</th><th>Grade</th><th>Feedback</th></tr></thead>
-                <tbody>
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0">Upcoming deadlines</div>
+                    <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Assignments" asp-action="Mine"><i class="bi bi-list-check me-1"></i>All tasks</a>
+                </div>
+                @if (!Model.UpcomingDeadlines.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-calendar-check"></i>
+                        <div class="um-empty-title">You're all clear</div>
+                        <div class="small">No pending deadlines this week.</div>
+                    </div>
+                }
+                else
+                {
+                    <ul class="um-timeline">
+                        @foreach (var d in Model.UpcomingDeadlines.OrderBy(x => x.DueDateUtc).Take(6))
+                        {
+                            var due = d.DueDateUtc.ToLocalTime();
+                            var state = d.Status == "Graded" ? "is-success" : d.Status == "Submitted" ? "" : due < DateTime.Now ? "is-rose" : due < DateTime.Now.AddDays(2) ? "is-warn" : "";
+                            var pillClass = d.Status == "Graded" ? "pill-success" : d.Status == "Submitted" ? "pill-info" : due < DateTime.Now ? "pill-rose" : "pill-warn";
+                            <li class="@state">
+                                <span class="um-timeline-marker"></span>
+                                <div class="d-flex flex-wrap justify-content-between gap-2">
+                                    <div>
+                                        <p class="um-timeline-title">@d.Title</p>
+                                        <div class="um-timeline-meta"><i class="bi bi-bookmark me-1"></i>@d.CourseCode · <i class="bi bi-clock ms-1 me-1"></i>@due.ToString("MMM d, h:mm tt")</div>
+                                    </div>
+                                    <span class="um-pill @pillClass">@d.Status</span>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <div class="um-panel card border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0">Recent grades</div>
+                    <span class="text-muted small"><i class="bi bi-award me-1"></i>@Model.RecentGrades.Count results</span>
+                </div>
                 @if (!Model.RecentGrades.Any())
                 {
-                    <tr><td colspan="4" class="text-muted py-5 text-center">No graded work yet. Submissions will appear here once marked.</td></tr>
+                    <div class="um-empty">
+                        <i class="bi bi-clipboard-data"></i>
+                        <div class="um-empty-title">No grades yet</div>
+                        <div class="small">Your feedback will appear here after marking.</div>
+                    </div>
                 }
-                @foreach (var g in Model.RecentGrades)
+                else
                 {
-                    <tr>
-                        <td><span class="fw-semibold">@g.CourseCode</span></td>
-                        <td>@g.Assignment</td>
-                        <td><span class="badge bg-light text-dark border">@g.Grade / @g.MaxPoints</span></td>
-                        <td class="small text-muted">@(g.FeedbackShort ?? "—")</td>
-                    </tr>
+                    <div class="table-responsive">
+                        <table class="table table-um mb-0 align-middle">
+                            <thead><tr><th>Course</th><th>Assignment</th><th>Score</th><th>Feedback</th></tr></thead>
+                            <tbody>
+                            @foreach (var g in Model.RecentGrades)
+                            {
+                                var pct = g.Grade.HasValue && g.MaxPoints > 0 ? (int)Math.Round((double)(g.Grade!.Value / g.MaxPoints) * 100) : 0;
+                                var pillClass = pct >= 75 ? "pill-success" : pct >= 50 ? "pill-info" : pct > 0 ? "pill-warn" : "pill-muted";
+                                <tr>
+                                    <td><span class="um-pill pill-info">@g.CourseCode</span></td>
+                                    <td class="fw-medium">@g.Assignment</td>
+                                    <td><span class="um-pill @pillClass">@g.Grade / @g.MaxPoints · @pct%</span></td>
+                                    <td class="small text-muted">@(string.IsNullOrWhiteSpace(g.FeedbackShort) ? "—" : g.FeedbackShort)</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
                 }
-                </tbody>
-            </table>
+            </div>
         </div>
+    </div>
+
+    <div class="col-xl-4">
+        @{
+            var nextDue = Model.UpcomingDeadlines
+                .Where(d => d.Status != "Graded" && d.Status != "Submitted" && d.DueDateUtc >= DateTime.UtcNow)
+                .OrderBy(d => d.DueDateUtc)
+                .FirstOrDefault();
+            var daysUntilNext = nextDue == null ? (int?)null : (int)Math.Ceiling((nextDue.DueDateUtc - DateTime.UtcNow).TotalDays);
+            var gradedCount = Model.RecentGrades.Count;
+            var hasGrades = Model.RecentGrades.Any(g => g.Grade.HasValue && g.MaxPoints > 0);
+        }
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="um-section-title">Progress snapshot</div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="um-ring-wrap">
+                        <svg viewBox="0 0 120 120" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="umRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#2563eb" />
+                                    <stop offset="55%" stop-color="#6366f1" />
+                                    <stop offset="100%" stop-color="#22d3ee" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="um-ring-track" cx="60" cy="60" r="54"></circle>
+                            <circle class="um-ring-bar" cx="60" cy="60" r="54"
+                                    stroke-dasharray="@circumference.ToString("0.###")"
+                                    stroke-dashoffset="@dashOffset.ToString("0.###")"></circle>
+                        </svg>
+                        <div class="um-ring-center">
+                            <div class="um-ring-value">@progress%</div>
+                            <div class="um-ring-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="small text-muted fw-semibold text-uppercase" style="letter-spacing:.08em;">This term</div>
+                        <div class="d-flex flex-column gap-2 mt-2">
+                            <div class="um-kpi">
+                                <i class="bi bi-mortarboard"></i>
+                                <div class="d-flex flex-column">
+                                    <span class="kpi-label">Average grade</span>
+                                    <span class="kpi-value">@(hasGrades ? avgGrade.ToString("0") + "%" : "—")</span>
+                                </div>
+                            </div>
+                            <div class="um-kpi">
+                                <i class="bi bi-alarm"></i>
+                                <div class="d-flex flex-column">
+                                    <span class="kpi-label">Next deadline</span>
+                                    <span class="kpi-value" style="font-size:0.95rem; line-height:1.2;">
+                                        @if (daysUntilNext.HasValue)
+                                        {
+                                            @(daysUntilNext.Value <= 0 ? "Today" : daysUntilNext.Value == 1 ? "Tomorrow" : daysUntilNext.Value + " days")
+                                        }
+                                        else
+                                        {
+                                            <span>All clear</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
     </div>
 </div>

@@ -3,15 +3,18 @@
     ViewData["Title"] = "Manage courses";
 }
 
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h1 class="h3 mb-0">Courses</h1>
+<div class="um-page-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+        <h1 class="mb-0">Courses</h1>
+        <p class="um-lead">Manage course catalog, lecturers, and enrollment limits.</p>
+    </div>
     <a class="btn btn-primary" asp-action="Create">Add course</a>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="um-panel card border-0">
     <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
+        <table class="table table-hover table-um mb-0 align-middle">
+            <thead>
                 <tr>
                     <th>Code</th>
                     <th>Name</th>
@@ -30,8 +33,8 @@
             @foreach (var c in Model)
             {
                 <tr>
-                    <td>@c.Code</td>
-                    <td>@c.Name</td>
+                    <td><span class="badge bg-primary-subtle text-primary-emphasis">@c.Code</span></td>
+                    <td class="fw-semibold">@c.Name</td>
                     <td>@c.Credits</td>
                     <td>@c.EnrollmentLimit</td>
                     <td>@c.Lecturer.FullName</td>

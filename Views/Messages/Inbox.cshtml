@@ -1,35 +1,154 @@
 @model List<MessageInboxRowViewModel>
 @{
     ViewData["Title"] = "Messages";
+    var now = DateTime.Now;
+    var total = Model.Count;
+    var unread = Model.Count(m => m.Unread);
+    var thisWeek = Model.Count(m => m.LastAtUtc.ToLocalTime() >= now.AddDays(-7));
+    var avatarPalette = new[] { "", "avatar-violet", "avatar-emerald", "avatar-amber", "avatar-rose" };
+
+    static string Initials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "?";
+        var parts = name.Trim().Split(new[] { ' ', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "?";
+        if (parts.Length == 1) return parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpperInvariant();
+        return $"{parts[0][0]}{parts[^1][0]}".ToUpperInvariant();
+    }
+
+    static string HumanTime(DateTime atUtc)
+    {
+        var local = atUtc.ToLocalTime();
+        var span = DateTime.Now - local;
+        if (span.TotalMinutes < 1) return "Just now";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}m ago";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours}h ago";
+        if (span.TotalDays < 2) return "Yesterday";
+        if (span.TotalDays < 7) return $"{(int)span.TotalDays}d ago";
+        return local.ToString("MMM d");
+    }
 }
 
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h1 class="h3 mb-0">Inbox</h1>
-    <a class="btn btn-primary" asp-action="Compose">New message</a>
-</div>
+<section class="um-hero-compact">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+            <div class="um-hero-eyebrow">Messages</div>
+            <h1>Inbox</h1>
+            <p class="um-hero-sub mb-0">Stay in touch with your lecturers and classmates. All your conversations in one place.</p>
+        </div>
+        <div class="col-lg-4 d-flex justify-content-lg-end">
+            <a class="btn btn-light" asp-action="Compose"><i class="bi bi-pencil-square me-1"></i>New message</a>
+        </div>
+    </div>
+</section>
 
-<div class="card border-0 shadow-sm">
-    <div class="list-group list-group-flush">
-        @if (!Model.Any())
-        {
-            <div class="p-4 text-center text-muted">No conversations yet.</div>
-        }
-        @foreach (var r in Model)
-        {
-            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" asp-action="Thread" asp-route-id="@r.OtherUserId">
-                <div class="me-3">
-                    <div class="fw-semibold">
-                        @r.OtherName
-                        @if (r.Unread)
-                        {
-                            <span class="badge bg-danger ms-2">New</span>
-                        }
-                    </div>
-                    <div class="small text-muted">@r.LastSubject</div>
-                    <div class="small">@r.LastPreview</div>
-                </div>
-                <small class="text-muted text-nowrap">@r.LastAtUtc.ToLocalTime().ToString("g")</small>
-            </a>
-        }
+<div class="um-stat-strip">
+    <div class="um-stat-chip">
+        <div class="chip-icon"><i class="bi bi-chat-left-dots-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Conversations</span>
+            <span class="chip-value">@total</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-rose">
+        <div class="chip-icon"><i class="bi bi-bell-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Unread</span>
+            <span class="chip-value">@unread</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-emerald">
+        <div class="chip-icon"><i class="bi bi-calendar-week-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">This week</span>
+            <span class="chip-value">@thisWeek</span>
+        </div>
     </div>
 </div>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div class="um-filter-pills">
+        <button type="button" class="um-filter-pill active" data-filter="all"><i class="bi bi-grid"></i>All <span class="pill-count">@total</span></button>
+        <button type="button" class="um-filter-pill" data-filter="unread"><i class="bi bi-envelope-exclamation"></i>Unread <span class="pill-count">@unread</span></button>
+    </div>
+    <div class="um-input-group" style="max-width: 18rem;">
+        <span class="um-input-ico"><i class="bi bi-search"></i></span>
+        <input type="search" id="msgSearch" class="form-control" placeholder="Search conversations" />
+    </div>
+</div>
+
+<div class="um-panel card border-0">
+    @if (!Model.Any())
+    {
+        <div class="card-body um-empty-full">
+            <i class="bi bi-chat-dots"></i>
+            <div class="um-empty-title">No conversations yet</div>
+            <div class="small">Start a new message to begin a conversation.</div>
+            <a class="btn btn-primary mt-3" asp-action="Compose"><i class="bi bi-pencil-square me-1"></i>Compose</a>
+        </div>
+    }
+    else
+    {
+        <div class="um-msg-list" id="msgList">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var r = Model[i];
+                var avatarCls = avatarPalette[Math.Abs(r.OtherName.GetHashCode()) % avatarPalette.Length];
+                <a class="um-msg-item @(r.Unread ? "unread" : "")"
+                   data-unread="@(r.Unread ? "1" : "0")"
+                   data-search="@($"{r.OtherName} {r.LastSubject} {r.LastPreview}".ToLowerInvariant())"
+                   asp-action="Thread" asp-route-id="@r.OtherUserId">
+                    <div class="um-avatar @avatarCls">@Initials(r.OtherName)</div>
+                    <div class="msg-body">
+                        <div class="msg-head">
+                            <span class="msg-name">@r.OtherName</span>
+                            <span class="msg-time"><i class="bi bi-clock me-1"></i>@HumanTime(r.LastAtUtc)</span>
+                        </div>
+                        <span class="msg-subject"><i class="bi bi-bookmark me-1"></i>@r.LastSubject</span>
+                        <span class="msg-preview">@r.LastPreview</span>
+                    </div>
+                </a>
+            }
+        </div>
+        <div id="msgNoResults" class="p-4 um-empty-full" style="display:none;">
+            <i class="bi bi-search"></i>
+            <div class="um-empty-title">No matching conversations</div>
+            <div class="small">Try a different keyword.</div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const pills = document.querySelectorAll('.um-filter-pill');
+            const items = document.querySelectorAll('#msgList .um-msg-item');
+            const searchBox = document.getElementById('msgSearch');
+            const none = document.getElementById('msgNoResults');
+            let activeFilter = 'all';
+
+            function apply() {
+                const q = (searchBox?.value || '').trim().toLowerCase();
+                let visible = 0;
+                items.forEach(el => {
+                    const matchStatus = activeFilter === 'all' || (activeFilter === 'unread' && el.dataset.unread === '1');
+                    const matchSearch = !q || (el.dataset.search || '').includes(q);
+                    const show = matchStatus && matchSearch;
+                    el.style.display = show ? '' : 'none';
+                    if (show) visible++;
+                });
+                if (none) none.style.display = visible === 0 && items.length > 0 ? '' : 'none';
+            }
+
+            pills.forEach(p => {
+                p.addEventListener('click', () => {
+                    pills.forEach(x => x.classList.remove('active'));
+                    p.classList.add('active');
+                    activeFilter = p.dataset.filter;
+                    apply();
+                });
+            });
+            searchBox?.addEventListener('input', apply);
+        })();
+    </script>
+}

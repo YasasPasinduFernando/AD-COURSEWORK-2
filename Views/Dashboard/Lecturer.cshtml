@@ -1,70 +1,203 @@
 @model LecturerDashboardViewModel
 @{
     ViewData["Title"] = "Lecturer dashboard";
+    var firstName = (User.Identity?.Name ?? "Lecturer").Split(' ', '@')[0];
+    var greeting = DateTime.Now.Hour < 12 ? "Good morning" : DateTime.Now.Hour < 18 ? "Good afternoon" : "Good evening";
+    var totalSub = Model.PendingSubmissions + Model.GradedSubmissions;
+    var gradingProgress = totalSub > 0 ? (int)Math.Round(Model.GradedSubmissions * 100.0 / totalSub) : 0;
+    var circumference = 2 * Math.PI * 54;
+    var dashOffset = circumference - (circumference * gradingProgress / 100.0);
+    var totalStudents = Model.Courses.Sum(c => c.EnrollmentCount);
+    var totalAssignments = Model.Courses.Sum(c => c.AssignmentCount);
+    var maxEnroll = Model.Courses.Any() ? Math.Max(1, Model.Courses.Max(c => c.EnrollmentCount)) : 1;
+    var accents = new[] { "", "accent-violet", "accent-emerald", "accent-amber", "accent-rose" };
 }
 
-<div class="um-page-header">
-    <h1 class="text-dark">Lecturer dashboard</h1>
-    <p class="um-lead">Teaching load, submissions, and assignment schedule.</p>
-</div>
-
-<div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="um-dash-stat um-dash-stat-warn">
-            <span class="um-dash-stat-label">Pending submissions</span>
-            <span class="um-dash-stat-value">@Model.PendingSubmissions</span>
+<section class="um-welcome">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <div class="um-welcome-eyebrow">Lecturer workspace</div>
+            <h1>@greeting, Dr. @firstName</h1>
+            <p class="um-welcome-sub">Manage your @Model.Courses.Count @(Model.Courses.Count == 1 ? "course" : "courses"), review submissions, and keep students engaged with timely feedback.</p>
+            <div class="um-welcome-chips">
+                <span class="um-chip"><i class="bi bi-calendar-event"></i>@DateTime.Now.ToString("dddd, MMM d")</span>
+                <span class="um-chip"><i class="bi bi-people"></i>@totalStudents students</span>
+                <span class="um-chip"><i class="bi bi-clipboard-check"></i>@Model.PendingSubmissions to grade</span>
+            </div>
+            <div class="um-welcome-cta">
+                <a class="btn btn-light" asp-controller="Courses" asp-action="MyCourses"><i class="bi bi-collection me-1"></i> My courses</a>
+                <a class="btn btn-outline-light" asp-controller="Reports" asp-action="LecturerWorkload"><i class="bi bi-bar-chart me-1"></i> Workload report</a>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="um-dash-stat um-dash-stat-accent">
-            <span class="um-dash-stat-label">Graded</span>
-            <span class="um-dash-stat-value">@Model.GradedSubmissions</span>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="um-dash-stat">
-            <span class="um-dash-stat-label">Unread messages</span>
-            <span class="um-dash-stat-value">@Model.UnreadMessages</span>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 align-items-stretch">
-    <div class="col-lg-8">
-        <div class="um-panel card border-0 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="h6 mb-0 fw-bold text-dark">My courses</h2>
-                    <a class="btn btn-sm btn-primary rounded-pill px-3" asp-controller="Courses" asp-action="MyCourses">All courses</a>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-um mb-0 align-middle">
-                        <thead><tr><th>Code</th><th>Name</th><th>Students</th><th>Assignments</th><th class="text-end">Actions</th></tr></thead>
-                        <tbody>
-                        @if (!Model.Courses.Any())
-                        {
-                            <tr><td colspan="5" class="text-muted py-5 text-center">No assigned courses.</td></tr>
-                        }
-                        @foreach (var c in Model.Courses)
-                        {
-                            <tr>
-                                <td><span class="badge bg-light text-dark border">@c.Code</span></td>
-                                <td class="fw-medium">@c.Name</td>
-                                <td>@c.EnrollmentCount</td>
-                                <td>@c.AssignmentCount</td>
-                                <td class="text-end text-nowrap">
-                                    <a class="btn btn-sm btn-primary" asp-controller="Courses" asp-action="Details" asp-route-id="@c.CourseId">Details</a>
-                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@c.CourseId">Tasks</a>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+            <div class="text-center text-white-50 small">
+                <div style="font-size:3.5rem; line-height:1;"><i class="bi bi-easel2-fill"></i></div>
+                <div class="mt-2">Teaching hub</div>
             </div>
         </div>
     </div>
-    <div class="col-lg-4 d-flex">
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card">
+            <div class="um-stat-icon"><i class="bi bi-collection-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Courses</span>
+                <span class="um-stat-value">@Model.Courses.Count</span>
+                <span class="um-stat-hint neutral"><i class="bi bi-layers"></i> Teaching load</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-amber">
+            <div class="um-stat-icon"><i class="bi bi-clipboard-check"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Pending</span>
+                <span class="um-stat-value">@Model.PendingSubmissions</span>
+                <span class="um-stat-hint @(Model.PendingSubmissions > 0 ? "down" : "up")"><i class="bi bi-@(Model.PendingSubmissions > 0 ? "exclamation-triangle" : "check2-circle")"></i> To grade</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-emerald">
+            <div class="um-stat-icon"><i class="bi bi-patch-check-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Graded</span>
+                <span class="um-stat-value">@Model.GradedSubmissions</span>
+                <span class="um-stat-hint up"><i class="bi bi-arrow-up-right"></i>@gradingProgress% done</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-violet">
+            <div class="um-stat-icon"><i class="bi bi-chat-dots-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Messages</span>
+                <span class="um-stat-value">@Model.UnreadMessages</span>
+                <span class="um-stat-hint neutral"><i class="bi bi-envelope"></i> Unread</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0">My courses</div>
+                    <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Courses" asp-action="MyCourses"><i class="bi bi-arrow-right me-1"></i>Open all</a>
+                </div>
+                @if (!Model.Courses.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-journal-x"></i>
+                        <div class="um-empty-title">No assigned courses</div>
+                        <div class="small">Reach out to an administrator to get started.</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @for (var i = 0; i < Model.Courses.Count; i++)
+                        {
+                            var c = Model.Courses[i];
+                            var accent = accents[i % accents.Length];
+                            <div class="col-md-6">
+                                <a class="um-course-pill @accent" asp-controller="Courses" asp-action="Details" asp-route-id="@c.CourseId">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <span class="course-code">@c.Code</span>
+                                        <span class="um-pill pill-info">@c.EnrollmentCount <i class="bi bi-people ms-1"></i></span>
+                                    </div>
+                                    <div class="course-name">@c.Name</div>
+                                    <div class="d-flex gap-3 course-meta">
+                                        <span><i class="bi bi-journal-text"></i>@c.AssignmentCount tasks</span>
+                                        <span><i class="bi bi-people-fill"></i>@c.EnrollmentCount enrolled</span>
+                                    </div>
+                                    <div class="um-rank-bar mt-2" title="Enrollment share">
+                                        <span style="width:@(Math.Min(100, (int)Math.Round(c.EnrollmentCount * 100.0 / maxEnroll)))%;"></span>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-xl-4">
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="um-section-title">Grading progress</div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="um-ring-wrap">
+                        <svg viewBox="0 0 120 120" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="umRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#4f46e5" />
+                                    <stop offset="55%" stop-color="#8b5cf6" />
+                                    <stop offset="100%" stop-color="#22d3ee" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="um-ring-track" cx="60" cy="60" r="54"></circle>
+                            <circle class="um-ring-bar" cx="60" cy="60" r="54"
+                                    stroke-dasharray="@circumference.ToString("0.###")"
+                                    stroke-dashoffset="@dashOffset.ToString("0.###")"></circle>
+                        </svg>
+                        <div class="um-ring-center">
+                            <div class="um-ring-value">@gradingProgress%</div>
+                            <div class="um-ring-label">Graded</div>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="small text-muted fw-semibold text-uppercase" style="letter-spacing:.08em;">Teaching reach</div>
+                        <div class="d-flex flex-column gap-2 mt-2">
+                            <div class="um-kpi">
+                                <i class="bi bi-people-fill"></i>
+                                <div class="d-flex flex-column">
+                                    <span class="kpi-label">Students</span>
+                                    <span class="kpi-value">@totalStudents</span>
+                                </div>
+                            </div>
+                            <div class="um-kpi">
+                                <i class="bi bi-journal-text"></i>
+                                <div class="d-flex flex-column">
+                                    <span class="kpi-label">Assignments</span>
+                                    <span class="kpi-value">@totalAssignments</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
+
+        <div class="um-panel card border-0 mt-4">
+            <div class="card-body">
+                <div class="um-section-title">Tips &amp; reminders</div>
+                <ul class="um-timeline">
+                    <li>
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Prioritise nearest deadlines</p>
+                        <div class="um-timeline-meta"><i class="bi bi-lightning me-1"></i>Start with pending work due this week.</div>
+                    </li>
+                    <li class="is-success">
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Post weekly updates</p>
+                        <div class="um-timeline-meta"><i class="bi bi-megaphone me-1"></i>Share lesson notes to keep students aligned.</div>
+                    </li>
+                    <li class="is-warn">
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Use workload reports</p>
+                        <div class="um-timeline-meta"><i class="bi bi-activity me-1"></i>Track grading and course trends over time.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>

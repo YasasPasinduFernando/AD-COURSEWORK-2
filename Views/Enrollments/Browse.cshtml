@@ -1,73 +1,197 @@
 @model List<CourseBrowseRowViewModel>
 @{
     ViewData["Title"] = "Course catalog";
+    var totalCount = Model.Count;
+    var openCount = Model.Count(x => !x.IsEnrolled && x.CanEnroll);
+    var enrolledCount = Model.Count(x => x.IsEnrolled);
+    var blockedCount = Model.Count(x => !x.IsEnrolled && !x.CanEnroll);
+    var accents = new[] { "", "accent-violet", "accent-emerald", "accent-amber", "accent-rose" };
 }
 
-<h1 class="h3 mb-3">Course catalog</h1>
+<section class="um-hero-compact">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+            <div class="um-hero-eyebrow">Student catalog</div>
+            <h1>Discover your next course</h1>
+            <p class="um-hero-sub mb-0">Browse @totalCount course@(totalCount == 1 ? "" : "s"), check prerequisites, and enroll instantly.</p>
+        </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+            <div class="text-center text-white-50 small">
+                <div style="font-size:3rem; line-height:1;"><i class="bi bi-collection"></i></div>
+                <div class="mt-1">@enrolledCount joined</div>
+            </div>
+        </div>
+    </div>
+</section>
 
-<div class="card border-0 shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0 align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Code</th>
-                    <th>Course</th>
-                    <th>Credits</th>
-                    <th>Lecturer</th>
-                    <th>Seats</th>
-                    <th>Prerequisite</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            @if (!Model.Any())
-            {
-                <tr><td colspan="8" class="text-center text-muted p-4">No courses available.</td></tr>
-            }
-            @foreach (var r in Model)
-            {
-                <tr>
-                    <td>@r.Code</td>
-                    <td>@r.Name</td>
-                    <td>@r.Credits</td>
-                    <td>@r.LecturerName</td>
-                    <td>@r.CurrentEnrollmentCount / @r.EnrollmentLimit</td>
-                    <td>@(r.PrerequisiteSummary ?? "—")</td>
-                    <td>
+<div class="um-stat-strip">
+    <div class="um-stat-chip">
+        <div class="chip-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Available</span>
+            <span class="chip-value">@totalCount</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-emerald">
+        <div class="chip-icon"><i class="bi bi-door-open"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Open</span>
+            <span class="chip-value">@openCount</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-violet">
+        <div class="chip-icon"><i class="bi bi-bookmark-check"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Enrolled</span>
+            <span class="chip-value">@enrolledCount</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-amber">
+        <div class="chip-icon"><i class="bi bi-slash-circle"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Blocked</span>
+            <span class="chip-value">@blockedCount</span>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+    <div class="um-filter-pills" role="tablist" aria-label="Filter courses">
+        <button type="button" class="um-filter-pill active" data-filter="all"><i class="bi bi-grid"></i>All <span class="pill-count">@totalCount</span></button>
+        <button type="button" class="um-filter-pill" data-filter="open"><i class="bi bi-door-open"></i>Open <span class="pill-count">@openCount</span></button>
+        <button type="button" class="um-filter-pill" data-filter="enrolled"><i class="bi bi-check2-circle"></i>Enrolled <span class="pill-count">@enrolledCount</span></button>
+        <button type="button" class="um-filter-pill" data-filter="blocked"><i class="bi bi-slash-circle"></i>Blocked <span class="pill-count">@blockedCount</span></button>
+    </div>
+    <div class="um-input-group" style="max-width: 18rem;">
+        <span class="um-input-ico"><i class="bi bi-search"></i></span>
+        <input type="search" id="catalogSearch" class="form-control" placeholder="Search by code, name or lecturer" />
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="um-panel card border-0">
+        <div class="card-body um-empty-full">
+            <i class="bi bi-journal-x"></i>
+            <div class="um-empty-title">No courses available</div>
+            <div class="small">Please check back soon — administrators will publish courses here.</div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3" id="catalogGrid">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var r = Model[i];
+            var accent = accents[i % accents.Length];
+            var status = r.IsEnrolled ? "enrolled" : (r.CanEnroll ? "open" : "blocked");
+            var capacityPct = r.EnrollmentLimit > 0
+                ? Math.Min(100, (int)Math.Round(r.CurrentEnrollmentCount * 100.0 / r.EnrollmentLimit))
+                : 0;
+            var isFull = r.EnrollmentLimit > 0 && r.CurrentEnrollmentCount >= r.EnrollmentLimit;
+            <div class="col-md-6 col-xl-4 um-catalog-item"
+                 data-status="@status"
+                 data-search="@($"{r.Code} {r.Name} {r.LecturerName}".ToLowerInvariant())">
+                <div class="um-catalog-card @accent">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <span class="cat-code">@r.Code</span>
                         @if (r.IsEnrolled)
                         {
-                            <span class="badge bg-success">Enrolled</span>
+                            <span class="um-pill pill-success"><i class="bi bi-check2-circle me-1"></i>Enrolled</span>
                         }
                         else if (r.CanEnroll)
                         {
-                            <span class="badge bg-secondary">Open</span>
+                            <span class="um-pill pill-info"><i class="bi bi-door-open me-1"></i>Open</span>
                         }
                         else
                         {
-                            <span class="badge bg-warning text-dark">Blocked</span>
+                            <span class="um-pill pill-warn"><i class="bi bi-slash-circle me-1"></i>Blocked</span>
                         }
-                    </td>
-                    <td class="text-end">
-                        @if (r.CanEnroll)
+                    </div>
+                    <h3 class="cat-title">@r.Name</h3>
+                    <div class="cat-meta">
+                        <span><i class="bi bi-person-badge"></i>@r.LecturerName</span>
+                        <span><i class="bi bi-award"></i>@r.Credits credit@(r.Credits == 1 ? "" : "s")</span>
+                        @if (!string.IsNullOrEmpty(r.PrerequisiteSummary))
                         {
-                            <form asp-action="Enroll" asp-route-id="@r.CourseId" method="post" class="d-inline">
+                            <span><i class="bi bi-diagram-3"></i>@r.PrerequisiteSummary</span>
+                        }
+                    </div>
+                    <div class="cat-progress">
+                        <div class="cat-progress-label">
+                            <span><i class="bi bi-people me-1"></i>Seats</span>
+                            <span>@r.CurrentEnrollmentCount / @r.EnrollmentLimit</span>
+                        </div>
+                        <div class="cat-progress-bar @(isFull ? "is-full" : "")">
+                            <span style="width:@capacityPct%"></span>
+                        </div>
+                    </div>
+                    <div class="cat-foot">
+                        @if (r.IsEnrolled)
+                        {
+                            <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Courses" asp-action="Details" asp-route-id="@r.CourseId">
+                                <i class="bi bi-arrow-right me-1"></i>Open course
+                            </a>
+                            <span class="small text-muted"><i class="bi bi-check2-circle text-success me-1"></i>Joined</span>
+                        }
+                        else if (r.CanEnroll)
+                        {
+                            <form asp-action="Enroll" asp-route-id="@r.CourseId" method="post" class="w-100 d-flex gap-2 justify-content-between align-items-center">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-primary">Enroll</button>
+                                <span class="small text-muted"><i class="bi bi-shield-check me-1"></i>Ready to join</span>
+                                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3"><i class="bi bi-box-arrow-in-right me-1"></i>Enroll</button>
                             </form>
                         }
-                        else if (r.IsEnrolled)
-                        {
-                            <span class="text-muted small">Joined</span>
-                        }
                         else
                         {
-                            <span class="text-muted small" title="@r.BlockReason">@r.BlockReason</span>
+                            <span class="small text-muted" title="@r.BlockReason"><i class="bi bi-info-circle me-1"></i>@r.BlockReason</span>
                         }
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-</div>
+    <div id="catalogNoResults" class="um-panel card border-0 mt-3" style="display:none;">
+        <div class="card-body um-empty-full">
+            <i class="bi bi-search"></i>
+            <div class="um-empty-title">No courses match your search</div>
+            <div class="small">Try a different keyword or switch the filter.</div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            const pills = document.querySelectorAll('.um-filter-pill');
+            const items = document.querySelectorAll('.um-catalog-item');
+            const searchBox = document.getElementById('catalogSearch');
+            const noResults = document.getElementById('catalogNoResults');
+            let activeFilter = 'all';
+
+            function apply() {
+                const q = (searchBox?.value || '').trim().toLowerCase();
+                let visible = 0;
+                items.forEach(el => {
+                    const matchStatus = activeFilter === 'all' || el.dataset.status === activeFilter;
+                    const matchSearch = !q || (el.dataset.search || '').includes(q);
+                    const show = matchStatus && matchSearch;
+                    el.style.display = show ? '' : 'none';
+                    if (show) visible++;
+                });
+                if (noResults) noResults.style.display = visible === 0 && items.length > 0 ? '' : 'none';
+            }
+
+            pills.forEach(p => {
+                p.addEventListener('click', () => {
+                    pills.forEach(x => x.classList.remove('active'));
+                    p.classList.add('active');
+                    activeFilter = p.dataset.filter;
+                    apply();
+                });
+            });
+            searchBox?.addEventListener('input', apply);
+        })();
+    </script>
+}

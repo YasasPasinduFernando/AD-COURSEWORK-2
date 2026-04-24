@@ -1,64 +1,229 @@
 @model AdminDashboardViewModel
 @{
     ViewData["Title"] = "Admin dashboard";
+    var firstName = (User.Identity?.Name ?? "Admin").Split(' ', '@')[0];
+    var greeting = DateTime.Now.Hour < 12 ? "Good morning" : DateTime.Now.Hour < 18 ? "Good afternoon" : "Good evening";
+    var avgEnrollPerCourse = Model.CourseCount > 0 ? Math.Round((double)Model.EnrollmentCount / Model.CourseCount, 1) : 0;
+    var maxEnroll = Model.PopularCourses.Any() ? Math.Max(1, Model.PopularCourses.Max(c => c.Enrollments)) : 1;
 }
 
-<div class="um-page-header">
-    <h1 class="text-dark">Administrator dashboard</h1>
-    <p class="um-lead">System overview and course popularity.</p>
-</div>
+<section class="um-welcome">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <div class="um-welcome-eyebrow">Administrator workspace</div>
+            <h1>@greeting, @firstName</h1>
+            <p class="um-welcome-sub">Institution overview, course offerings, enrollments and reports — keep UniManage healthy and running smoothly.</p>
+            <div class="um-welcome-chips">
+                <span class="um-chip"><i class="bi bi-calendar-event"></i>@DateTime.Now.ToString("dddd, MMM d")</span>
+                <span class="um-chip"><i class="bi bi-people"></i>@Model.UserCount users</span>
+                <span class="um-chip"><i class="bi bi-shield-check"></i>System healthy</span>
+            </div>
+            <div class="um-welcome-cta">
+                <a class="btn btn-light" asp-controller="Courses" asp-action="Index"><i class="bi bi-collection me-1"></i> Manage courses</a>
+                <a class="btn btn-outline-light" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart me-1"></i> View reports</a>
+            </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+            <div class="text-center text-white-50 small">
+                <div style="font-size:3.5rem; line-height:1;"><i class="bi bi-shield-fill-check"></i></div>
+                <div class="mt-2">Control center</div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="um-dash-stat">
-            <span class="um-dash-stat-label">Users</span>
-            <span class="um-dash-stat-value">@Model.UserCount</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card">
+            <div class="um-stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Users</span>
+                <span class="um-stat-value">@Model.UserCount</span>
+                <span class="um-stat-hint up"><i class="bi bi-person-check"></i> Active accounts</span>
+            </div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="um-dash-stat um-dash-stat-accent">
-            <span class="um-dash-stat-label">Courses</span>
-            <span class="um-dash-stat-value">@Model.CourseCount</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-violet">
+            <div class="um-stat-icon"><i class="bi bi-collection-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Courses</span>
+                <span class="um-stat-value">@Model.CourseCount</span>
+                <span class="um-stat-hint neutral"><i class="bi bi-layers"></i> Offered</span>
+            </div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="um-dash-stat">
-            <span class="um-dash-stat-label">Enrollments</span>
-            <span class="um-dash-stat-value">@Model.EnrollmentCount</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-emerald">
+            <div class="um-stat-icon"><i class="bi bi-mortarboard-fill"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Enrollments</span>
+                <span class="um-stat-value">@Model.EnrollmentCount</span>
+                <span class="um-stat-hint up"><i class="bi bi-bar-chart"></i>Avg @avgEnrollPerCourse / course</span>
+            </div>
         </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <div class="um-dash-stat um-dash-stat-warn">
-            <span class="um-dash-stat-label">Assignments</span>
-            <span class="um-dash-stat-value">@Model.AssignmentCount</span>
+    <div class="col-sm-6 col-xl-3">
+        <div class="um-stat-card stat-amber">
+            <div class="um-stat-icon"><i class="bi bi-journal-text"></i></div>
+            <div class="um-stat-body">
+                <span class="um-stat-label">Assignments</span>
+                <span class="um-stat-value">@Model.AssignmentCount</span>
+                <span class="um-stat-hint neutral"><i class="bi bi-list-check"></i> Created</span>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="um-panel card border-0">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h6 mb-0 fw-bold text-dark">Popular courses</h2>
-            <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Reports" asp-action="CoursePopularity">Full report</a>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-um mb-0 align-middle">
-                <thead><tr><th>Code</th><th>Name</th><th>Enrollments</th></tr></thead>
-                <tbody>
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0">Popular courses</div>
+                    <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Reports" asp-action="CoursePopularity"><i class="bi bi-arrow-up-right me-1"></i>Full report</a>
+                </div>
                 @if (!Model.PopularCourses.Any())
                 {
-                    <tr><td colspan="3" class="text-muted py-5 text-center">No data.</td></tr>
+                    <div class="um-empty">
+                        <i class="bi bi-bar-chart"></i>
+                        <div class="um-empty-title">No data yet</div>
+                        <div class="small">Once enrollments start, the top courses will appear here.</div>
+                    </div>
                 }
-                @foreach (var c in Model.PopularCourses)
+                else
                 {
-                    <tr>
-                        <td><span class="badge bg-light text-dark border">@c.Code</span></td>
-                        <td>@c.Name</td>
-                        <td><span class="fw-semibold">@c.Enrollments</span></td>
-                    </tr>
+                    <ol class="um-rank-list">
+                        @for (var i = 0; i < Model.PopularCourses.Count; i++)
+                        {
+                            var c = Model.PopularCourses[i];
+                            var pct = (int)Math.Round(c.Enrollments * 100.0 / maxEnroll);
+                            var rankClass = i == 0 ? "top-1" : i == 1 ? "top-2" : i == 2 ? "top-3" : "";
+                            <li class="um-rank-item @rankClass">
+                                <span class="um-rank-pos">@(i + 1)</span>
+                                <div class="um-rank-body">
+                                    <div class="um-rank-title"><span class="um-pill pill-info">@c.Code</span>@c.Name</div>
+                                    <div class="um-rank-bar"><span style="width:@pct%;"></span></div>
+                                </div>
+                                <div class="um-rank-value">@c.Enrollments</div>
+                            </li>
+                        }
+                    </ol>
                 }
-                </tbody>
-            </table>
+            </div>
+        </div>
+
+        <div class="um-panel card border-0">
+            <div class="card-body">
+                <div class="um-section-title">Quick actions</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a class="um-quick-action" asp-controller="Courses" asp-action="Create">
+                            <span class="um-qa-icon"><i class="bi bi-plus-lg"></i></span>
+                            <div>
+                                <div class="qa-title">Create a new course</div>
+                                <div class="qa-sub">Add code, title, lecturer and capacity</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="um-quick-action qa-violet" asp-controller="Reports" asp-action="StudentPerformance">
+                            <span class="um-qa-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                            <div>
+                                <div class="qa-title">Student performance</div>
+                                <div class="qa-sub">Review averages across the institution</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="um-quick-action qa-emerald" asp-controller="Reports" asp-action="Enrollments">
+                            <span class="um-qa-icon"><i class="bi bi-clipboard-data"></i></span>
+                            <div>
+                                <div class="qa-title">Enrollment report</div>
+                                <div class="qa-sub">Track sign-ups by course and date</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="um-quick-action qa-amber" asp-controller="Reports" asp-action="LecturerWorkload">
+                            <span class="um-qa-icon"><i class="bi bi-briefcase"></i></span>
+                            <div>
+                                <div class="qa-title">Lecturer workload</div>
+                                <div class="qa-sub">Compare teaching and grading load</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="um-section-title">System at a glance</div>
+                <ul class="um-timeline">
+                    <li class="is-success">
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Database connected</p>
+                        <div class="um-timeline-meta"><i class="bi bi-database me-1"></i>All EF migrations applied.</div>
+                    </li>
+                    <li>
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Authentication running</p>
+                        <div class="um-timeline-meta"><i class="bi bi-shield-lock me-1"></i>Identity + Google OAuth configured.</div>
+                    </li>
+                    <li class="is-warn">
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Email delivery</p>
+                        <div class="um-timeline-meta"><i class="bi bi-envelope-paper me-1"></i>Gmail SMTP active with TLS.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="um-panel card border-0">
+            <div class="card-body">
+                <div class="um-section-title">Institution metrics</div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-people"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Users</span>
+                                <span class="kpi-value">@Model.UserCount</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-journals"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Courses</span>
+                                <span class="kpi-value">@Model.CourseCount</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-mortarboard"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Enrollments</span>
+                                <span class="kpi-value">@Model.EnrollmentCount</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-journal-text"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Assignments</span>
+                                <span class="kpi-value">@Model.AssignmentCount</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

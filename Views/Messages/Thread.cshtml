@@ -1,30 +1,96 @@
 @model MessageThreadViewModel
 @{
     ViewData["Title"] = $"Thread – {Model.OtherUserName}";
+    var avatarPalette = new[] { "", "avatar-violet", "avatar-emerald", "avatar-amber", "avatar-rose" };
+    var avatarCls = avatarPalette[Math.Abs(Model.OtherUserName.GetHashCode()) % avatarPalette.Length];
+    var ordered = Model.Messages.OrderBy(m => m.SentAtUtc).ToList();
+    var first = ordered.FirstOrDefault();
+    var last = ordered.LastOrDefault();
+
+    static string Initials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "?";
+        var parts = name.Trim().Split(new[] { ' ', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "?";
+        if (parts.Length == 1) return parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpperInvariant();
+        return $"{parts[0][0]}{parts[^1][0]}".ToUpperInvariant();
+    }
+
+    static string HumanDay(DateTime d)
+    {
+        var t = d.Date;
+        if (t == DateTime.Today) return "Today";
+        if (t == DateTime.Today.AddDays(-1)) return "Yesterday";
+        if ((DateTime.Today - t).TotalDays < 7) return t.ToString("dddd");
+        return t.ToString("MMM d, yyyy");
+    }
 }
 
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <div>
-        <h1 class="h4 mb-0">@Model.OtherUserName</h1>
-        <p class="text-muted small mb-0">Conversation</p>
+<section class="um-hero-compact" style="padding:1.1rem 1.35rem;">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8 d-flex align-items-center gap-3">
+            <div class="um-avatar avatar-lg @avatarCls">@Initials(Model.OtherUserName)</div>
+            <div>
+                <div class="um-hero-eyebrow mb-0">Conversation</div>
+                <h1 style="font-size:1.35rem; margin-bottom:0;">@Model.OtherUserName</h1>
+                <p class="um-hero-sub mb-0 small">@ordered.Count message@(ordered.Count == 1 ? "" : "s") · @(last != null ? last.SentAtUtc.ToLocalTime().ToString("MMM d, h:mm tt") : "—")</p>
+            </div>
+        </div>
+        <div class="col-lg-4 d-flex flex-wrap justify-content-lg-end gap-2">
+            <a class="btn btn-light" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId"><i class="bi bi-reply-fill me-1"></i>Reply</a>
+            <a class="btn btn-outline-light" asp-action="Inbox"><i class="bi bi-arrow-left me-1"></i>Inbox</a>
+        </div>
     </div>
-    <div>
-        <a class="btn btn-primary btn-sm" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId">Reply</a>
-        <a class="btn btn-outline-secondary btn-sm" asp-action="Inbox">Inbox</a>
-    </div>
-</div>
+</section>
 
-<div class="vstack gap-3">
-    @if (!Model.Messages.Any())
+<div class="um-chat-shell">
+    @if (!ordered.Any())
     {
-        <div class="alert alert-light border">No messages in this thread yet.</div>
-    }
-    @foreach (var m in Model.Messages)
-    {
-        var cls = m.IsMine ? "align-self-end bg-primary text-white" : "align-self-start bg-white border";
-        <div class="rounded-3 p-3 shadow-sm @cls" style="max-width: 80%;">
-            <div class="small opacity-75">@m.Subject &middot; @m.SentAtUtc.ToLocalTime().ToString("g")</div>
-            <div class="mt-2" style="white-space: pre-wrap;">@m.Content</div>
+        <div class="um-empty-full">
+            <i class="bi bi-chat-left-text"></i>
+            <div class="um-empty-title">No messages yet</div>
+            <div class="small">Send your first message to start the conversation.</div>
+            <a class="btn btn-primary mt-3" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId"><i class="bi bi-pencil-square me-1"></i>Compose</a>
         </div>
     }
+    else
+    {
+        <div class="um-chat-list">
+            @{
+                DateTime? lastDay = null;
+            }
+            @foreach (var m in ordered)
+            {
+                var local = m.SentAtUtc.ToLocalTime();
+                if (lastDay == null || lastDay.Value.Date != local.Date)
+                {
+                    <div class="um-chat-daymark">@HumanDay(local)</div>
+                    lastDay = local;
+                }
+                var rowCls = m.IsMine ? "row-mine" : "";
+                var avatarBubble = m.IsMine ? "avatar-violet" : avatarCls;
+                <div class="um-chat-row @rowCls">
+                    <div class="um-avatar avatar-sm @avatarBubble">@(m.IsMine ? "Me" : Initials(Model.OtherUserName))</div>
+                    <div class="um-chat-bubble">
+                        @if (!string.IsNullOrWhiteSpace(m.Subject))
+                        {
+                            <div class="um-chat-subject">@m.Subject</div>
+                        }
+                        <div class="um-chat-content">@m.Content</div>
+                        <div class="um-chat-time">
+                            <i class="bi bi-clock me-1"></i>@local.ToString("h:mm tt")
+                            @if (m.IsMine)
+                            {
+                                <i class="bi bi-check2-all ms-1" title="Sent"></i>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="mt-3 d-flex justify-content-end">
+    <a class="btn btn-primary" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId"><i class="bi bi-reply-fill me-1"></i>Reply to @Model.OtherUserName</a>
 </div>

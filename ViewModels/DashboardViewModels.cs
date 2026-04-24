@@ -1,5 +1,13 @@
 namespace AD_COURSEWORK_2.ViewModels;
 
+public enum DashboardCalendarEventKind
+{
+    Deadline = 0,
+    Material = 1,
+    Submission = 2,
+    Grade = 3
+}
+
 public class DashboardCalendarModel
 {
     public int Year { get; set; }
@@ -11,6 +19,17 @@ public class DashboardCalendarEvent
 {
     public string Title { get; set; } = string.Empty;
     public string Detail { get; set; } = string.Empty;
+    public DashboardCalendarEventKind Kind { get; set; } = DashboardCalendarEventKind.Deadline;
+}
+
+public class CourseStudentSubmissionRow
+{
+    public int AssignmentId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public DateTime DueDateUtc { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public decimal? Grade { get; set; }
+    public decimal MaxPoints { get; set; }
 }
 
 public class StudentDashboardViewModel

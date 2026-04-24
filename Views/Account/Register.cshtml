@@ -1,54 +1,133 @@
 @model RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Create account";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h1 class="h4 mb-3">Create account</h1>
-                <form asp-action="Register" method="post">
-                    @Html.AntiForgeryToken()
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label"></label>
-                        <input asp-for="FullName" class="form-control" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
+<div class="um-login-wrap">
+    <div class="card um-login-card shadow-sm border-0">
+        <div class="row g-0">
+            <div class="col-lg-5 d-none d-lg-flex um-login-brand p-4 p-xl-5 flex-column">
+                <a class="um-auth-logo" asp-controller="Home" asp-action="Index">
+                    <span class="um-auth-logo-dot"><i class="bi bi-mortarboard-fill"></i></span>
+                    UniManage
+                </a>
+                <span class="um-auth-badge mb-3"><i class="bi bi-person-plus"></i> Get started</span>
+                <h2 class="h3 mb-3">Create your UniManage account.</h2>
+                <p class="mb-0">Students and lecturers — join the modern LMS built for Sri Lankan universities.</p>
+                <ul class="um-auth-features">
+                    <li>
+                        <span class="um-feature-ico"><i class="bi bi-shield-lock"></i></span>
+                        <div><strong>Secure by design</strong><span>Password-protected with optional Google sign‑in.</span></div>
+                    </li>
+                    <li>
+                        <span class="um-feature-ico"><i class="bi bi-bar-chart"></i></span>
+                        <div><strong>Rich dashboards</strong><span>Insights tailored to every role.</span></div>
+                    </li>
+                    <li>
+                        <span class="um-feature-ico"><i class="bi bi-envelope-paper-heart"></i></span>
+                        <div><strong>Welcome email</strong><span>A friendly message confirms your registration.</span></div>
+                    </li>
+                </ul>
+                <div class="um-auth-footer">Already registered? <a class="fw-semibold text-white text-decoration-none" asp-action="Login">Sign in</a></div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card-body p-4 p-xl-5">
+                    <div class="um-auth-head">
+                        <h1 class="h3">Create account</h1>
+                        <p>Fill in your details — takes less than a minute.</p>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" autocomplete="username" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Phone" class="form-label"></label>
-                        <input asp-for="Phone" class="form-control" />
-                        <span asp-validation-for="Phone" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Role" class="form-label"></label>
-                        <select asp-for="Role" class="form-select">
-                            @foreach (var r in RegisterViewModel.AllowedRoles)
-                            {
-                                <option value="@r">@r</option>
-                            }
-                        </select>
-                        <span asp-validation-for="Role" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control" autocomplete="new-password" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label"></label>
-                        <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
-                <p class="mt-3 mb-0 small text-muted">Already registered? <a asp-action="Login">Sign in</a></p>
+
+                    <form asp-action="Register" method="post" id="registerForm">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label fw-semibold"></label>
+                            <div class="um-input-group">
+                                <i class="bi bi-person um-input-ico"></i>
+                                <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-7">
+                                <label asp-for="Email" class="form-label fw-semibold"></label>
+                                <div class="um-input-group">
+                                    <i class="bi bi-envelope um-input-ico"></i>
+                                    <input asp-for="Email" class="form-control" autocomplete="username" placeholder="name@university.edu" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-5">
+                                <label asp-for="Phone" class="form-label fw-semibold"></label>
+                                <div class="um-input-group">
+                                    <i class="bi bi-telephone um-input-ico"></i>
+                                    <input asp-for="Phone" class="form-control" placeholder="07x xxx xxxx" />
+                                </div>
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label fw-semibold">I'm signing up as</label>
+                            <div class="um-role-select">
+                                @{
+                                    var roles = RegisterViewModel.AllowedRoles.ToList();
+                                    var current = string.IsNullOrEmpty(Model?.Role) ? roles.FirstOrDefault() : Model.Role;
+                                }
+                                @foreach (var r in roles)
+                                {
+                                    var isLecturer = string.Equals(r, "Lecturer", StringComparison.OrdinalIgnoreCase);
+                                    var isActive = string.Equals(r, current, StringComparison.OrdinalIgnoreCase);
+                                    <label class="um-role-choice @(isLecturer ? "is-lecturer" : "") @(isActive ? "active" : "")" data-role-choice>
+                                        @if (isActive)
+                                        {
+                                            <input type="radio" name="Role" value="@r" checked="checked" />
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" name="Role" value="@r" />
+                                        }
+                                        <span class="um-role-choice-title">
+                                            <i class="bi bi-@(isLecturer ? "easel2-fill" : "mortarboard-fill")"></i>@r
+                                        </span>
+                                        <span class="um-role-choice-sub">@(isLecturer ? "Manage courses and grade students." : "Enroll in courses and submit work.")</span>
+                                    </label>
+                                }
+                            </div>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label fw-semibold"></label>
+                                <div class="um-input-group">
+                                    <i class="bi bi-lock um-input-ico"></i>
+                                    <input asp-for="Password" class="form-control has-action" autocomplete="new-password" placeholder="At least 8 characters" data-pw-input id="registerPassword" />
+                                    <button type="button" class="um-input-action" data-pw-toggle aria-label="Show password"><i class="bi bi-eye"></i></button>
+                                </div>
+                                <div class="um-pw-meter" id="pwMeter" aria-hidden="true">
+                                    <div class="um-pw-track" id="pwTrack"><span></span><span></span><span></span><span></span></div>
+                                    <div class="um-pw-label"><span id="pwLabel">Strength</span><span id="pwHint" class="text-muted">8+ chars · upper · number · symbol</span></div>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ConfirmPassword" class="form-label fw-semibold"></label>
+                                <div class="um-input-group">
+                                    <i class="bi bi-lock-fill um-input-ico"></i>
+                                    <input asp-for="ConfirmPassword" class="form-control has-action" autocomplete="new-password" placeholder="Re-enter password" data-pw-input />
+                                    <button type="button" class="um-input-action" data-pw-toggle aria-label="Show password"><i class="bi bi-eye"></i></button>
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-4"><i class="bi bi-person-plus me-2"></i>Create account</button>
+                        <p class="mt-3 mb-0 small text-center text-muted">Already have an account? <a class="fw-semibold text-decoration-none" asp-action="Login">Sign in instead</a></p>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -56,4 +135,47 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-pw-toggle]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.closest('.um-input-group').querySelector('[data-pw-input]');
+                if (!input) return;
+                const icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'bi bi-eye-slash';
+                    btn.setAttribute('aria-label', 'Hide password');
+                } else {
+                    input.type = 'password';
+                    icon.className = 'bi bi-eye';
+                    btn.setAttribute('aria-label', 'Show password');
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-role-choice]').forEach(label => {
+            label.addEventListener('click', () => {
+                document.querySelectorAll('[data-role-choice]').forEach(l => l.classList.remove('active'));
+                label.classList.add('active');
+            });
+        });
+
+        const pwInput = document.getElementById('registerPassword');
+        const pwTrack = document.getElementById('pwTrack');
+        const pwLabel = document.getElementById('pwLabel');
+        if (pwInput && pwTrack && pwLabel) {
+            const labels = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'];
+            pwInput.addEventListener('input', () => {
+                const v = pwInput.value;
+                let score = 0;
+                if (v.length >= 8) score++;
+                if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+                if (/\d/.test(v)) score++;
+                if (/[^A-Za-z0-9]/.test(v)) score++;
+                if (v.length < 8) score = Math.min(score, 1);
+                pwTrack.className = 'um-pw-track level-' + score;
+                pwLabel.textContent = labels[score];
+            });
+        }
+    </script>
 }

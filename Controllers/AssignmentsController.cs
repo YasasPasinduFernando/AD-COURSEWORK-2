@@ -25,7 +25,8 @@ public class AssignmentsController : Controller
         var userId = _userManager.GetUserId(User);
         var course = await _db.Courses
             .AsNoTracking()
-            .Include(c => c.Assignments)
+            .Include(c => c.Assignments).ThenInclude(a => a.Submissions)
+            .Include(c => c.Enrollments)
             .FirstOrDefaultAsync(c => c.CourseId == id);
 
         if (course == null)
@@ -37,6 +38,8 @@ public class AssignmentsController : Controller
         var list = course.Assignments.OrderByDescending(a => a.DueDateUtc).ToList();
         ViewBag.CourseId = course.CourseId;
         ViewBag.CourseCode = course.Code;
+        ViewBag.CourseName = course.Name;
+        ViewBag.EnrolledCount = course.Enrollments.Count;
         return View(list);
     }
 

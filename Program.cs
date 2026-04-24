@@ -1,6 +1,7 @@
 using AD_COURSEWORK_2.Data;
 using AD_COURSEWORK_2.Infrastructure;
 using AD_COURSEWORK_2.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
@@ -46,6 +47,13 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
         options.ClientId = googleClientId;
         options.ClientSecret = googleClientSecret;
         options.CallbackPath = "/signin-google";
+        options.Events.OnRemoteFailure = context =>
+        {
+            var error = Uri.EscapeDataString(context.Failure?.Message ?? "Google login failed.");
+            context.Response.Redirect($"/Account/Login?googleError={error}");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        };
     });
 }
 

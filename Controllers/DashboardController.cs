@@ -106,6 +106,7 @@ public class DashboardController : Controller
         var calNow = DateTime.Now;
         var rangeStart = new DateTime(calNow.Year, calNow.Month, 1, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
         var rangeEnd = rangeStart.AddMonths(1);
+
         var assnInMonth = await _db.Assignments
             .AsNoTracking()
             .Include(a => a.Course)
@@ -113,8 +114,29 @@ public class DashboardController : Controller
             .OrderBy(a => a.DueDateUtc)
             .ToListAsync();
 
-        var calItems = assnInMonth.Select(a => (a.DueDateUtc, a.Title, a.Course.Code));
-        var calendar = BuildAssignmentCalendar(calNow.Year, calNow.Month, calItems);
+        var matsInMonth = await _db.CourseMaterials
+            .AsNoTracking()
+            .Include(m => m.Course)
+            .Where(m => courseIds.Contains(m.CourseId) && m.UploadedAtUtc >= rangeStart && m.UploadedAtUtc < rangeEnd)
+            .OrderBy(m => m.UploadedAtUtc)
+            .ToListAsync();
+
+        var subsInMonth = await (
+            from s in _db.Submissions.AsNoTracking()
+            join a in _db.Assignments on s.AssignmentId equals a.AssignmentId
+            join c in _db.Courses on a.CourseId equals c.CourseId
+            where s.StudentId == userId
+                  && s.SubmittedAtUtc != null
+                  && s.SubmittedAtUtc >= rangeStart && s.SubmittedAtUtc < rangeEnd
+            orderby s.SubmittedAtUtc
+            select new { Date = s.SubmittedAtUtc!.Value, a.Title, c.Code }).ToListAsync();
+
+        var calItems = new List<CalendarItem>();
+        calItems.AddRange(assnInMonth.Select(a => new CalendarItem(a.DueDateUtc, $"Due: {a.Title}", a.Course.Code, DashboardCalendarEventKind.Deadline)));
+        calItems.AddRange(matsInMonth.Select(m => new CalendarItem(m.UploadedAtUtc, $"New material: {m.Title}", m.Course.Code, DashboardCalendarEventKind.Material)));
+        calItems.AddRange(subsInMonth.Select(s => new CalendarItem(s.Date, $"Submitted: {s.Title}", s.Code, DashboardCalendarEventKind.Submission)));
+
+        var calendar = BuildCalendar(calNow.Year, calNow.Month, calItems);
 
         var vm = new StudentDashboardViewModel
         {
@@ -169,6 +191,7 @@ public class DashboardController : Controller
         var calNow = DateTime.Now;
         var rangeStart = new DateTime(calNow.Year, calNow.Month, 1, 0, 0, 0, DateTimeKind.Local).ToUniversalTime();
         var rangeEnd = rangeStart.AddMonths(1);
+
         var assnInMonth = await _db.Assignments
             .AsNoTracking()
             .Include(a => a.Course)
@@ -176,8 +199,32 @@ public class DashboardController : Controller
             .OrderBy(a => a.DueDateUtc)
             .ToListAsync();
 
-        var calItems = assnInMonth.Select(a => (a.DueDateUtc, a.Title, a.Course.Code));
-        var calendar = BuildAssignmentCalendar(calNow.Year, calNow.Month, calItems);
+        var matsInMonth = await _db.CourseMaterials
+            .AsNoTracking()
+            .Include(m => m.Course)
+            .Where(m => courseIds.Contains(m.CourseId)
+                        && m.UploadedById == userId
+                        && m.UploadedAtUtc >= rangeStart && m.UploadedAtUtc < rangeEnd)
+            .OrderBy(m => m.UploadedAtUtc)
+            .ToListAsync();
+
+        var subsInMonth = await (
+            from s in _db.Submissions.AsNoTracking()
+            join a in _db.Assignments on s.AssignmentId equals a.AssignmentId
+            join c in _db.Courses on a.CourseId equals c.CourseId
+            join u in _db.Users on s.StudentId equals u.Id
+            where courseIds.Contains(a.CourseId)
+                  && s.SubmittedAtUtc != null
+                  && s.SubmittedAtUtc >= rangeStart && s.SubmittedAtUtc < rangeEnd
+            orderby s.SubmittedAtUtc
+            select new { Date = s.SubmittedAtUtc!.Value, a.Title, c.Code, Student = u.FullName }).ToListAsync();
+
+        var calItems = new List<CalendarItem>();
+        calItems.AddRange(assnInMonth.Select(a => new CalendarItem(a.DueDateUtc, $"Due: {a.Title}", a.Course.Code, DashboardCalendarEventKind.Deadline)));
+        calItems.AddRange(matsInMonth.Select(m => new CalendarItem(m.UploadedAtUtc, $"Uploaded: {m.Title}", m.Course.Code, DashboardCalendarEventKind.Material)));
+        calItems.AddRange(subsInMonth.Select(s => new CalendarItem(s.Date, $"{s.Student} submitted: {s.Title}", s.Code, DashboardCalendarEventKind.Submission)));
+
+        var calendar = BuildCalendar(calNow.Year, calNow.Month, calItems);
 
         var vm = new LecturerDashboardViewModel
         {
@@ -221,12 +268,14 @@ public class DashboardController : Controller
         return View(vm);
     }
 
-    private static DashboardCalendarModel BuildAssignmentCalendar(int year, int month, IEnumerable<(DateTime DueDateUtc, string Title, string Detail)> items)
+    private sealed record CalendarItem(DateTime WhenUtc, string Title, string Detail, DashboardCalendarEventKind Kind);
+
+    private static DashboardCalendarModel BuildCalendar(int year, int month, IEnumerable<CalendarItem> items)
     {
         var dict = new Dictionary<DateOnly, List<DashboardCalendarEvent>>();
-        foreach (var it in items)
+        foreach (var it in items.OrderBy(x => x.WhenUtc))
         {
-            var local = it.DueDateUtc.ToLocalTime();
+            var local = it.WhenUtc.ToLocalTime();
             if (local.Year != year || local.Month != month)
                 continue;
 
@@ -237,7 +286,12 @@ public class DashboardController : Controller
                 dict[d] = list;
             }
 
-            list.Add(new DashboardCalendarEvent { Title = it.Title, Detail = it.Detail });
+            list.Add(new DashboardCalendarEvent
+            {
+                Title = it.Title,
+                Detail = it.Detail,
+                Kind = it.Kind
+            });
         }
 
         return new DashboardCalendarModel { Year = year, Month = month, EventsByDay = dict };

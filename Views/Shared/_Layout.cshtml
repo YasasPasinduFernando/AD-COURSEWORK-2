@@ -1,12 +1,26 @@
 @using AD_COURSEWORK_2.Models
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    string NavClass(string controller, string? action = null)
+    {
+        var isActive = currentController.Equals(controller, StringComparison.OrdinalIgnoreCase)
+            && (action == null || currentAction.Equals(action, StringComparison.OrdinalIgnoreCase));
+        return isActive ? "nav-link active" : "nav-link";
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - UniManage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AD_COURSEWORK_2.styles.css" asp-append-version="true" />
@@ -22,26 +36,26 @@
                 </button>
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-2 mt-lg-0">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="@NavClass("Home", "Index")" asp-controller="Home" asp-action="Index">Home</a></li>
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                            <li class="nav-item"><a class="@NavClass("Dashboard")" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
                             @if (User.IsInRole(AppRoles.Student))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Enrollments" asp-action="Browse">Catalog</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Assignments" asp-action="Mine">Assignments</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
+                                <li class="nav-item"><a class="@NavClass("Enrollments", "Browse")" asp-controller="Enrollments" asp-action="Browse">Catalog</a></li>
+                                <li class="nav-item"><a class="@NavClass("Assignments", "Mine")" asp-controller="Assignments" asp-action="Mine">Assignments</a></li>
+                                <li class="nav-item"><a class="@NavClass("Messages")" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
                             }
                             @if (User.IsInRole(AppRoles.Lecturer))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Courses" asp-action="MyCourses">My Courses</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="LecturerWorkload">Workload</a></li>
+                                <li class="nav-item"><a class="@NavClass("Courses", "MyCourses")" asp-controller="Courses" asp-action="MyCourses">My Courses</a></li>
+                                <li class="nav-item"><a class="@NavClass("Messages")" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
+                                <li class="nav-item"><a class="@NavClass("Reports", "LecturerWorkload")" asp-controller="Reports" asp-action="LecturerWorkload">Workload</a></li>
                             }
                             @if (User.IsInRole(AppRoles.Administrator))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="Index">Reports</a></li>
+                                <li class="nav-item"><a class="@NavClass("Courses", "Index")" asp-controller="Courses" asp-action="Index">Courses</a></li>
+                                <li class="nav-item"><a class="@NavClass("Reports", "Index")" asp-controller="Reports" asp-action="Index">Reports</a></li>
                             }
                         }
                         else
@@ -54,8 +68,15 @@
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
                         @if (SignInManager.IsSignedIn(User))
                         {
+                            var roleLabel = User.IsInRole(AppRoles.Administrator) ? "Admin" : User.IsInRole(AppRoles.Lecturer) ? "Lecturer" : "Student";
                             <li class="nav-item px-lg-2 mb-2 mb-lg-0">
-                                <span class="um-user-pill d-inline-block" title="@User.Identity?.Name">@User.Identity?.Name</span>
+                                <span class="um-user-pill d-inline-flex align-items-center gap-2" title="@User.Identity?.Name">
+                                    <span class="um-user-avatar">@((User.Identity?.Name ?? "U")[0].ToString().ToUpperInvariant())</span>
+                                    <span>
+                                        <span class="d-block um-user-name">@User.Identity?.Name</span>
+                                        <small class="um-user-role">@roleLabel</small>
+                                    </span>
+                                </span>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
@@ -66,7 +87,7 @@
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Sign in</a></li>
+                            <li class="nav-item"><a class="@NavClass("Account", "Login")" asp-controller="Account" asp-action="Login">Sign in</a></li>
                             <li class="nav-item"><a class="btn btn-light btn-sm btn-register ms-lg-2" asp-controller="Account" asp-action="Register">Register</a></li>
                         }
                     </ul>

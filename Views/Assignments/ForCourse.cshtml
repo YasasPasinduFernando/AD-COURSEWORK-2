@@ -1,50 +1,158 @@
 @model List<AD_COURSEWORK_2.Models.Assignment>
+@using AD_COURSEWORK_2.Models
 @{
-    ViewData["Title"] = $"{ViewBag.CourseCode} – Assignments";
     var courseId = (int)ViewBag.CourseId;
+    var courseCode = (string)ViewBag.CourseCode;
+    var courseName = (string?)ViewBag.CourseName ?? courseCode;
+    var enrolled = (int)(ViewBag.EnrolledCount ?? 0);
+    ViewData["Title"] = $"{courseCode} – Assignments";
+
+    var totalAssn = Model.Count;
+    var pendingGrading = Model.Sum(a => a.Submissions.Count(s => s.Status == SubmissionStatus.Submitted));
+    var graded = Model.Sum(a => a.Submissions.Count(s => s.Status == SubmissionStatus.Graded));
+    var totalSubs = Model.Sum(a => a.Submissions.Count);
 }
 
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h1 class="h3 mb-0">Assignments for @ViewBag.CourseCode</h1>
-    <div>
-        <a class="btn btn-primary" asp-action="Create" asp-route-courseId="@courseId">New assignment</a>
-        <a class="btn btn-outline-secondary" asp-controller="Courses" asp-action="Details" asp-route-id="@courseId">Course</a>
+<section class="um-hero-compact">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+            <div class="um-hero-eyebrow">Course assignments</div>
+            <h1>@courseName</h1>
+            <p class="um-hero-sub mb-2"><span class="fw-semibold">@courseCode</span> · @enrolled student@(enrolled == 1 ? "" : "s") · @totalAssn assignment@(totalAssn == 1 ? "" : "s")</p>
+        </div>
+        <div class="col-lg-4 d-flex flex-wrap justify-content-lg-end gap-2">
+            <a class="btn btn-light" asp-action="Create" asp-route-courseId="@courseId"><i class="bi bi-plus-lg me-1"></i>New assignment</a>
+            <a class="btn btn-outline-light" asp-controller="Courses" asp-action="Details" asp-route-id="@courseId"><i class="bi bi-arrow-left me-1"></i>Course</a>
+        </div>
+    </div>
+</section>
+
+<div class="um-stat-strip">
+    <div class="um-stat-chip">
+        <div class="chip-icon"><i class="bi bi-journal-text"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Assignments</span>
+            <span class="chip-value">@totalAssn</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-violet">
+        <div class="chip-icon"><i class="bi bi-inboxes-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Submissions</span>
+            <span class="chip-value">@totalSubs</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-amber">
+        <div class="chip-icon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">To grade</span>
+            <span class="chip-value">@pendingGrading</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-emerald">
+        <div class="chip-icon"><i class="bi bi-patch-check-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Graded</span>
+            <span class="chip-value">@graded</span>
+        </div>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="table-responsive">
-        <table class="table mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Title</th>
-                    <th>Due</th>
-                    <th>Points</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            @if (!Model.Any())
-            {
-                <tr><td colspan="4" class="text-muted p-4 text-center">No assignments yet.</td></tr>
-            }
-            @foreach (var a in Model)
-            {
-                <tr>
-                    <td>@a.Title</td>
-                    <td>@a.DueDateUtc.ToLocalTime().ToString("g")</td>
-                    <td>@a.MaxPoints</td>
-                    <td class="text-end text-nowrap">
-                        <a class="btn btn-sm btn-outline-primary" asp-controller="Submissions" asp-action="ForAssignment" asp-route-id="@a.AssignmentId">Submissions</a>
-                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@a.AssignmentId">Edit</a>
-                        <form asp-action="Delete" asp-route-id="@a.AssignmentId" method="post" class="d-inline" onsubmit="return confirm('Delete this assignment?');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+@if (!Model.Any())
+{
+    <div class="um-panel card border-0">
+        <div class="card-body um-empty-full">
+            <i class="bi bi-journal-plus"></i>
+            <div class="um-empty-title">No assignments yet</div>
+            <div class="small">Create your first task for this course to get started.</div>
+            <a class="btn btn-primary mt-3" asp-action="Create" asp-route-courseId="@courseId"><i class="bi bi-plus-lg me-1"></i>Create assignment</a>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="d-flex flex-column gap-2">
+        @foreach (var a in Model)
+        {
+            var due = a.DueDateUtc.ToLocalTime();
+            var delta = due - DateTime.Now;
+            var subCount = a.Submissions.Count;
+            var pendCount = a.Submissions.Count(s => s.Status == SubmissionStatus.Submitted);
+            var gradedHere = a.Submissions.Count(s => s.Status == SubmissionStatus.Graded);
+            var submitPct = enrolled > 0 ? Math.Min(100, (int)Math.Round(subCount * 100.0 / enrolled)) : 0;
+            string dateClass;
+            string dueChipClass;
+            string dueChipText;
+
+            if (delta.TotalMinutes < 0)
+            {
+                dateClass = "is-overdue";
+                dueChipClass = "due-overdue";
+                dueChipText = $"Past {Math.Ceiling(Math.Abs(delta.TotalDays))}d";
+            }
+            else if (delta.TotalHours < 24)
+            {
+                dateClass = "is-today";
+                dueChipClass = "due-today";
+                dueChipText = "Due today";
+            }
+            else if (delta.TotalDays < 7)
+            {
+                dateClass = "is-soon";
+                dueChipClass = "due-soon";
+                dueChipText = $"In {Math.Ceiling(delta.TotalDays)}d";
+            }
+            else
+            {
+                dateClass = "";
+                dueChipClass = "due-far";
+                dueChipText = due.ToString("MMM d");
+            }
+
+            <div class="um-assn-card">
+                <div class="um-assn-date @dateClass">
+                    <span class="day-num">@due.ToString("dd")</span>
+                    <span class="day-mon">@due.ToString("MMM")</span>
+                </div>
+                <div class="um-assn-body">
+                    <h3 class="um-assn-title">@a.Title</h3>
+                    <div class="um-assn-meta">
+                        <span><i class="bi bi-clock"></i>@due.ToString("h:mm tt")</span>
+                        <span><i class="bi bi-trophy"></i>@a.MaxPoints pts</span>
+                        <span><i class="bi bi-people"></i>@subCount / @enrolled submitted</span>
+                        @if (pendCount > 0)
+                        {
+                            <span><i class="bi bi-hourglass-split"></i>@pendCount to grade</span>
+                        }
+                        @if (gradedHere > 0)
+                        {
+                            <span><i class="bi bi-patch-check"></i>@gradedHere graded</span>
+                        }
+                    </div>
+                    <div class="mt-2 d-flex gap-2 flex-wrap align-items-center">
+                        <span class="um-due-chip @dueChipClass">@dueChipText</span>
+                        @if (enrolled > 0)
+                        {
+                            <div class="cat-progress-bar" style="width: 140px;">
+                                <span style="width:@submitPct%"></span>
+                            </div>
+                            <span class="small text-muted">@submitPct%</span>
+                        }
+                    </div>
+                </div>
+                <div class="um-assn-actions">
+                    <a class="btn btn-sm btn-primary rounded-pill px-3" asp-controller="Submissions" asp-action="ForAssignment" asp-route-id="@a.AssignmentId">
+                        <i class="bi bi-inboxes me-1"></i>Submissions
+                    </a>
+                    <a class="btn btn-sm btn-outline-secondary rounded-pill px-3" asp-action="Edit" asp-route-id="@a.AssignmentId">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form asp-action="Delete" asp-route-id="@a.AssignmentId" method="post" class="d-inline" onsubmit="return confirm('Delete this assignment?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}

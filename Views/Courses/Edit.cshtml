@@ -5,9 +5,12 @@
     var prereqs = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Prerequisites!;
 }
 
-<h1 class="h3 mb-3">Edit course</h1>
+<div class="um-page-header">
+    <h1>Edit course</h1>
+    <p class="um-lead">Update course settings while preserving enrollment data.</p>
+</div>
 
-<div class="card border-0 shadow-sm">
+<div class="um-panel card border-0">
     <div class="card-body p-4">
         <form asp-action="Edit" method="post">
             @Html.AntiForgeryToken()

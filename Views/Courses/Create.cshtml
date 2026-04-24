@@ -5,9 +5,12 @@
     var prereqs = (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Prerequisites!;
 }
 
-<h1 class="h3 mb-3">Add course</h1>
+<div class="um-page-header">
+    <h1>Add course</h1>
+    <p class="um-lead">Create a new course and assign the teaching owner.</p>
+</div>
 
-<div class="card border-0 shadow-sm">
+<div class="um-panel card border-0">
     <div class="card-body p-4">
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()

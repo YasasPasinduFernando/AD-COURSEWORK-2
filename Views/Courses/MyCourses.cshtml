@@ -3,7 +3,10 @@
     ViewData["Title"] = "My courses";
 }
 
-<h1 class="h3 mb-3">My courses</h1>
+<div class="um-page-header">
+    <h1>My courses</h1>
+    <p class="um-lead">Quick access to assigned courses and teaching actions.</p>
+</div>
 
 <div class="row g-3">
 @if (!Model.Any())
@@ -15,7 +18,7 @@
 @foreach (var c in Model)
 {
     <div class="col-md-6 col-lg-4">
-        <div class="card h-100 shadow-sm border-0">
+        <div class="um-card um-card-interactive card h-100 border-0">
             <div class="card-body">
                 <span class="badge bg-primary-subtle text-primary-emphasis mb-2">@c.Code</span>
                 <h2 class="h5">@c.Name</h2>

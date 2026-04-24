@@ -59,7 +59,7 @@ public class CoursesController : Controller
         return View(list);
     }
 
-    [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
+    [Authorize]
     public async Task<IActionResult> Details(int id)
     {
         var userId = _userManager.GetUserId(User);
@@ -76,6 +76,30 @@ public class CoursesController : Controller
 
         if (User.IsInRole(AppRoles.Lecturer) && course.LecturerId != userId)
             return Forbid();
+
+        if (User.IsInRole(AppRoles.Student))
+        {
+            var isEnrolled = await _db.Enrollments.AnyAsync(e => e.CourseId == id && e.StudentId == userId);
+            if (!isEnrolled)
+                return Forbid();
+
+            var mySubs = await (
+                from s in _db.Submissions.AsNoTracking()
+                join a in _db.Assignments on s.AssignmentId equals a.AssignmentId
+                where s.StudentId == userId && a.CourseId == id
+                orderby a.DueDateUtc
+                select new CourseStudentSubmissionRow
+                {
+                    AssignmentId = a.AssignmentId,
+                    Title = a.Title,
+                    DueDateUtc = a.DueDateUtc,
+                    Status = s.Status.ToString(),
+                    Grade = s.Grade,
+                    MaxPoints = a.MaxPoints
+                }).ToListAsync();
+
+            ViewBag.MySubmissions = mySubs;
+        }
 
         ViewBag.CanUpload = User.IsInRole(AppRoles.Lecturer) && course.LecturerId == userId;
         return View(course);
@@ -274,6 +298,9 @@ public class CoursesController : Controller
             .Where(s => s.Email != null)
             .ToListAsync();
 
+        var lecturer = await _userManager.GetUserAsync(User);
+        var courseUrl = Url.Action(nameof(Details), "Courses", new { id = model.CourseId }, protocol: Request.Scheme);
+
         foreach (var student in students)
         {
             try
@@ -281,12 +308,13 @@ public class CoursesController : Controller
                 await _emailService.SendAsync(
                     student.Email!,
                     $"New lesson uploaded - {course.Code}",
-                    $"""
-                    <p>Hello {System.Text.Encodings.Web.HtmlEncoder.Default.Encode(student.FullName)},</p>
-                    <p>A new lesson/content was uploaded to <strong>{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(course.Code)}</strong>.</p>
-                    <p>Title: {System.Text.Encodings.Web.HtmlEncoder.Default.Encode(model.Title)}</p>
-                    <p>Please log in to UniManage and check your course materials.</p>
-                    """);
+                    EmailTemplates.BuildMaterialUploadEmail(
+                        student.FullName,
+                        course.Code,
+                        course.Name,
+                        model.Title,
+                        lecturer?.FullName,
+                        courseUrl));
             }
             catch (Exception ex)
             {

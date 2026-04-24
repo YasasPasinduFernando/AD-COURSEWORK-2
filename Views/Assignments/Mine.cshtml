@@ -3,43 +3,194 @@
 @{
     ViewData["Title"] = "My assignments";
     var subs = (Dictionary<int, Submission>)ViewBag.Submissions!;
+
+    string ResolveStatus(int id)
+    {
+        return subs.TryGetValue(id, out var s) ? s.Status.ToString() : "Not started";
+    }
+
+    var totalCount = Model.Count;
+    var pendingCount = Model.Count(a => { var st = ResolveStatus(a.AssignmentId); return st == "Not started" || st == "NotSubmitted" || st == "Pending"; });
+    var submittedCount = Model.Count(a => ResolveStatus(a.AssignmentId) == "Submitted");
+    var gradedCount = Model.Count(a => ResolveStatus(a.AssignmentId) == "Graded");
+    var overdueCount = Model.Count(a =>
+    {
+        var st = ResolveStatus(a.AssignmentId);
+        return (st == "Not started" || st == "NotSubmitted" || st == "Pending") && a.DueDateUtc < DateTime.UtcNow;
+    });
 }
 
-<h1 class="h3 mb-3">My assignments</h1>
+<section class="um-hero-compact">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+            <div class="um-hero-eyebrow">Student workspace</div>
+            <h1>My assignments</h1>
+            <p class="um-hero-sub mb-0">Keep track of deadlines, submit work, and review your grades in one place.</p>
+        </div>
+        <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+            <div class="text-center text-white-50 small">
+                <div style="font-size:3rem; line-height:1;"><i class="bi bi-list-check"></i></div>
+                <div class="mt-1">@totalCount task@(totalCount == 1 ? "" : "s")</div>
+            </div>
+        </div>
+    </div>
+</section>
 
-<div class="card border-0 shadow-sm">
-    <div class="table-responsive">
-        <table class="table mb-0 align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Course</th>
-                    <th>Assignment</th>
-                    <th>Due</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            @if (!Model.Any())
-            {
-                <tr><td colspan="5" class="text-muted p-4 text-center">No assignments yet. Enroll in a course first.</td></tr>
-            }
-            @foreach (var a in Model)
-            {
-                subs.TryGetValue(a.AssignmentId, out var s);
-                var status = s == null ? "Not started" : s.Status.ToString();
-                var badge = s?.Status == SubmissionStatus.Graded ? "bg-success" : s?.Status == SubmissionStatus.Submitted ? "bg-primary" : "bg-secondary";
-                <tr>
-                    <td>@a.Course.Code</td>
-                    <td>@a.Title</td>
-                    <td>@a.DueDateUtc.ToLocalTime().ToString("g")</td>
-                    <td><span class="badge @badge">@status</span></td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-primary" asp-controller="Submissions" asp-action="Submit" asp-route-id="@a.AssignmentId">Open</a>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+<div class="um-stat-strip">
+    <div class="um-stat-chip">
+        <div class="chip-icon"><i class="bi bi-journal-text"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Total</span>
+            <span class="chip-value">@totalCount</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-amber">
+        <div class="chip-icon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Pending</span>
+            <span class="chip-value">@pendingCount</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-emerald">
+        <div class="chip-icon"><i class="bi bi-check2-square"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Submitted</span>
+            <span class="chip-value">@submittedCount</span>
+        </div>
+    </div>
+    <div class="um-stat-chip chip-violet">
+        <div class="chip-icon"><i class="bi bi-patch-check-fill"></i></div>
+        <div class="d-flex flex-column">
+            <span class="chip-label">Graded</span>
+            <span class="chip-value">@gradedCount</span>
+        </div>
+    </div>
+    @if (overdueCount > 0)
+    {
+        <div class="um-stat-chip chip-rose">
+            <div class="chip-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <div class="d-flex flex-column">
+                <span class="chip-label">Overdue</span>
+                <span class="chip-value">@overdueCount</span>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <div class="um-filter-pills" role="tablist" aria-label="Filter assignments">
+        <button type="button" class="um-filter-pill active" data-filter="all"><i class="bi bi-grid"></i>All <span class="pill-count">@totalCount</span></button>
+        <button type="button" class="um-filter-pill" data-filter="pending"><i class="bi bi-hourglass"></i>Pending <span class="pill-count">@pendingCount</span></button>
+        <button type="button" class="um-filter-pill" data-filter="submitted"><i class="bi bi-check2-circle"></i>Submitted <span class="pill-count">@submittedCount</span></button>
+        <button type="button" class="um-filter-pill" data-filter="graded"><i class="bi bi-patch-check"></i>Graded <span class="pill-count">@gradedCount</span></button>
     </div>
 </div>
+
+@if (!Model.Any())
+{
+    <div class="um-panel card border-0">
+        <div class="card-body um-empty-full">
+            <i class="bi bi-journal-x"></i>
+            <div class="um-empty-title">No assignments yet</div>
+            <div class="small">Enroll in a course to see tasks here.</div>
+            <a class="btn btn-primary mt-3" asp-controller="Enrollments" asp-action="Browse"><i class="bi bi-collection me-1"></i>Browse catalog</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column gap-2" id="assnList">
+        @foreach (var a in Model.OrderBy(x => x.DueDateUtc))
+        {
+            var status = ResolveStatus(a.AssignmentId);
+            var filterKey = status == "Submitted" ? "submitted" : status == "Graded" ? "graded" : "pending";
+            var due = a.DueDateUtc.ToLocalTime();
+            var delta = due - DateTime.Now;
+            var isPending = filterKey == "pending";
+            var isDone = filterKey == "submitted" || filterKey == "graded";
+            string dateClass;
+            string dueChipClass;
+            string dueChipText;
+
+            if (isDone)
+            {
+                dateClass = "is-done";
+                dueChipClass = "due-done";
+                dueChipText = status == "Graded" ? "Graded" : "Submitted";
+            }
+            else if (delta.TotalMinutes < 0)
+            {
+                dateClass = "is-overdue";
+                dueChipClass = "due-overdue";
+                dueChipText = $"Overdue {Math.Ceiling(Math.Abs(delta.TotalDays))}d";
+            }
+            else if (delta.TotalHours < 24)
+            {
+                dateClass = "is-today";
+                dueChipClass = "due-today";
+                dueChipText = "Due today";
+            }
+            else if (delta.TotalDays < 3)
+            {
+                dateClass = "is-soon";
+                dueChipClass = "due-soon";
+                dueChipText = $"In {Math.Ceiling(delta.TotalDays)}d";
+            }
+            else
+            {
+                dateClass = "";
+                dueChipClass = "due-far";
+                dueChipText = due.ToString("MMM d");
+            }
+
+            subs.TryGetValue(a.AssignmentId, out var sub);
+            <div class="um-assn-card" data-filter="@filterKey">
+                <div class="um-assn-date @dateClass">
+                    <span class="day-num">@due.ToString("dd")</span>
+                    <span class="day-mon">@due.ToString("MMM")</span>
+                </div>
+                <div class="um-assn-body">
+                    <h3 class="um-assn-title">@a.Title</h3>
+                    <div class="um-assn-meta">
+                        <span><i class="bi bi-bookmark"></i>@a.Course.Code</span>
+                        <span><i class="bi bi-clock"></i>@due.ToString("h:mm tt")</span>
+                        <span><i class="bi bi-trophy"></i>@a.MaxPoints pts</span>
+                        @if (sub?.Grade.HasValue == true)
+                        {
+                            <span><i class="bi bi-award"></i>Score: <strong>@sub.Grade / @a.MaxPoints</strong></span>
+                        }
+                    </div>
+                    <div class="mt-2 d-flex gap-2 flex-wrap">
+                        <span class="um-due-chip @dueChipClass">@dueChipText</span>
+                        @{
+                            var statusPill = status == "Graded" ? "pill-success" : status == "Submitted" ? "pill-info" : "pill-warn";
+                        }
+                        <span class="um-pill @statusPill">@status</span>
+                    </div>
+                </div>
+                <div class="um-assn-actions">
+                    <a class="btn btn-sm btn-primary rounded-pill px-3" asp-controller="Submissions" asp-action="Submit" asp-route-id="@a.AssignmentId">
+                        <i class="bi bi-box-arrow-in-up me-1"></i>@(isDone ? "View" : "Open")
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            const pills = document.querySelectorAll('.um-filter-pill');
+            const cards = document.querySelectorAll('#assnList .um-assn-card');
+            pills.forEach(p => {
+                p.addEventListener('click', () => {
+                    pills.forEach(x => x.classList.remove('active'));
+                    p.classList.add('active');
+                    const f = p.dataset.filter;
+                    cards.forEach(c => c.style.display = (f === 'all' || c.dataset.filter === f) ? '' : 'none');
+                });
+            });
+        })();
+    </script>
+}

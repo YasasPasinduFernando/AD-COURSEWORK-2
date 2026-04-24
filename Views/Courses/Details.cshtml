@@ -1,82 +1,244 @@
 @model AD_COURSEWORK_2.Models.Course
+@using AD_COURSEWORK_2.Models
 @using AD_COURSEWORK_2.ViewModels
 @{
     ViewData["Title"] = $"{Model.Code} - Details";
     var canUpload = (bool)(ViewBag.CanUpload ?? false);
+    var isStudent = User.IsInRole(AppRoles.Student);
+    var isLecturer = User.IsInRole(AppRoles.Lecturer);
+    var isAdmin = User.IsInRole(AppRoles.Administrator);
+    var mySubmissions = (List<CourseStudentSubmissionRow>?)ViewBag.MySubmissions ?? new List<CourseStudentSubmissionRow>();
+    var enrollmentPct = Model.EnrollmentLimit > 0
+        ? Math.Min(100, (int)Math.Round(Model.Enrollments.Count * 100.0 / Model.EnrollmentLimit))
+        : 0;
 }
 
-<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
-    <div>
-        <h1 class="h3 mb-1">@Model.Name</h1>
-        <p class="text-muted mb-0">@Model.Code &middot; @Model.Credits credits &middot; Lecturer: @Model.Lecturer.FullName</p>
+<section class="um-welcome" style="padding:1.4rem 1.6rem; margin-bottom:1.25rem;">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+            <div class="um-welcome-eyebrow">Course details</div>
+            <h1 class="mb-1" style="font-size:1.8rem;">@Model.Name</h1>
+            <p class="um-welcome-sub mb-2">
+                <span class="fw-semibold">@Model.Code</span> · @Model.Credits credit@(Model.Credits == 1 ? "" : "s") · Lecturer: @Model.Lecturer.FullName
+            </p>
+            <div class="um-welcome-chips">
+                <span class="um-chip"><i class="bi bi-people-fill"></i>@Model.Enrollments.Count / @Model.EnrollmentLimit enrolled</span>
+                <span class="um-chip"><i class="bi bi-journal-text"></i>@Model.Assignments.Count assignment@(Model.Assignments.Count == 1 ? "" : "s")</span>
+                <span class="um-chip"><i class="bi bi-file-earmark-arrow-down"></i>@Model.Materials.Count material@(Model.Materials.Count == 1 ? "" : "s")</span>
+                @if (Model.Prerequisite != null)
+                {
+                    <span class="um-chip"><i class="bi bi-diagram-3"></i>Prereq: @Model.Prerequisite.Code</span>
+                }
+            </div>
+        </div>
+        <div class="col-lg-4 d-flex flex-wrap justify-content-lg-end gap-2">
+            @if (isStudent)
+            {
+                <a class="btn btn-light" asp-controller="Assignments" asp-action="Mine"><i class="bi bi-list-check me-1"></i>My assignments</a>
+            }
+            else
+            {
+                <a class="btn btn-light" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@Model.CourseId"><i class="bi bi-list-check me-1"></i>Assignments</a>
+            }
+            @if (isAdmin)
+            {
+                <a class="btn btn-outline-light" asp-action="Index"><i class="bi bi-arrow-left me-1"></i>All courses</a>
+            }
+            else if (isLecturer)
+            {
+                <a class="btn btn-outline-light" asp-action="MyCourses"><i class="bi bi-arrow-left me-1"></i>My courses</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-light" asp-controller="Dashboard" asp-action="Student"><i class="bi bi-arrow-left me-1"></i>Dashboard</a>
+            }
+        </div>
     </div>
-    <div class="text-md-end">
-        <a class="btn btn-outline-secondary btn-sm" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@Model.CourseId">Assignments</a>
-        @if (User.IsInRole(AD_COURSEWORK_2.Models.AppRoles.Administrator))
-        {
-            <a class="btn btn-outline-primary btn-sm" asp-action="Index">Back to list</a>
-        }
-        else
-        {
-            <a class="btn btn-outline-primary btn-sm" asp-action="MyCourses">Back</a>
-        }
-    </div>
-</div>
+</section>
 
 <div class="row g-4">
     <div class="col-lg-7">
-        <div class="card border-0 shadow-sm">
+        <div class="um-panel card border-0 mb-4">
             <div class="card-body">
-                <h2 class="h5">Description</h2>
-                <p class="mb-0 text-muted">@(string.IsNullOrWhiteSpace(Model.Description) ? "No description provided." : Model.Description)</p>
-                <hr />
-                <p class="mb-0"><strong>Prerequisite:</strong> @(Model.Prerequisite == null ? "None" : $"{Model.Prerequisite.Code} – {Model.Prerequisite.Name}")</p>
-                <p class="mb-0 mt-2"><strong>Enrollment:</strong> @Model.Enrollments.Count / @Model.EnrollmentLimit</p>
+                <div class="um-section-title">About this course</div>
+                <p class="text-muted mb-3">@(string.IsNullOrWhiteSpace(Model.Description) ? "No description provided for this course yet." : Model.Description)</p>
+
+                <div class="row g-3 small">
+                    <div class="col-sm-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-diagram-3"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Prerequisite</span>
+                                <span class="kpi-value" style="font-size:0.95rem;">@(Model.Prerequisite == null ? "None" : $"{Model.Prerequisite.Code} – {Model.Prerequisite.Name}")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-person-badge"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Instructor</span>
+                                <span class="kpi-value" style="font-size:0.95rem;">@Model.Lecturer.FullName</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between small fw-semibold text-muted mb-1">
+                            <span><i class="bi bi-people me-1"></i>Enrollment</span>
+                            <span>@Model.Enrollments.Count / @Model.EnrollmentLimit · @enrollmentPct%</span>
+                        </div>
+                        <div class="um-rank-bar" title="Enrollment capacity">
+                            <span style="width:@enrollmentPct%"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        @if (isStudent)
+        {
+            <div class="um-panel card border-0 mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="um-section-title mb-0">My submissions</div>
+                        <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Assignments" asp-action="Mine"><i class="bi bi-list-check me-1"></i>All tasks</a>
+                    </div>
+                    @if (!Model.Assignments.Any())
+                    {
+                        <div class="um-empty">
+                            <i class="bi bi-journal-x"></i>
+                            <div class="um-empty-title">No assignments yet</div>
+                            <div class="small">The lecturer hasn't posted any tasks for this course.</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="um-timeline mb-0">
+                            @foreach (var a in Model.Assignments.OrderBy(x => x.DueDateUtc))
+                            {
+                                var sub = mySubmissions.FirstOrDefault(s => s.AssignmentId == a.AssignmentId);
+                                var status = sub?.Status ?? "Not started";
+                                var due = a.DueDateUtc.ToLocalTime();
+                                var state = status == "Graded" ? "is-success" : status == "Submitted" ? "" : due < DateTime.Now ? "is-rose" : due < DateTime.Now.AddDays(2) ? "is-warn" : "";
+                                var pillClass = status == "Graded" ? "pill-success" : status == "Submitted" ? "pill-info" : due < DateTime.Now ? "pill-rose" : "pill-warn";
+                                <li class="@state">
+                                    <span class="um-timeline-marker"></span>
+                                    <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
+                                        <div class="flex-grow-1 min-w-0">
+                                            <p class="um-timeline-title">@a.Title</p>
+                                            <div class="um-timeline-meta"><i class="bi bi-clock me-1"></i>Due @due.ToString("MMM d, h:mm tt")</div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if (sub?.Grade.HasValue == true)
+                                            {
+                                                <span class="um-pill pill-success">@sub.Grade / @sub.MaxPoints</span>
+                                            }
+                                            <span class="um-pill @pillClass">@status</span>
+                                            <a class="btn btn-sm btn-outline-primary rounded-pill" asp-controller="Submissions" asp-action="Submit" asp-route-id="@a.AssignmentId">
+                                                <i class="bi bi-box-arrow-in-up me-1"></i>@(status == "Not started" ? "Submit" : "Open")
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="um-panel card border-0 mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="um-section-title mb-0">Assignments</div>
+                        <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Assignments" asp-action="ForCourse" asp-route-id="@Model.CourseId"><i class="bi bi-arrow-right me-1"></i>Open all</a>
+                    </div>
+                    @if (!Model.Assignments.Any())
+                    {
+                        <div class="um-empty">
+                            <i class="bi bi-journal-plus"></i>
+                            <div class="um-empty-title">No assignments yet</div>
+                            <div class="small">Post your first task for this course.</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var a in Model.Assignments.OrderBy(x => x.DueDateUtc).Take(6))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <div>
+                                        <div class="fw-semibold">@a.Title</div>
+                                        <div class="small text-muted"><i class="bi bi-clock me-1"></i>Due @a.DueDateUtc.ToLocalTime().ToString("MMM d, h:mm tt") · @a.MaxPoints pts</div>
+                                    </div>
+                                    <a class="btn btn-sm btn-outline-primary rounded-pill" asp-controller="Submissions" asp-action="ForAssignment" asp-route-id="@a.AssignmentId">Submissions</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        }
     </div>
+
     <div class="col-lg-5">
         @if (canUpload)
         {
-            <div class="card border-0 shadow-sm mb-3">
+            <div class="um-panel card border-0 mb-4">
                 <div class="card-body">
-                    <h2 class="h6">Upload material</h2>
+                    <div class="um-section-title">Upload material</div>
                     <form asp-action="UploadMaterial" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="CourseId" value="@Model.CourseId" />
                         <div class="mb-2">
-                            <label class="form-label">Title</label>
-                            <input type="text" name="Title" class="form-control" required maxlength="200" />
+                            <label class="form-label small fw-semibold">Title</label>
+                            <div class="um-input-group">
+                                <span class="um-input-ico"><i class="bi bi-card-heading"></i></span>
+                                <input type="text" name="Title" class="form-control" required maxlength="200" placeholder="e.g. Week 3 – Sorting Algorithms" />
+                            </div>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label">File</label>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">File</label>
                             <input type="file" name="File" class="form-control" required />
                         </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-cloud-upload me-1"></i>Upload material</button>
                     </form>
                 </div>
             </div>
         }
-        <div class="card border-0 shadow-sm">
+
+        <div class="um-panel card border-0">
             <div class="card-body">
-                <h2 class="h6">Materials</h2>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0">Course materials</div>
+                    <span class="text-muted small"><i class="bi bi-archive me-1"></i>@Model.Materials.Count file@(Model.Materials.Count == 1 ? "" : "s")</span>
+                </div>
                 @if (!Model.Materials.Any())
                 {
-                    <p class="text-muted small mb-0">No materials uploaded.</p>
+                    <div class="um-empty">
+                        <i class="bi bi-folder2-open"></i>
+                        <div class="um-empty-title">No materials yet</div>
+                        <div class="small">@(isStudent ? "Materials posted by the lecturer will appear here." : "Upload your first lesson resource above.")</div>
+                    </div>
                 }
                 else
                 {
                     <ul class="list-group list-group-flush">
-                    @foreach (var m in Model.Materials.OrderByDescending(x => x.UploadedAtUtc))
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-semibold">@m.Title</div>
-                                <div class="small text-muted">@m.UploadedBy.FullName &middot; @m.UploadedAtUtc.ToLocalTime().ToString("g")</div>
-                            </div>
-                            <a class="btn btn-sm btn-outline-primary" asp-controller="Submissions" asp-action="CourseMaterialFile" asp-route-id="@m.CourseMaterialId">Download</a>
-                        </li>
-                    }
+                        @foreach (var m in Model.Materials.OrderByDescending(x => x.UploadedAtUtc))
+                        {
+                            var sizeKb = m.FileSizeBytes > 0 ? Math.Max(1, m.FileSizeBytes / 1024) : 0;
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 gap-2">
+                                <div class="d-flex gap-2 align-items-start min-w-0">
+                                    <span class="um-cal-ico kind-material"><i class="bi bi-file-earmark-text"></i></span>
+                                    <div class="min-w-0">
+                                        <div class="fw-semibold text-break">@m.Title</div>
+                                        <div class="small text-muted"><i class="bi bi-person me-1"></i>@m.UploadedBy.FullName · <i class="bi bi-clock ms-1 me-1"></i>@m.UploadedAtUtc.ToLocalTime().ToString("MMM d, yyyy")@(sizeKb > 0 ? $" · {sizeKb} KB" : "")</div>
+                                    </div>
+                                </div>
+                                <a class="btn btn-sm btn-outline-primary rounded-pill flex-shrink-0" asp-controller="Submissions" asp-action="CourseMaterialFile" asp-route-id="@m.CourseMaterialId"><i class="bi bi-download me-1"></i>Open</a>
+                            </li>
+                        }
                     </ul>
                 }
             </div>

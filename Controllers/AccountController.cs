@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace AD_COURSEWORK_2.Controllers;
 
@@ -76,20 +75,18 @@ public class AccountController : Controller
         await TrySendEmailAsync(
             user.Email!,
             "Welcome to UniManage",
-            $"""
-            <p>Hello {HtmlEncoder.Default.Encode(user.FullName)},</p>
-            <p>Your account was created successfully as <strong>{HtmlEncoder.Default.Encode(model.Role)}</strong>.</p>
-            <p>You can now access your dashboard and start using UniManage.</p>
-            <p>Thanks,<br/>UniManage LMS</p>
-            """);
+            EmailTemplates.BuildWelcomeEmail(user.FullName, model.Role));
         TempData["Success"] = "Registration successful. Welcome to UniManage.";
         return RedirectToAction("Index", "Dashboard");
     }
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Login(string? returnUrl = null)
+    public IActionResult Login(string? returnUrl = null, string? googleError = null)
     {
+        if (!string.IsNullOrWhiteSpace(googleError))
+            TempData["Error"] = "Google sign-in was cancelled or failed. Please try again.";
+
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
@@ -116,8 +113,12 @@ public class AccountController : Controller
         }
 
         if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+        {
+            await SendLoginNotificationAsync(user);
             return Redirect(model.ReturnUrl);
+        }
 
+        await SendLoginNotificationAsync(user);
         TempData["Success"] = "Signed in successfully.";
         return RedirectToAction("Index", "Dashboard");
     }
@@ -194,8 +195,12 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
         if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            await SendLoginNotificationAsync(user);
             return Redirect(returnUrl);
+        }
 
+        await SendLoginNotificationAsync(user);
         TempData["Success"] = "Signed in with Google.";
         return RedirectToAction("Index", "Dashboard");
     }
@@ -254,12 +259,7 @@ public class AccountController : Controller
                 await TrySendEmailAsync(
                     user.Email!,
                     "Reset your UniManage password",
-                    $"""
-                    <p>Hello {HtmlEncoder.Default.Encode(user.FullName)},</p>
-                    <p>Click the link below to reset your password:</p>
-                    <p><a href="{HtmlEncoder.Default.Encode(callbackUrl)}">Reset password</a></p>
-                    <p>If you did not request this, you can ignore this email.</p>
-                    """);
+                    EmailTemplates.BuildPasswordResetEmail(user.FullName, callbackUrl));
             }
         }
 
@@ -318,5 +318,19 @@ public class AccountController : Controller
         {
             _logger.LogError(ex, "Email send failed for {Email} ({Subject})", toEmail, subject);
         }
+    }
+
+    private Task SendLoginNotificationAsync(ApplicationUser user)
+    {
+        if (string.IsNullOrWhiteSpace(user.Email))
+            return Task.CompletedTask;
+
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+        var userAgent = Request.Headers.UserAgent.ToString();
+
+        return TrySendEmailAsync(
+            user.Email,
+            "UniManage login alert",
+            EmailTemplates.BuildLoginAlertEmail(user.FullName, DateTime.Now, ip, userAgent));
     }
 }
