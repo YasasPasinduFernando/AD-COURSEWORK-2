@@ -14,15 +14,21 @@ public class CoursesController : Controller
     private readonly ApplicationDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IWebHostEnvironment _env;
+    private readonly IEmailService _emailService;
+    private readonly ILogger<CoursesController> _logger;
 
     public CoursesController(
         ApplicationDbContext db,
         UserManager<ApplicationUser> userManager,
-        IWebHostEnvironment env)
+        IWebHostEnvironment env,
+        IEmailService emailService,
+        ILogger<CoursesController> logger)
     {
         _db = db;
         _userManager = userManager;
         _env = env;
+        _emailService = emailService;
+        _logger = logger;
     }
 
     [Authorize(Roles = AppRoles.Administrator)]
@@ -261,6 +267,33 @@ public class CoursesController : Controller
             UploadedById = userId!
         });
         await _db.SaveChangesAsync();
+
+        var students = await _db.Enrollments
+            .Where(e => e.CourseId == model.CourseId)
+            .Select(e => e.Student)
+            .Where(s => s.Email != null)
+            .ToListAsync();
+
+        foreach (var student in students)
+        {
+            try
+            {
+                await _emailService.SendAsync(
+                    student.Email!,
+                    $"New lesson uploaded - {course.Code}",
+                    $"""
+                    <p>Hello {System.Text.Encodings.Web.HtmlEncoder.Default.Encode(student.FullName)},</p>
+                    <p>A new lesson/content was uploaded to <strong>{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(course.Code)}</strong>.</p>
+                    <p>Title: {System.Text.Encodings.Web.HtmlEncoder.Default.Encode(model.Title)}</p>
+                    <p>Please log in to UniManage and check your course materials.</p>
+                    """);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Material upload email failed for {Email}", student.Email);
+            }
+        }
+
         TempData["Success"] = "Material uploaded.";
         return RedirectToAction(nameof(Details), new { id = model.CourseId });
     }
