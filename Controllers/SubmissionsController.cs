@@ -279,7 +279,7 @@ public class SubmissionsController : Controller
         if (sub.Assignment.Course.LecturerId != userId)
             return Forbid();
 
-        if (model.Grade < 0 || model.Grade > sub.Assignment.MaxPoints)
+        if (!SubmissionGradingRules.IsValidGrade(model.Grade, sub.Assignment.MaxPoints))
             ModelState.AddModelError(nameof(model.Grade), $"Grade must be between 0 and {sub.Assignment.MaxPoints}.");
 
         if (!ModelState.IsValid)
