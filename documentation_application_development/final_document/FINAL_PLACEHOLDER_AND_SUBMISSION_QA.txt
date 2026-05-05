@@ -1,0 +1,329 @@
+FINAL PLACEHOLDER AND SUBMISSION QA REPORT
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+
+Cleanup pass run date: 5 May 2026
+Source files cleaned in this pass:
+- documentation_application_development/Main_Application_Development_Report.md
+- documentation_application_development/Expanded_Individual_Contribution.md
+- documentation_application_development/User_Manual_Application_Development.md
+Word/PDF rebuilt:
+- documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx
+- documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.pdf
+
+
+==================================================================
+SUMMARY OF CHANGES IN THIS CLEANUP PASS
+==================================================================
+
+1. Title page placeholders updated.
+   - "Lecturer / Module Leader: [INSERT IF REQUIRED]" replaced with "Lecturer / Module Leader: [LECTURER NAME TO BE CONFIRMED]". The bracket flag is intentionally retained as a clear signal that the field is still draft. The name has not been provided to the author at the time of writing; the marker should replace this with the lecturer or module leader name before final submission.
+   - "Submission Date: [INSERT DATE]" replaced with "Submission Date: 5 May 2026". This is the date on which the cleanup pass was carried out and is being used as a draft submission date. The marker should re-confirm the actual final submission date and update this line if it differs.
+
+2. References access dates updated.
+   - All 10 occurrences of "[Accessed [INSERT DATE]]" in Chapter 23 (References) replaced with "[Accessed 5 May 2026]". The marker can update the access date if the references are reconsulted closer to the final submission.
+
+3. Front matter restructured for Word fields.
+   - Removed the sentence "The Word version of this report should generate a Table of Contents from the heading structure. The chapters listed below match the body of the report." per the cleanup brief. (This guidance is preserved in the QA file; see the Final Manual Steps section below.)
+   - Replaced the Table of Contents body with a real Word TOC field placeholder (`<<WORD_TOC>>` in the Markdown, expanded to a proper TOC field in the Word document).
+   - Replaced the textual List of Figures with a real Word Table of Figures field placeholder (`<<WORD_LIST_OF_FIGURES>>`, switch `\c "Figure"`).
+   - Replaced the textual List of Tables with a real Word Table of Tables field placeholder (`<<WORD_LIST_OF_TABLES>>`, switch `\c "Table"`).
+   - When the Word document is opened, pressing Ctrl+A and then F9 will populate all three fields automatically.
+
+4. Diagram body placeholders converted.
+   - All six body-text "[DIAGRAM EXPORT REQUIRED] Figure X: ..." lines in Sections 6.1 to 6.6 converted to the standard figure-insertion pattern:
+       Figure X: [INSERT EXPORTED DIAGRAM IMAGE HERE]
+       This diagram shows ...
+   - The six diagrams now have a centred bold image placeholder line followed by a centred italic 10 pt caption explaining what the diagram shows. The caption text describes the actual content of each diagram and references the source `.mmd` file.
+
+5. Screenshot body placeholders converted.
+   - All "[SCREENSHOT REQUIRED] Figure X: ..." body callouts in Chapter 8, Chapter 9, Chapter 12, and Appendix E (main report) and Sections 4 to 12 (user manual) converted to the standard figure-insertion pattern:
+       Figure X: [INSERT SCREENSHOT HERE]
+       This screenshot shows ...
+   - User manual figures (UM1 to UM18) follow the same format and use "This screenshot shows ..." captions consistently. No "should show" wording remains in any caption.
+   - The optional responsive design screenshot in Section 9.5 has been retained as a labelled optional figure (`Figure 9c (optional)`).
+   - The Appendix H tracking marker has been softened from "[SCREENSHOT REQUIRED] for each item above." to a clearer narrative sentence that still flags the manual action.
+   - The Appendix G tracking marker has been softened to a clearer narrative sentence.
+   - The Appendix C action column has been cleaned up to remove the [DIAGRAM EXPORT REQUIRED] prefix; the column now describes the action plainly ("Export to PNG and PDF, insert as Figure X.").
+
+6. Status-flag placeholders deliberately retained.
+   - Status flags such as [SCREENSHOT REQUIRED], [VERIFY], and [NEEDS CONFIRMATION] inside evidence and status tables have been left as honest tracking markers (Test Plan T1 to T31, Appendix B status column, IC2 row in the contribution report). They form the audit trail for outstanding manual evidence work. They do not appear in body callouts.
+
+7. Honest limitations preserved and clearly located.
+   - The dedicated administrator user-management screen, automated tests, hosted deployment, accessibility audit, audit log retention, individual approval evidence file, and SQL Server / LocalDB equivalence are all honestly retained as limitations. They appear in the Limitations chapter (Chapter 18), Future Improvements chapter (Chapter 21), the Evaluation chapter (Chapter 16), and the in-context narrative where the absence is relevant. None of these limitations were removed.
+
+8. Style verification.
+   - 0 em or en dashes across all three Markdown files.
+   - 0 occurrences of "we", "We", "our", or "Our" across all three Markdown files.
+   - "the author" voice is consistent in body chapters of the main report and throughout the contribution report.
+   - First-person voice is limited to Chapter 19 (Reflection) of the main report.
+   - All user manual figure captions begin with "This screenshot shows ...".
+   - No "should show" appears in any figure caption.
+   - No group blame, no group conflict wording, no names of group members, no work-splitting tables, and no group contribution tables.
+   - All approved individual submission wording remains professional and neutral.
+
+9. DOCX and PDF rebuilt.
+   - DOCX rebuilt from the cleaned Markdown using `documentation_application_development/conversion/convert_to_docx_expanded.py`. Word fields for TOC, List of Figures, and List of Tables inserted directly into the DOCX via OXML field instructions.
+   - PDF rebuilt using `documentation_application_development/conversion/export_pdf_via_word.ps1` driving Microsoft Word through PowerShell COM. The Tables of Contents collection was updated successfully (one Table of Contents). The List of Figures and List of Tables fields are present as Word fields and will populate when the marker presses Ctrl+A and F9 in Word.
+
+
+==================================================================
+FILE STATUS AFTER CLEANUP
+==================================================================
+
+| File | Path | Size | Last Modified | Status |
+|---|---|---|---|---|
+| Main report (Markdown) | documentation_application_development/Main_Application_Development_Report.md | varies | 5 May 2026 | Cleaned |
+| Individual contribution (Markdown) | documentation_application_development/Expanded_Individual_Contribution.md | varies | unchanged | No changes required (already clean) |
+| User manual (Markdown) | documentation_application_development/User_Manual_Application_Development.md | varies | 5 May 2026 | Cleaned |
+| Word document (DOCX) | documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx | 132,556 bytes | 5 May 2026 | Rebuilt |
+| PDF document | documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.pdf | 960,290 bytes | 5 May 2026 | Rebuilt; PDF header valid (%PDF-1.7) and EOF valid |
+
+Document statistics (Word ComputeStatistics):
+- Page count: 112 (will increase by approximately 1 to 3 pages after the final TOC, LoF, and LoT field updates expand inside Word).
+- Word count: 31,667.
+
+
+==================================================================
+1. REMAINING TITLE PAGE PLACEHOLDERS
+==================================================================
+
+| Placeholder | Where | Required Action | Priority |
+|---|---|---|---|
+| [LECTURER NAME TO BE CONFIRMED] | Title page, "Lecturer / Module Leader" line | Replace with the actual lecturer or module leader name if the marking process requires it. If the institution does not require a name in this field, the line can be deleted. | HIGH if required; LOW otherwise |
+| Submission Date: 5 May 2026 | Title page, "Submission Date" line | Confirm that 5 May 2026 is the actual final submission date. If the actual submission is on a different date, replace the value before exporting the final PDF. | HIGH |
+| References access date: 5 May 2026 | Chapter 23, ten "[Accessed 5 May 2026]" lines | If the references are reconsulted closer to the final submission, refresh the access date. Otherwise, retain the current value. | LOW |
+
+
+==================================================================
+2. REMAINING SCREENSHOT PLACEHOLDERS
+==================================================================
+
+The body of the report no longer contains "[SCREENSHOT REQUIRED]" callouts. Each unique figure now appears as the pair:
+  Figure X: [INSERT SCREENSHOT HERE]
+  This screenshot shows ...
+
+The remaining screenshot work is therefore the capture and insertion of the actual image files. The required figures are listed below.
+
+2.1 Main report unique figures (38 figures)
+
+| Figure | Subject | Capture target | Status |
+|---|---|---|---|
+| Figure 7 | Login Screen | `Views/Account/Login.cshtml` | To capture |
+| Figure 7b | Registration Screen | `Views/Account/Register.cshtml` | To capture |
+| Figure 7c | Invalid Login Validation Message | Login form with bad input | To capture |
+| Figure 7d | Successful Role-Based Redirect | URL bar after login | To capture |
+| Figure 8 | Student Dashboard | `Views/Dashboard/Student.cshtml` | To capture |
+| Figure 8b | Student Calendar Panel | `_DashboardCalendar.cshtml` | To capture |
+| Figure 9 | Lecturer Dashboard | `Views/Dashboard/Lecturer.cshtml` | To capture |
+| Figure 9b | Pending Submissions panel | Lecturer dashboard | To capture |
+| Figure 9c (optional) | Dashboard at narrower viewport | Resized browser | Optional |
+| Figure 10 | Administrator Dashboard | `Views/Dashboard/Administrator.cshtml` | To capture |
+| Figure 10b | Audit Log Review | `Views/AuditLogs/Index.cshtml` | To capture |
+| Figure 11 | Course List | `Views/Courses/Index.cshtml` | To capture |
+| Figure 11b | Course Create Form | `Views/Courses/Create.cshtml` | To capture |
+| Figure 11c | Course Edit Form | `Views/Courses/Edit.cshtml` | To capture |
+| Figure 11d | Course Material Upload | Material upload modal | To capture |
+| Figure 12 | Course Browse | `Views/Enrollments/Browse.cshtml` | To capture |
+| Figure 12b | Successful Enrolment | Confirmation alert | To capture |
+| Figure 12c | Duplicate / Capacity Rejection | Browse view error | To capture |
+| Figure 13 | Assignment List | `Views/Assignments/Mine.cshtml` | To capture |
+| Figure 13b | Assignment Create Form | `Views/Assignments/Create.cshtml` | To capture |
+| Figure 13c | Submission Form | `Views/Submissions/Submit.cshtml` | To capture |
+| Figure 13d | Grading Form | `Views/Submissions/Grade.cshtml` | To capture |
+| Figure 13e | Graded Submission View | Student-side view | To capture |
+| Figure 14 | Reports Landing | `Views/Reports/Index.cshtml` | To capture |
+| Figure 14b | Sample Report Output | One report view | To capture |
+| Figure 14c | CSV Export Evidence | CSV file in browser | To capture |
+| Figure 14d | PDF Export Evidence | PDF file output | To capture |
+| Figure 15 | Inbox | `Views/Messages/Inbox.cshtml` | To capture |
+| Figure 15b | Message Thread | `Views/Messages/Thread.cshtml` | To capture |
+| Figure 15c | Compose Message | `Views/Messages/Compose.cshtml` | To capture |
+| Figure 15d | Meetings List | `Views/Meetings/Index.cshtml` | To capture |
+| Figure 16 | Validation Error | Any form with bad input | To capture |
+| Figure 16b | Friendly Error Page | `Views/Shared/Error.cshtml` | To capture |
+| Figure 17 | Database Table View | MySQL client | To capture |
+| Figure 17b | Migration List Output | `dotnet ef migrations list` | To capture |
+| Figure 18 | Source Repository | GitHub or other host | To capture |
+| Figure 19 | Packaged Build / Deployment | ZIP location or hosted URL | To capture |
+| Figure 20 | Visual Studio Solution Open | IDE screenshot | To capture |
+| Figure 20b | Successful Build Output | `dotnet build` console | To capture |
+
+2.2 User manual figures (18 figures)
+
+| Figure | Subject | Status |
+|---|---|---|
+| Figure UM1 | Project Opened in Visual Studio | To capture |
+| Figure UM2 | appsettings.json Database Configuration (redacted) | To capture |
+| Figure UM3 | Build Successful Output | To capture |
+| Figure UM4 | Login Page | To capture |
+| Figure UM5 | Registration Page | To capture |
+| Figure UM6 | Student Dashboard | To capture |
+| Figure UM7 | Lecturer Dashboard | To capture |
+| Figure UM8 | Administrator Dashboard | To capture |
+| Figure UM9 | Course Management | To capture |
+| Figure UM10 | Enrollment | To capture |
+| Figure UM11 | Assignment Creation | To capture |
+| Figure UM12 | Assignment Submission | To capture |
+| Figure UM13 | Grading | To capture |
+| Figure UM14 | Reports | To capture |
+| Figure UM15 | Messaging | To capture |
+| Figure UM16 | Meeting Scheduling | To capture |
+| Figure UM17 | Validation Error Example | To capture |
+| Figure UM18 | Database Evidence (redacted) | To capture |
+
+2.3 Status-flag placeholders retained as the audit trail (do not remove):
+
+- Test plan rows T1 to T31 in Chapter 15.9 each carry a "[SCREENSHOT REQUIRED]" status flag in the "Actual Result" column.
+- Appendix B status table carries a "[SCREENSHOT REQUIRED]" status flag in the "Status" column for each of the 38 unique figures.
+- The IC2 table in the individual contribution report carries one "[SCREENSHOT REQUIRED]" reference in a row that explains the figure-status convention.
+
+These status flags should be replaced individually with "Captured" or with the actual figure caption once each figure has been captured and inserted.
+
+
+==================================================================
+3. REMAINING DIAGRAM PLACEHOLDERS
+==================================================================
+
+The body of the report no longer contains "[DIAGRAM EXPORT REQUIRED]" callouts in Sections 6.1 to 6.6. Each diagram now appears as:
+  Figure X: [INSERT EXPORTED DIAGRAM IMAGE HERE]
+  This diagram shows ...
+
+The remaining work is therefore the export of the six Mermaid sources to PNG and PDF and the insertion of the exported images into the Word document.
+
+| Figure | Diagram | Source File | Action |
+|---|---|---|---|
+| Figure 1 | System Architecture | `documentation_application_development/diagrams/architecture_diagram.mmd` | Export to PNG (and PDF) at minimum 1600 px width and insert into Section 6.1. |
+| Figure 2 | Use Case | `documentation_application_development/diagrams/use_case_diagram.mmd` | Export and insert into Section 6.2. |
+| Figure 3 | Entity Relationship | `documentation_application_development/diagrams/er_diagram.mmd` | Export and insert into Section 6.3. |
+| Figure 4 | UML Class | `documentation_application_development/diagrams/class_diagram.mmd` | Export and insert into Section 6.4. |
+| Figure 5 | Application Flowchart | `documentation_application_development/diagrams/application_flowchart.mmd` | Export and insert into Section 6.5. |
+| Figure 6 | Authentication and RBAC Flow | `documentation_application_development/diagrams/security_flow_diagram.mmd` | Export and insert into Section 6.6. |
+
+Suggested tools:
+- Mermaid CLI (`mmdc`) for batch export.
+- Mermaid Live Editor (mermaid.live) for one-off export.
+- Visual Studio Code with the Markdown Preview Mermaid extension for inspection.
+
+A single residual textual reference to "[DIAGRAM EXPORT REQUIRED]" appears in Chapter 17.3 (Evidence Preparation Challenges) as part of the sentence that explains the placeholder convention. It is descriptive narrative, not an outstanding callout.
+
+
+==================================================================
+4. REMAINING EVIDENCE PLACEHOLDERS
+==================================================================
+
+| Evidence Item | Where | Required Action | Priority |
+|---|---|---|---|
+| Database table view (redacted) | Section 7.7, Appendix E (Figure 17) | Capture from MySQL client, redact personal data, save under `documentation_application_development/evidence/database/`, and insert as Figure 17. | HIGH |
+| Migration list output | Section 7.7, Appendix E (Figure 17b) | Run `dotnet ef migrations list` and capture the console output. Insert as Figure 17b. | HIGH |
+| Source repository page | Appendix E (Figure 18) | Capture the public landing page of the project's GitHub repository. Confirm public access. | HIGH |
+| Packaged build / deployment evidence | Appendix E (Figure 19) | Capture the ZIP location or the hosted deployment URL. | HIGH |
+| Visual Studio solution screenshot | Appendix E (Figure 20) | Capture the IDE with the solution loaded. | MEDIUM |
+| Build console output | Appendix E (Figure 20b) | Capture the `dotnet build --no-restore` console showing zero warnings and zero errors. Save as plain text under `documentation_application_development/evidence/build/`. | HIGH |
+| Audit log export | Appendix G | Open the Administrator audit log view and capture an audit log screenshot. Optionally export as CSV. | MEDIUM |
+| Validation message screenshots | Appendix H | Capture representative validation messages for required field, weak password, wrong credentials, duplicate course code, enrolment limit reached, file too large, and friendly error page. | MEDIUM |
+| Individual approval evidence | Appendix D | If available, attach the lecturer email or note that approved the individual completion route. Save under `documentation_application_development/evidence/approval/`. | MEDIUM |
+
+
+==================================================================
+5. MISSING REPOSITORY / BUILD / DATABASE LINKS
+==================================================================
+
+The following links must be pasted into `documentation_application_development/Source_And_Build_Links.md` before the final upload. The current detected Git remote is `https://github.com/YasasPasinduFernando/AD-COURSEWORK-2.git`, which should be confirmed as the final repository URL.
+
+| Link Type | Target Field in Source_And_Build_Links.md | Priority | Notes |
+|---|---|---|---|
+| Source repository | Project Repository | HIGH | Paste the final public or accessible repository URL. |
+| Packaged build / hosted deployment | Packaged Build / Deployment | HIGH | Paste either a ZIP download URL or a hosted deployment URL. |
+| Database script / backup | Database Script / Backup | MEDIUM | Either paste the path to an exported SQL script or a backup file, or retain the current note that EF Core migrations are the supported approach. |
+| Evidence folder | Evidence Folder | LOW | Paste a shared link if the evidence folder is hosted online; otherwise leave blank. |
+
+
+==================================================================
+6. ITEMS SAFE TO KEEP AS LIMITATIONS
+==================================================================
+
+The following items are honest limitations of the implementation. They are correctly recorded in Chapter 18 (Limitations), Chapter 21 (Future Improvements), Section 13.8 (Data Protection), and Section 16.3 (Remaining Risks). They are NOT defects of the report and should be retained.
+
+| Limitation | Where it is recorded | Reason it is a limitation |
+|---|---|---|
+| Dedicated administrator user-management screen | Section 1.1, Section 2.5, Section 8.7, Chapter 16, Chapter 18, Chapter 21 | The source code does not contain a dedicated manage-users page. The administrator can manage courses, view reports, and review the audit log, which covers most administrative needs. |
+| Automated unit and integration tests | Chapter 15, Chapter 18, Chapter 21 | A dedicated test project is not present. Manual testing of 32 cases (T1 to T32) is documented and the build verification is confirmed. Adding automated tests is a future improvement. |
+| Hosted demonstration deployment | Chapter 18, Chapter 21, Source_And_Build_Links.md | The application runs locally on `https://localhost:7212` and `http://localhost:5103`. A hosted URL is a future improvement. |
+| Packaged build (ZIP) link | Chapter 18, Source_And_Build_Links.md | The ZIP packaging is a manual step before submission. |
+| Formal accessibility audit (WCAG 2.1 AA) | Chapter 9, Chapter 18 | Basic accessibility considerations are applied (skip link, label association, semantic markup, responsive Bootstrap layout, no colour-only state). A formal audit is a future improvement. |
+| Audit log retention policy | Section 13.8 | The application records audit entries but does not document a formal retention policy. A future improvement would add a cleanup job or retention configuration. |
+| SQL Server / LocalDB equivalent script | Section 7.1, Section 7.7 | The project uses MySQL through Pomelo. A SQL Server / LocalDB equivalent is a future improvement if required by the marker. |
+| Individual approval evidence file | Appendix D | The author has the approved individual completion arrangement, but a formal email or note has not been attached at the time of writing. |
+
+
+==================================================================
+7. ITEMS THAT MUST BE FIXED BEFORE FINAL PDF
+==================================================================
+
+The following actions are required before the final PDF upload. Each action is a discrete step that the marker can perform in Word.
+
+7.1 Inside Word (after opening Application_Development_Final_Report_EXPANDED.docx)
+
+1. Press Ctrl+A, then press F9. Word will populate the Table of Contents, the List of Figures, and the List of Tables fields. (Currently, the Table of Contents has been populated by the export step; the List of Figures and List of Tables fields contain the placeholder hint until F9 is pressed.)
+2. Insert the captured screenshots above each "Figure X: [INSERT SCREENSHOT HERE]" line. Use Insert > Pictures > This Device. After insertion, delete the placeholder line so the figure number appears as the centred caption.
+3. Insert the exported diagram images above each "Figure X: [INSERT EXPORTED DIAGRAM IMAGE HERE]" line in Sections 6.1 to 6.6 in the same way.
+4. Replace the title-page lecturer name placeholder if the institution requires the field.
+5. Confirm or update the title-page submission date.
+6. Confirm or update the ten reference access dates in Chapter 23.
+7. Press Ctrl+A and F9 once more so the regenerated TOC, LoF, and LoT entries reflect the inserted figures.
+8. Run a UK English spell and grammar check (File > Options > Proofing > UK English).
+9. Save the DOCX and re-export the PDF: File > Export > Create PDF/XPS Document, or rerun `documentation_application_development/conversion/export_pdf_via_word.ps1`.
+
+7.2 Outside Word
+
+10. Capture the 38 main-report screenshots and the 18 user-manual screenshots listed in Sections 2.1 and 2.2 of this QA report. Save into `documentation_application_development/screenshots/` using consistent file names.
+11. Export the six Mermaid diagrams listed in Section 3 of this QA report. Save into `documentation_application_development/diagrams/exported/`.
+12. Capture build evidence (`dotnet build --no-restore` console output) and migration list evidence (`dotnet ef migrations list` output) into `documentation_application_development/evidence/build/` and `documentation_application_development/evidence/database/`.
+13. Capture a redacted database table view into `documentation_application_development/evidence/database/`.
+14. Paste the final repository link, packaged build link, and database evidence link into `documentation_application_development/Source_And_Build_Links.md`.
+15. Confirm that no sensitive configuration value (database password, SMTP password, Google client secret) appears in any screenshot or in the body of the report.
+
+7.3 Final visual inspection
+
+16. Open the final PDF and inspect every page for the following issues:
+    - Any figure or table that runs off the right margin.
+    - Any figure caption that has been orphaned at the bottom of a page (the figure on the previous page).
+    - Any heading that is the last line on a page (it should be moved to the next page).
+    - Any oversized image that needs to be resized.
+    - Any remaining placeholder lines such as "Figure X: [INSERT ...]" that have not been replaced with images.
+17. Confirm that the page count is 90+ pages after image insertion (the current count is 112 pages and will increase slightly).
+
+
+==================================================================
+INDIVIDUAL WORDING CHECK (FINAL)
+==================================================================
+
+PASS  Approved individual submission wording is consistent across all three documents.
+- Title page: "Submission Type: Approved individual submission".
+- Declaration / Academic Integrity Note: confirms personal authorship and approved individual completion.
+- Acknowledgement: thanks the lecturer and module team neutrally; no other student is named.
+- Abstract: includes the approved individual submission statement.
+- Chapter 1 Section 1.3: dedicated paragraph for the approved individual submission context.
+- Individual contribution report: opens with the approved submission context and uses the mandated sentence "Following approval to complete the coursework individually, the author took responsibility for the final implementation, testing, documentation, and submission preparation." in Section 3 and again in Section 26.
+- User manual: Section 1 includes the same approved individual submission wording.
+- Conclusion (Chapter 22): closes with a brief restatement.
+
+PASS  Voice consistency.
+- "the author" is used in all body chapters of the main report.
+- "the author" is used throughout the contribution report.
+- First-person voice is limited to Chapter 19 (Reflection) of the main report.
+- 0 occurrences of "we", "We", "our", or "Our" across all three Markdown files.
+
+PASS  No group blame, no group conflict wording, no names of group members, and no task allocation tables.
+
+PASS  No em dashes or strange symbols.
+- 0 em or en dashes (verified by Unicode regex \u2013 / \u2014).
+- No curly quotes, no decorative bullets, no emoji.
+
+PASS  Approved individual submission wording remains professional and neutral throughout.
+
+End of final placeholder and submission QA report.

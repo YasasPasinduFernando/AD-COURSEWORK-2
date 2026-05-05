@@ -1,0 +1,304 @@
+EXPANDED WORD EXPORT QA REPORT
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+
+Source Markdown files combined into the export:
+- documentation_application_development/Main_Application_Development_Report.md
+- documentation_application_development/Expanded_Individual_Contribution.md
+- documentation_application_development/User_Manual_Application_Development.md
+
+Conversion tooling used (this run):
+- python-docx 1.2.0 (DOCX assembly)
+- Microsoft Word (Office 16) via PowerShell COM (PDF export and statistics)
+
+Helper scripts used (kept in source for repeatable export):
+- documentation_application_development/conversion/convert_to_docx_expanded.py
+- documentation_application_development/conversion/export_pdf_via_word.ps1
+- documentation_application_development/conversion/count_placeholders.ps1
+
+
+==================================================================
+1. WORD FILE CREATED
+==================================================================
+
+Word file: CREATED
+- Path: documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx
+- Size: 132,072 bytes (approximately 129 KB)
+- Last modified: 2026-05-05 23:02
+- Generation method: python-docx 1.2.0 with the following formatting settings applied:
+  * A4 page size (8.27 x 11.69 inches), 1 inch margins on all sides
+  * Times New Roman set on Normal, Heading 1, Heading 2, Heading 3, List Bullet, List Number styles (ASCII, hAnsi, cs, eastAsia)
+  * Heading 1: 16 pt, bold, black
+  * Heading 2: 14 pt, bold, black
+  * Heading 3: 12 pt, bold, black
+  * Body text: 12 pt, justified, 1.5 line spacing, 6 pt space after
+  * Table text: 10 pt, header row bold, table grid style, centred
+  * Figure and table captions: 10 pt italic centred, single line spacing, detected from "Figure X:" and "Table X:" patterns including those marked [SCREENSHOT REQUIRED] and [DIAGRAM EXPORT REQUIRED]
+  * Code blocks: Consolas 10 pt, single line spacing
+  * Page break inserted between the main report, the contribution report, and the user manual
+  * Newlines from the source Markdown preserved
+
+
+==================================================================
+2. PDF FILE CREATED
+==================================================================
+
+PDF file: CREATED
+- Path: documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.pdf
+- Size: 954,750 bytes (approximately 932 KB)
+- Last modified: 2026-05-05 23:03
+- Generation method: Microsoft Word (Office 16) was driven through PowerShell COM (Word.Application). The DOCX was opened, all Tables of Contents and field codes were updated, the document was repaginated, statistics were collected, and the file was saved as PDF using SaveAs2 with the wdFormatPDF format.
+- Note: PDF export was successful in this run because Microsoft Word is installed locally. If a future environment does not have Word, pandoc with a LaTeX backend, or LibreOffice with `soffice --headless --convert-to pdf`, would be reasonable alternatives. In that case, only the DOCX would be created and the marker would need to export the PDF manually using File > Save As > PDF inside Word.
+
+
+==================================================================
+3. APPROXIMATE PAGE COUNT
+==================================================================
+
+- Page count reported by Word ComputeStatistics(2): 112 pages
+- Word count reported by Word ComputeStatistics(0): 31,180 words
+- Section count: 1 main section plus page breaks between the three documents
+
+The page count comfortably exceeds the 90+ page guidance for a substantial individual technical report. The page count includes:
+- The expanded main report (Chapters 1 to 24, Appendices A to J).
+- A page break.
+- The expanded individual contribution report (Sections 1 to 26 with Tables IC1 and IC2).
+- A page break.
+- The expanded installation guide and user manual (Sections 1 to 14 with 18 figure placeholders).
+
+Final paginated counts in Word may differ slightly after the marker:
+- Inserts the captured screenshots (38 unique figures plus the 18 UM figures).
+- Inserts the six exported diagrams.
+- Updates the Table of Contents, List of Figures, and List of Tables.
+- Replaces the title page placeholders.
+
+
+==================================================================
+4. REMAINING PLACEHOLDERS
+==================================================================
+
+The placeholder counter (documentation_application_development/conversion/count_placeholders.ps1) reports the following totals across the three combined documents.
+
+| File | [SCREENSHOT REQUIRED] | [DIAGRAM EXPORT REQUIRED] | [NEEDS CONFIRMATION] | [VERIFY] | [INSERT IF REQUIRED] | [INSERT DATE] | em/en dash | "we"/"our" |
+|------|----------------------|---------------------------|----------------------|----------|----------------------|----------------|------------|-----------|
+| Main_Application_Development_Report.md | 119 | 13 | 23 | 0 | 1 | 11 | 0 | 0 |
+| Expanded_Individual_Contribution.md | 1 | 0 | 4 | 3 | 0 | 0 | 0 | 0 |
+| User_Manual_Application_Development.md | 18 | 0 | 2 | 3 | 0 | 0 | 0 | 0 |
+
+Notes on placeholder counts:
+
+- [SCREENSHOT REQUIRED] markers in the main report appear both in the body of each implementation section and again in the comprehensive list inside Appendix B; this is why the count (119) is higher than the 38 unique figures. Each unique figure must be captured once and inserted in both locations.
+- [DIAGRAM EXPORT REQUIRED] markers in the main report cover the six diagrams referenced from Sections 6.1 to 6.6 plus their cross-references inside Appendix C. The six unique diagrams must be exported once and inserted in both locations.
+- [NEEDS CONFIRMATION] markers are honestly retained where the source code does not prove a claim (for example the dedicated administrator user-management screen, automated test project, hosted deployment, accessibility audit, audit log retention).
+- [INSERT IF REQUIRED] is the lecturer / module leader placeholder on the title page of the main report. It must be replaced before final submission if the marker requires the field.
+- [INSERT DATE] occurs once on the title page (submission date) and ten times in the References chapter (one "[Accessed [INSERT DATE]]" per cited source).
+- 0 em or en dashes in any of the three combined documents (verified by Unicode regex).
+- 0 occurrences of "we", "We", "our", or "Our" in any of the three combined documents (verified by word-boundary regex).
+
+
+==================================================================
+5. REMAINING SCREENSHOTS REQUIRED
+==================================================================
+
+5.1 Main report unique screenshots (38 figures referenced in Appendix B):
+
+Figure 7  Login Screen
+Figure 7b Registration Screen
+Figure 7c Invalid Login Validation Message
+Figure 7d Successful Role-Based Redirect
+Figure 8  Student Dashboard
+Figure 8b Student Calendar Panel
+Figure 9  Lecturer Dashboard
+Figure 9b Lecturer Pending Submissions
+Figure 10  Administrator Dashboard
+Figure 10b Audit Log Review
+Figure 11  Course List
+Figure 11b Course Create Form
+Figure 11c Course Edit Form
+Figure 11d Course Material Upload
+Figure 12  Course Browse
+Figure 12b Successful Enrolment
+Figure 12c Duplicate or Capacity Rejection
+Figure 13  Assignment List
+Figure 13b Assignment Create Form
+Figure 13c Submission Form
+Figure 13d Grading Form
+Figure 13e Graded Submission View
+Figure 14  Reports Landing
+Figure 14b Sample Report Output
+Figure 14c CSV Export Evidence
+Figure 14d PDF Export Evidence
+Figure 15  Inbox
+Figure 15b Message Thread
+Figure 15c Compose Message
+Figure 15d Meetings List
+Figure 16  Validation Error
+Figure 16b Friendly Error Page
+Figure 17  Database Table View
+Figure 17b Migration List Output
+Figure 18  Source Repository Page
+Figure 19  Packaged Build / Deployment Evidence
+Figure 20  Visual Studio Solution Open
+Figure 20b Successful Build Output
+
+5.2 User manual figures (18 figures):
+
+Figure UM1  Project Opened in Visual Studio
+Figure UM2  appsettings.json Database Configuration
+Figure UM3  Build Successful Output
+Figure UM4  Login Page
+Figure UM5  Registration Page
+Figure UM6  Student Dashboard
+Figure UM7  Lecturer Dashboard
+Figure UM8  Administrator Dashboard
+Figure UM9  Course Management
+Figure UM10 Enrollment
+Figure UM11 Assignment Creation
+Figure UM12 Assignment Submission
+Figure UM13 Grading
+Figure UM14 Reports
+Figure UM15 Messaging
+Figure UM16 Meeting Scheduling
+Figure UM17 Validation Error Example
+Figure UM18 Database Evidence
+
+Capture guidance:
+- Use a 1280 x 800 or larger window for legible screenshots.
+- Sign in with the seeded users defined in `Data/DbInitializer.cs` (admin@unimanage.local / Admin123!, lecturer@unimanage.local / Lecturer123!, student@unimanage.local / Student123!).
+- Redact any personal data (email addresses, phone numbers) before insertion.
+- Save screenshots into documentation_application_development/screenshots/ using consistent file names (for example Figure_07_Login.png, Figure_UM01_Visual_Studio.png).
+- After insertion, replace the corresponding [SCREENSHOT REQUIRED] line with the actual figure caption "This screenshot shows ..." for the user manual or the existing caption for the main report.
+
+
+==================================================================
+6. REMAINING DIAGRAMS REQUIRED
+==================================================================
+
+The six Mermaid diagram sources are stored in documentation_application_development/diagrams/. They must be exported to PNG and PDF and inserted into the main report at Sections 6.1 to 6.6 and again in Appendix C.
+
+| Figure | Source File | Section in Main Report |
+|---|---|---|
+| Figure 1 | architecture_diagram.mmd | 6.1 High-Level Architecture |
+| Figure 2 | use_case_diagram.mmd | 6.2 Use Case Diagram |
+| Figure 3 | er_diagram.mmd | 6.3 Entity Relationship Diagram |
+| Figure 4 | class_diagram.mmd | 6.4 UML Class Diagram |
+| Figure 5 | application_flowchart.mmd | 6.5 Application Flowchart |
+| Figure 6 | security_flow_diagram.mmd | 6.6 Authentication and Role-Based Access Flow |
+
+Suggested export tools:
+- Mermaid CLI (mmdc) for batch PNG and PDF export.
+- Mermaid Live Editor (mermaid.live) for one-off exports.
+- Visual Studio Code with the Markdown Preview Mermaid Support extension for quick inspection.
+
+Recommended target:
+- Save into documentation_application_development/diagrams/exported/ as Figure_01_Architecture.png/.pdf, Figure_02_UseCase.png/.pdf, etc.
+- Use a width of at least 1600 px for clarity.
+
+
+==================================================================
+7. REMAINING LINKS REQUIRED
+==================================================================
+
+The following links must be pasted into documentation_application_development/Source_And_Build_Links.md before the final submission. The current detected Git remote is `https://github.com/YasasPasinduFernando/AD-COURSEWORK-2.git`, but this should be confirmed.
+
+| Link Type | Target Field | Required Value |
+|---|---|---|
+| Source repository | "Project Repository" | Final repository URL (public or accessible link). |
+| Packaged build / hosted deployment | "Packaged Build / Deployment" | Either a ZIP download link or a hosted deployment URL. |
+| Database script / backup | "Database Script / Backup" | Path to an exported SQL script, a backup file, or a database evidence link. Currently the EF Core migrations are recorded; an exported SQL script remains [NEEDS CONFIRMATION]. |
+| Evidence folder | "Evidence Folder" | Optional shared link to the evidence folder if hosted online. |
+
+Title page placeholders (one occurrence each on the title page of the main report):
+
+| Placeholder | Where | Required Action |
+|---|---|---|
+| [INSERT IF REQUIRED] | Title page, "Lecturer / Module Leader" line | Replace with lecturer or module leader name if required. |
+| [INSERT DATE] | Title page, "Submission Date" line | Replace with the actual submission date. |
+
+References chapter placeholders (ten occurrences in Chapter 23 of the main report):
+
+| Placeholder | Where | Required Action |
+|---|---|---|
+| [Accessed [INSERT DATE]] | References list (one per cited source) | Replace each with the date the source was last consulted. |
+
+
+==================================================================
+8. INDIVIDUAL WORDING CHECK
+==================================================================
+
+The expanded Word document and the three source Markdown files have been verified against the approved individual submission wording rules. The result of the wording check is:
+
+PASS  Approved individual submission wording is present and consistent.
+- Title page: "Submission Type: Approved individual submission".
+- Declaration / Academic Integrity Note: confirms personal authorship and approved individual completion.
+- Acknowledgement: thanks the lecturer and module team for guidance and approval; no other student is named.
+- Abstract: includes "is written and submitted as an approved individual submission".
+- Chapter 1 Section 1.3: dedicated paragraph for the approved individual submission context.
+- Individual contribution report: opens with the approved submission context, uses the mandated sentence "Following approval to complete the coursework individually, the author took responsibility for the final implementation, testing, documentation, and submission preparation." in Sections 3 and 26.
+- User manual: Section 1 includes the same approved individual submission wording.
+- Conclusion (Chapter 22): closes with a brief restatement that the submission represents the author's own work under the approved individual route.
+
+PASS  Voice consistency.
+- "the author" used throughout body chapters of the main report.
+- "the author" used throughout the contribution report.
+- First-person voice is limited to Chapter 19 (Reflection) of the main report, which is the section where personal voice is appropriate.
+- 0 occurrences of "we", "We", "our", or "Our" in any of the three combined documents (verified by word-boundary regex).
+
+PASS  No group blame, no group conflict, no group contribution table, no work-splitting table.
+- No other students are named, blamed, or compared.
+- No emotional or accusatory language is used.
+
+PASS  Style rules.
+- 0 em or en dashes (verified by Unicode regex \u2013/\u2014).
+- No curly quotes, no decorative bullets, no emoji.
+- UK English spelling used (organise, behaviour, recognise, programme).
+- All user manual screenshot captions begin with "This screenshot shows ...".
+- The phrase "should show" is not used in any screenshot caption.
+
+
+==================================================================
+9. FINAL MANUAL STEPS BEFORE SUBMISSION
+==================================================================
+
+The following steps must be completed in Word before uploading the final PDF.
+
+HIGH PRIORITY (required for a complete submission)
+
+1. Capture the 38 unique figures listed in Section 5.1 (main report) and the 18 figures listed in Section 5.2 (user manual). Save them into documentation_application_development/screenshots/.
+2. Export the six Mermaid diagrams listed in Section 6 to PNG (at least 1600 px wide) and PDF. Save into documentation_application_development/diagrams/exported/.
+3. Open the regenerated DOCX (`Application_Development_Final_Report_EXPANDED.docx`) in Microsoft Word.
+4. For each [SCREENSHOT REQUIRED] line, insert the captured image directly above the line, then delete the placeholder line. Use the Insert > Pictures menu to keep the image in the body text. Confirm that the figure caption (line directly below the image) renders as 10 pt italic centred text.
+5. For each [DIAGRAM EXPORT REQUIRED] line in Sections 6.1 to 6.6, insert the corresponding diagram image and remove the placeholder line in the same way.
+6. Replace the [INSERT IF REQUIRED] and [INSERT DATE] placeholders on the title page.
+7. Replace the ten [Accessed [INSERT DATE]] placeholders in Chapter 23 (References) with the actual date the source was consulted.
+8. Paste the final repository link, packaged build link, and database evidence link into documentation_application_development/Source_And_Build_Links.md.
+9. Insert a Word "Table of Contents" field at the start of the report (Insert > Reference > Table of Contents). After insertion, right-click and choose Update Field > Update Entire Table.
+10. Insert a Word "Table of Figures" field for the List of Figures. Right-click and Update Field > Update Entire Table after every change.
+11. Insert a Word "Table of Tables" field (or a separate Table of Figures filtered on "Table") for the List of Tables. Right-click and Update Field after every change.
+12. Press Ctrl+A and then F9 to update all fields one final time.
+13. Run a UK English spell and grammar check (File > Options > Proofing > UK English).
+14. Save the DOCX. Re-export to PDF using File > Export > Create PDF/XPS Document, or rerun the helper script `documentation_application_development/conversion/export_pdf_via_word.ps1`.
+
+MEDIUM PRIORITY (recommended for a polished submission)
+
+15. Visually inspect every page of the final PDF. Confirm that no figure straddles a page break, no table runs off the right margin, and no caption is orphaned at the bottom of a page.
+16. Check that section headings appear in the Navigation Pane (View > Navigation Pane) so that the marker can use the document outline.
+17. Confirm that the seeded demonstration credentials in Section 6 of the user manual still match `Data/DbInitializer.cs` (admin@unimanage.local / Admin123!, lecturer@unimanage.local / Lecturer123!, student@unimanage.local / Student123!).
+18. Confirm that the final DOCX and PDF retain the correct file names exactly as listed below for upload.
+
+LOW PRIORITY (optional)
+
+19. Optionally embed the user manual figures into a redacted appendix at the end of the user manual section.
+20. Optionally add a final cover page with the centre logo if required by the marker.
+21. Optionally export the rewritten contribution report as a separate DOCX if the marker prefers the supporting document as a standalone file.
+
+Final upload artefacts:
+
+- documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx
+- documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.pdf
+- The supporting documents folder (documentation_application_development/) including diagrams/, screenshots/, evidence/, and Source_And_Build_Links.md.
+
+End of expanded Word export QA report.

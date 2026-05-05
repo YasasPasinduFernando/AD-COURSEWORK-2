@@ -1,0 +1,415 @@
+MAIN REPORT EXPANSION SUMMARY
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+Source File Updated: documentation_application_development/Main_Application_Development_Report.md
+
+OVERALL EXPANSION STATISTICS
+
+- Final word count of the rewritten main report: approximately 24,270 words.
+- Number of numbered chapters: 23 (front matter plus chapters 1 to 23) plus 10 appendices (A to J).
+- Number of tables in the main report: 22 numbered tables (Table 1 to Table 22).
+- Number of figures referenced from the body text: 45 (Figure 1 to Figure 6 diagrams plus Figure 7 to Figure 20b screenshots).
+- Style verification: zero em dashes, zero en dashes, no strange symbols, UK English, "the author" voice, no group blame, no group contribution table, no work-splitting table.
+- Build evidence verification carried over from the previous build run: dotnet build --no-restore returned 0 warnings and 0 errors.
+
+
+==================================================================
+1. CHAPTERS EXPANDED
+==================================================================
+
+The full main report was rewritten in a single consistent pass. Every chapter listed in the documentation expansion plan has been expanded with academic explanation, marker-friendly tables, source-code references, and evidence placeholders. The previous short version (approximately 23 numbered sections of mostly one-paragraph length) has been replaced.
+
+Front Matter
+- Title Page: extended to include technology stack, centre, lecturer placeholder, submission date placeholder, and submission type ("Approved individual submission").
+- Declaration / Academic Integrity Note: rewritten as a short evidence-based declaration that explicitly references approved individual submission and the use of [NEEDS CONFIRMATION] markers.
+- Acknowledgement: rewritten in a neutral, factual tone naming Microsoft Learn, EF Core, Pomelo, QuestPDF, and Bootstrap as influences.
+- Abstract: rewritten as a 200-300 word academic abstract covering technology, source-code evidence, build verification, and submission context.
+- Table of Contents: instruction note for Word generation retained.
+- List of Figures: extended from 19 to 45 figure entries to match the screenshot expansion plan.
+- List of Tables: extended from 9 to 22 tables.
+- Abbreviations and Glossary: extended with HSTS, CSRF, CDN, ICS, OWASP, UCMS, UTC, plus a glossary block for ApplicationUser, ApplicationDbContext, DbInitializer, AppRoles, ViewModel, and Razor view.
+
+Chapter 1: Introduction (5 sub-sections)
+- 1.1 Background and Coursework Context
+- 1.2 Purpose of the Report
+- 1.3 Approved Individual Submission Context
+- 1.4 Scope of the UniManage Application
+- 1.5 Report Structure
+Depth target: 800+ words. Achieved: well above the target.
+
+Chapter 2: Problem Description and Case Study Analysis (6 sub-sections)
+- 2.1 Academic Administration Problem
+- 2.2 Stakeholder Analysis (with Table 10)
+- 2.3 Problems Faced by Students
+- 2.4 Problems Faced by Lecturers
+- 2.5 Problems Faced by Administrators
+- 2.6 Success Criteria for the Solution
+Depth target: 800+ words. Achieved: well above the target.
+
+Chapter 3: Aim, Objectives and Functional Scope (5 sub-sections)
+- 3.1 Aim
+- 3.2 Objectives (O1-O11)
+- 3.3 Functional Scope (Table 11, 18 features with source-code evidence)
+- 3.4 Non-Functional Scope (Table 12, eight quality attributes)
+- 3.5 Assumptions and Constraints (Table 13)
+
+Chapter 4: Research and Background (8 sub-sections)
+- 4.1 ASP.NET Core MVC
+- 4.2 C# and .NET
+- 4.3 Razor Views and Tag Helpers
+- 4.4 Entity Framework Core and MySQL
+- 4.5 ASP.NET Core Identity and Role-Based Access Control
+- 4.6 Bootstrap and Web User Interface Design
+- 4.7 Software Engineering Principles Applied
+- 4.8 Security and Data Protection Background
+Depth target: 1,200+ words. Achieved: well above the target.
+
+Chapter 5: Requirement Analysis (5 sub-sections)
+- 5.1 Requirement Derivation
+- 5.2 Functional Requirements (Table 1, 30 requirements with source-code evidence)
+- 5.3 Non-Functional Requirements (Table 2, 10 requirements)
+- 5.4 Use Case Summary (Table 14)
+- 5.5 Requirement Traceability Summary (Table 15)
+
+Chapter 6: System Architecture and Design (7 sub-sections)
+- 6.1 High-Level Architecture (Figure 1)
+- 6.2 Use Case Diagram (Figure 2)
+- 6.3 Entity Relationship Diagram (Figure 3)
+- 6.4 UML Class Diagram (Figure 4)
+- 6.5 Application Flowchart (Figure 5)
+- 6.6 Authentication and Role-Based Access Flow (Figure 6)
+- 6.7 Design Decisions and Rationale
+
+Chapter 7: Database Design (7 sub-sections)
+- 7.1 Database Technology
+- 7.2 ApplicationDbContext
+- 7.3 Main Entities (Table 3)
+- 7.4 Entity Relationships
+- 7.5 Keys, Constraints and Validation Rules
+- 7.6 Migrations and Seed Data
+- 7.7 Database Evidence Required
+Depth target: 1,000+ words. Achieved: target met.
+
+Chapter 8: Implementation (19 sub-sections, 8.1 to 8.19)
+- 8.1 Project Structure
+- 8.2 Program.cs and Startup Configuration (with Listing 8.1 rate limiter snippet)
+- 8.3 User Registration and Login
+- 8.4 Role-Based Access Control
+- 8.5 Student Dashboard
+- 8.6 Lecturer Dashboard
+- 8.7 Administrator Dashboard
+- 8.8 Course Management
+- 8.9 Enrollment System
+- 8.10 Assignment Management
+- 8.11 Submission and Grading
+- 8.12 Reporting and Analytics
+- 8.13 Communication Module
+- 8.14 Meeting Scheduling
+- 8.15 Course Materials and File Uploads
+- 8.16 Profile and Password Management
+- 8.17 Audit Logging
+- 8.18 Infrastructure Services
+- 8.19 UI Layout and Static Assets
+Depth target: 4,000+ words across sub-sections. Achieved: well above the target.
+
+Chapter 9: User Interface and Usability (7 sub-sections)
+- 9.1 Design Language
+- 9.2 Layout Structure
+- 9.3 Role-Aware Navigation
+- 9.4 Forms and Validation Feedback
+- 9.5 Responsive Design
+- 9.6 Accessibility Considerations
+- 9.7 Error and Confirmation Messages
+
+Chapter 10: Detailed Description of Classes, Properties and Methods (6 sub-sections)
+- 10.1 Main Controllers and Responsibilities (Table 4)
+- 10.2 Main Models and Properties (Table 5)
+- 10.3 Main Methods and Purpose (Table 6)
+- 10.4 Controller Layer Explanation
+- 10.5 Model and ViewModel Layer Explanation
+- 10.6 Infrastructure and Service Layer Explanation
+
+Chapter 11: Logical Solution Explanation (9 sub-sections)
+- 11.1 Overall Request-to-Response Flow
+- 11.2 Registration and Login Logic
+- 11.3 Dashboard Logic
+- 11.4 Course Management Logic
+- 11.5 Enrollment Validation Logic
+- 11.6 Assignment, Submission and Grading Logic
+- 11.7 Reporting Logic
+- 11.8 Communication Logic
+- 11.9 Security and Validation Logic
+Depth target: 1,000+ words. Achieved: target met.
+
+Chapter 12: Validation, Exception Handling and Error Management (8 sub-sections)
+- 12.1 Data Annotation Validation (Table 16, 12 forms with rules)
+- 12.2 ModelState Handling
+- 12.3 Server-Side Ownership Checks
+- 12.4 File Upload Validation
+- 12.5 Anti-Forgery Protection
+- 12.6 Exception Handling Middleware
+- 12.7 Friendly Error Pages
+- 12.8 Audit and Error Evidence
+
+Chapter 13: Security and Data Protection (8 sub-sections)
+- 13.1 Authentication
+- 13.2 Authorisation
+- 13.3 Password Handling
+- 13.4 Role-Based Access Control
+- 13.5 Protection Against Common Web Risks (Table 17, 13 risks mapped to controls)
+- 13.6 File Security
+- 13.7 Audit Logging and Traceability (Table 18, 10 categories)
+- 13.8 Data Protection Considerations
+Depth target: 1,200+ words. Achieved: target met.
+
+Chapter 14: Programming Style and Maintainability (7 sub-sections)
+- 14.1 Naming and Readability
+- 14.2 MVC Separation of Concerns
+- 14.3 View Models and Entities
+- 14.4 Dependency Injection
+- 14.5 Asynchronous Programming
+- 14.6 Comments and Code Clarity
+- 14.7 Maintainability Improvements
+- (Table 19, 12 programming style practices)
+
+Chapter 15: Testing (9 sub-sections)
+- 15.1 Testing Strategy
+- 15.2 Test Environment
+- 15.3 Functional Testing
+- 15.4 Validation Testing
+- 15.5 Role-Based Access Testing
+- 15.6 Database Testing
+- 15.7 UI and Usability Testing
+- 15.8 Build Verification
+- 15.9 Test Plan and Results (Table 8, 32 test cases T1 to T32)
+Test case count requirement: at least 25 cases. Achieved: 32 cases.
+
+Chapter 16: Evaluation Against Coursework Brief (4 sub-sections)
+- 16.1 Marking Scheme Alignment (Table 7, 19 marking items)
+- 16.2 Strengths of the Implementation (Table 20)
+- 16.3 Remaining Risks (Table 21)
+- 16.4 Evidence Still Required
+
+Chapter 17: Challenges Faced (4 sub-sections)
+- 17.1 Technical Challenges
+- 17.2 Documentation Challenges
+- 17.3 Evidence Preparation Challenges
+- 17.4 Individual Completion Challenges
+
+Chapter 18: Limitations (5 sub-sections)
+- 18.1 Functional Limitations
+- 18.2 Testing Limitations
+- 18.3 Deployment Limitations
+- 18.4 Accessibility Limitations
+- 18.5 Evidence Limitations
+
+Chapter 19: Own Reflection on Experience (6 sub-sections)
+- 19.1 Technical Learning
+- 19.2 Professional Learning
+- 19.3 Problem-Solving Experience
+- 19.4 Impact of Approved Individual Submission
+- 19.5 Ethical and Academic Integrity Awareness
+- 19.6 Future Learning Plan
+Depth target: 900+ words. Achieved: target met.
+
+Chapter 20: Individual Contribution
+Cross-references the supporting document and summarises the approved individual submission.
+
+Chapter 21: Future Improvements (Table 22 with 12 future improvement items)
+
+Chapter 22: Conclusion
+
+Chapter 23: References (Harvard-style entries for Microsoft Learn, ASP.NET Core, Identity, EF Core, ASP.NET Core security, ASP.NET Core rate limiting, Pomelo, QuestPDF, Bootstrap, OWASP Top 10, Pressman and Maxim, Sommerville)
+
+Chapter 24: Appendices A to J
+
+
+==================================================================
+2. TABLES ADDED OR IMPROVED
+==================================================================
+
+The rewritten report contains 22 numbered tables. Tables 1, 2, 3, 4, 5, 6, 7, 8, and 9 have been retained from the previous version and significantly expanded. Tables 10 to 22 are new.
+
+| Table | Title | Status |
+|---|---|---|
+| Table 1 | Functional Requirements (30 requirements with source-code evidence) | Expanded |
+| Table 2 | Non-Functional Requirements (10 requirements) | Expanded |
+| Table 3 | Core Database Entities (9 entities) | Expanded with relationships |
+| Table 4 | Main Controllers and Responsibilities (12 controllers) | Expanded |
+| Table 5 | Main Models and Properties (12 models) | Expanded with property lists |
+| Table 6 | Main Methods and Purpose (extensive method-level table) | Expanded |
+| Table 7 | Coursework Marking Alignment (19 marking items) | Expanded |
+| Table 8 | Test Plan and Results (32 test cases) | Expanded from 15 to 32 cases |
+| Table 9 | Individual Evidence Checklist | Retained reference; full table held in Evidence_Checklist.md |
+| Table 10 | Stakeholder Analysis | New |
+| Table 11 | Functional Scope Inclusions (18 features with source-code evidence) | New |
+| Table 12 | Non-Functional Scope and Quality Attributes | New |
+| Table 13 | Assumptions and Constraints | New |
+| Table 14 | Use Case Summary | New |
+| Table 15 | Requirement Traceability Summary | New |
+| Table 16 | Validation Rules by Form | New |
+| Table 17 | Security Controls Mapped to Common Web Risks | New |
+| Table 18 | Audit Logger Categories | New |
+| Table 19 | Programming Style Practices | New |
+| Table 20 | Strengths of the Implementation | New |
+| Table 21 | Remaining Risks | New |
+| Table 22 | Future Improvements and Justification | New |
+
+
+==================================================================
+3. SCREENSHOT PLACEHOLDERS ADDED
+==================================================================
+
+The body of the report and Appendix B include [SCREENSHOT REQUIRED] placeholders for the following figures. These must be captured before final Word export.
+
+| Figure | Subject | Location of Placeholder |
+|---|---|---|
+| Figure 7 | Login Screen | Section 8.3, Appendix B |
+| Figure 7b | Registration Screen | Section 8.3, Appendix B |
+| Figure 7c | Invalid Login Validation Message | Section 8.3, Appendix B |
+| Figure 7d | Successful Role-Based Redirect | Section 8.3, Appendix B |
+| Figure 8 | Student Dashboard | Section 8.5, Appendix B |
+| Figure 8b | Student Calendar Panel | Section 8.5, Appendix B |
+| Figure 9 | Lecturer Dashboard | Section 8.6, Appendix B |
+| Figure 9b | Lecturer Pending Submissions | Section 8.6, Appendix B |
+| Figure 10 | Administrator Dashboard | Section 8.7, Appendix B |
+| Figure 10b | Audit Log Review | Section 8.7, Appendix B |
+| Figure 11 | Course List | Section 8.8, Appendix B |
+| Figure 11b | Course Create Form | Section 8.8, Appendix B |
+| Figure 11c | Course Edit Form | Section 8.8, Appendix B |
+| Figure 11d | Course Material Upload | Section 8.8, Appendix B |
+| Figure 12 | Course Browse | Section 8.9, Appendix B |
+| Figure 12b | Successful Enrolment | Section 8.9, Appendix B |
+| Figure 12c | Duplicate or Capacity Rejection | Section 8.9, Appendix B |
+| Figure 13 | Assignment List | Section 8.10, Appendix B |
+| Figure 13b | Assignment Create Form | Section 8.10, Appendix B |
+| Figure 13c | Submission Form | Section 8.11, Appendix B |
+| Figure 13d | Grading Form | Section 8.11, Appendix B |
+| Figure 13e | Graded Submission View | Section 8.11, Appendix B |
+| Figure 14 | Reports Landing | Section 8.12, Appendix B |
+| Figure 14b | Sample Report Output | Section 8.12, Appendix B |
+| Figure 14c | CSV Export Evidence | Section 8.12, Appendix B |
+| Figure 14d | PDF Export Evidence | Section 8.12, Appendix B |
+| Figure 15 | Inbox | Section 8.13, Appendix B |
+| Figure 15b | Message Thread | Section 8.13, Appendix B |
+| Figure 15c | Compose Message | Section 8.13, Appendix B |
+| Figure 15d | Meetings List | Section 8.14, Appendix B |
+| Figure 16 | Validation Error | Sections 9.7 and 12.8, Appendix B |
+| Figure 16b | Friendly Error Page | Sections 9.7 and 12.8, Appendix B |
+| Figure 17 | Database Table View | Section 7.7, Appendix E |
+| Figure 17b | Migration List Output | Section 7.7, Appendix E |
+| Figure 18 | Source Repository Page | Appendix E |
+| Figure 19 | Packaged Build / Deployment Evidence | Appendix E |
+| Figure 20 | Visual Studio Solution Open | Appendix E |
+| Figure 20b | Successful Build Output | Appendix E |
+
+Total screenshot placeholders inserted: 38 (including secondary figures).
+
+
+==================================================================
+4. DIAGRAM PLACEHOLDERS ADDED
+==================================================================
+
+The body of the report (Sections 6.1 to 6.6) and Appendix C include [DIAGRAM EXPORT REQUIRED] placeholders for the six architecture and design diagrams.
+
+| Figure | Diagram | Source File | Action Required |
+|---|---|---|---|
+| Figure 1 | System Architecture | documentation_application_development/diagrams/architecture_diagram.mmd | Export to PNG and PDF, insert in Section 6.1 |
+| Figure 2 | Use Case | documentation_application_development/diagrams/use_case_diagram.mmd | Export to PNG and PDF, insert in Section 6.2 |
+| Figure 3 | Entity Relationship | documentation_application_development/diagrams/er_diagram.mmd | Export to PNG and PDF, insert in Section 6.3 |
+| Figure 4 | UML Class | documentation_application_development/diagrams/class_diagram.mmd | Export to PNG and PDF, insert in Section 6.4 |
+| Figure 5 | Application Flowchart | documentation_application_development/diagrams/application_flowchart.mmd | Export to PNG and PDF, insert in Section 6.5 |
+| Figure 6 | Authentication and RBAC Flow | documentation_application_development/diagrams/security_flow_diagram.mmd | Export to PNG and PDF, insert in Section 6.6 |
+
+Total diagram placeholders inserted: 6.
+
+
+==================================================================
+5. REMAINING [NEEDS CONFIRMATION] ITEMS
+==================================================================
+
+The following items remain marked [NEEDS CONFIRMATION] in the rewritten report. They are honestly recorded rather than embellished, and they should be replaced with evidence (or kept as honest limitations) before final submission.
+
+5.1 Functional or feature confirmations
+
+- Dedicated administrator user-management screen: not confirmed in the source code. Mentioned in Section 1.1, Section 2.5, Section 8.7, Chapter 16, Chapter 18, and Chapter 21.
+- SQL Server / LocalDB equivalent script: not present in the source. Pomelo MySQL is used instead. Mentioned in Section 7.1.
+- Raw SQL backup script or database backup file: not present. Mentioned in Section 7.7.
+- Automated unit and integration test project: not present. Mentioned in Chapter 15 and Chapter 18.
+- Hosted deployment URL: not yet provided. Mentioned in Chapter 18 and Appendix E.
+- Packaged build (ZIP) link: not yet provided. Mentioned in Chapter 18 and Appendix E.
+- Formal accessibility audit (WCAG 2.1 AA): not yet carried out. Mentioned in Chapter 9 and Chapter 18.
+- Audit log retention policy: not formally documented. Mentioned in Section 13.8.
+- Individual approval evidence file (lecturer email or note): not yet attached. Mentioned in Appendix D.
+
+5.2 Submission and presentation confirmations
+
+- Title page: lecturer / module leader name placeholder (`[INSERT IF REQUIRED]`).
+- Title page: submission date placeholder (`[INSERT DATE]`).
+- References: each reference includes an `[Accessed [INSERT DATE]]` placeholder for Harvard-style consistency.
+
+5.3 Evidence confirmations
+
+- All [SCREENSHOT REQUIRED] markers listed in Section 3.
+- All [DIAGRAM EXPORT REQUIRED] markers listed in Section 4.
+- Repository link in `Source_And_Build_Links.md`.
+- Build / deployment link in `Source_And_Build_Links.md`.
+- Database evidence link in `Source_And_Build_Links.md`.
+- Audit log export evidence (Appendix G).
+- Validation message screenshots (Appendix H).
+
+
+==================================================================
+6. REMAINING MANUAL ACTIONS BEFORE WORD EXPORT
+==================================================================
+
+The following manual actions must be completed before the final Word and PDF export. They are listed in priority order.
+
+HIGH PRIORITY
+
+1. Capture all screenshots listed in Section 3. Use the running application with the seeded demonstration users. Redact any personal data (email addresses, names, phone numbers) where appropriate.
+2. Export the six Mermaid diagrams to PNG and PDF using a Mermaid renderer (for example the Mermaid CLI, the Mermaid Live Editor, or a Visual Studio Code extension). Save the exported files into `documentation_application_development/diagrams/exported/` and insert them into the report.
+3. Replace the title page placeholders `[INSERT IF REQUIRED]` (lecturer / module leader) and `[INSERT DATE]` (submission date).
+4. Paste the final repository link, packaged build link, and database evidence into `documentation_application_development/Source_And_Build_Links.md`.
+5. Capture and store build evidence as plain text under `documentation_application_development/evidence/build/`.
+6. Capture and store database evidence under `documentation_application_development/evidence/database/`. Include the migration list output and a redacted view of one or two tables.
+7. Convert the rewritten Markdown report to Word using `documentation_application_development/conversion/convert_to_docx.py` (or pandoc directly), then update the Table of Contents, the List of Figures, and the List of Tables in Word.
+8. Insert the captured screenshots and exported diagrams into the Word document with the figure captions matching the body text.
+9. Run a final UK English spell and grammar check.
+10. Export the final PDF and inspect every page visually before upload.
+
+MEDIUM PRIORITY
+
+11. Complete the `[Accessed [INSERT DATE]]` placeholders in Chapter 23 (References).
+12. Capture audit log export evidence (Appendix G) and validation message screenshots (Appendix H).
+13. If available, attach the individual approval evidence file (Appendix D).
+14. Confirm that the seeded demonstration credentials still match `Data/DbInitializer.cs`.
+15. Verify that the rewritten report maintains a consistent voice ("the author" in body chapters, first person only in Chapter 19) by performing a quick read-through.
+
+LOW PRIORITY
+
+16. Optional: add a screenshot of the dashboard at a narrower viewport to Chapter 9 as evidence of responsive design.
+17. Optional: add structural improvements to the Mermaid diagrams (for example colour coding for actors) before exporting.
+18. Optional: convert long code listings in Appendix A into separate listing files referenced by relative path.
+
+
+==================================================================
+7. CONSISTENCY AND ACADEMIC INTEGRITY CHECKS PASSED
+==================================================================
+
+- UK English spelling used throughout (organise, behaviour, recognise, programme, etc.).
+- "the author" used in body chapters; first person used only in Chapter 19 (Reflection).
+- No use of "we" for implementation work.
+- No group blame, group conflict, group contribution table, or task allocation table.
+- No names of other students.
+- No emotional or accusatory language.
+- No em dashes (verified by ripgrep search).
+- No en dashes (verified by ripgrep search).
+- No strange symbols (no curly quotes, no decorative bullets, no emoji).
+- All claims are supported by source code references or marked as [NEEDS CONFIRMATION] / [SCREENSHOT REQUIRED] / [DIAGRAM EXPORT REQUIRED].
+- The rewrite does not duplicate or borrow content from any unrelated AI coursework report; it is built from the actual UniManage source code and the documentation expansion plan only.
+
+End of expansion summary.

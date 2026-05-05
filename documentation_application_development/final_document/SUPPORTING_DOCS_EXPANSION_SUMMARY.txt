@@ -1,0 +1,314 @@
+SUPPORTING DOCUMENTS EXPANSION SUMMARY
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+
+Files Updated In This Pass:
+1. documentation_application_development/Expanded_Individual_Contribution.md
+2. documentation_application_development/User_Manual_Application_Development.md
+
+Word Count Result:
+- Expanded_Individual_Contribution.md: approximately 4,976 words.
+- User_Manual_Application_Development.md: approximately 4,757 words.
+- Combined supporting word count: approximately 9,733 words.
+
+Style Verification:
+- UK English used throughout (organise, behaviour, recognise, programme, neutral, etc.).
+- "the author" voice in the contribution report; practical step-by-step voice in the user manual.
+- No em dashes (verified by ripgrep search).
+- No en dashes (verified by ripgrep search).
+- No strange symbols, no curly quotes, no decorative bullets, no emoji.
+- No group blame, no group conflict, no group contribution table, no work-splitting table.
+- Approved individual submission wording used.
+- Fixed sentence used where appropriate: "Following approval to complete the coursework individually, the author took responsibility for the final implementation, testing, documentation, and submission preparation."
+- Screenshot captions in the user manual all begin with "This screenshot shows..." (verified by review).
+- No phrase "should show" in screenshot captions; the previous narrative use was tightened to "displays".
+
+
+==================================================================
+1. INDIVIDUAL CONTRIBUTION SECTIONS EXPANDED
+==================================================================
+
+The contribution report has been rewritten in the structure requested. Every section is dedicated to a specific academic area or to a specific aspect of the author's individual delivery. Two consolidated tables (IC1 and IC2) have been included.
+
+Section 1: Introduction
+- Explains the purpose of the contribution report and its relationship to the main report.
+- Notes that the document avoids group blame, group conflict, and comparative wording.
+
+Section 2: Project Context
+- Records the technology stack (ASP.NET Core MVC 8, C#, Razor, Bootstrap, EF Core with Pomelo MySQL, Identity).
+- Records the source-code baseline: 12 controllers, 12 models, 16 view models, 12 infrastructure components, 46 Razor views, 3 EF Core migrations.
+- Records the verified build (`dotnet build --no-restore`, zero warnings, zero errors).
+
+Section 3: Approved Individual Submission Context
+- Includes the approved submission wording.
+- Explains the wording approach (third-person "the author" voice, no other students named, no comparative language).
+
+Section 4: Personal Motivation and Project Selection
+- Explains why the author chose UniManage (realistic academic problem, marking-friendly, industry-relevant technology).
+- Describes the personal motivation in neutral, professional terms.
+
+Section 5: Summary of Main Contribution
+- Includes Table IC1 (Summary of Individual Contribution) with 18 rows covering every academic area.
+- Each row includes Area, Contribution Summary, Evidence/Figure Reference, and Status columns.
+
+Section 6: Contribution to Requirement Analysis
+- Records 30 functional requirements (FR1 to FR30) and 10 non-functional requirements (NFR1 to NFR10) by reference to the main report.
+- Records the traceability through Table 7 and Table 15 in the main report.
+
+Section 7: Contribution to Architecture and System Design
+- Records the six diagrams (architecture, use case, ER, UML class, application flowchart, authentication flow).
+- Records six design decisions (MVC vs Razor Pages, MySQL vs SQL Server, single DashboardController, Submission stores grade fields, custom security headers middleware, QuestPDF).
+
+Section 8: Contribution to Database Design
+- Records nine academic entities, the relationships, the constraints, the migrations, and the seeding.
+- Honestly notes that MySQL is used through Pomelo rather than SQL Server / LocalDB.
+
+Section 9: Contribution to User Registration and Login
+- Records AccountController actions, ApplicationUser, Identity options, lockout, and audit log entries on success and failure.
+
+Section 10: Contribution to Role-Based Access Control
+- Records the three-layer RBAC approach (AppRoles constants, role seeding, [Authorize] attributes plus ownership filters).
+- Records the AccessDenied page.
+
+Section 11: Contribution to Student Dashboard
+- Records DashboardController.Student, the view model, the Razor view, and the supporting partial _DashboardCalendar.cshtml.
+
+Section 12: Contribution to Lecturer Dashboard
+- Records DashboardController.Lecturer, ownership-filtered queries, and the lecturer view model.
+
+Section 13: Contribution to Administrator Dashboard
+- Records DashboardController.Administrator and the audit log integration.
+- Honestly notes that the dedicated user-management screen is [NEEDS CONFIRMATION].
+
+Section 14: Contribution to Course Management
+- Records CoursesController CRUD, search, paging, MyCourses, UploadMaterial, unique code constraint, capacity, prerequisite, lecturer assignment, and the upload rate-limiting policy.
+
+Section 15: Contribution to Enrolment System
+- Records EnrollmentsController Browse and Enroll, capacity, duplicate, and prerequisite checks, and audit log entries.
+
+Section 16: Contribution to Assignment, Submission and Grading
+- Records AssignmentsController, SubmissionsController, file validation, score range, feedback, and the graded lock.
+
+Section 17: Contribution to Reporting and Analytics
+- Records six reports plus CSV and PDF export through QuestPDF.
+
+Section 18: Contribution to Communication and Meetings
+- Records MessagesController inbox, thread, reply, compose, allowed-recipient validation, and MeetingsController create, edit, delete, join, and ICS export.
+
+Section 19: Contribution to Security, Validation and Error Handling
+- Records Identity options, anti-forgery, rate limiter (auth, upload), security headers middleware, HTTPS, HSTS, ModelState, ownership checks, file validation, exception handling, and audit logging.
+
+Section 20: Contribution to UI/UX and Usability
+- Records _Layout, _Alerts, _DashboardCalendar, role-aware navigation, validation feedback, responsive Bootstrap grid, skip link, label association.
+- Records the WCAG 2.1 AA audit as [VERIFY].
+
+Section 21: Contribution to Testing and Debugging
+- Records the 32 test cases (T1 to T32) from the main report, the build verification (T32 confirmed), and three concrete debugging stories (MySQL transient errors, rate limiter split, audit table ordering with try/catch wrapping).
+
+Section 22: Contribution to Documentation and User Manual
+- Records the full documentation package and the consistent style applied across documents.
+
+Section 23: Contribution to Evidence Preparation and Viva Readiness
+- Records 38 screenshot placeholders, 6 diagram placeholders, and the viva demonstration script.
+- Records the seeded demonstration users for the viva.
+
+Section 24: Challenges, Learning and Final Preparation
+- Records technical, professional, and personal learning.
+- Records the final preparation tasks (screenshot capture, diagram export, title placeholders, references, repository/build links, Word/PDF conversion).
+
+Section 25: Supporting Evidence
+- Includes Table IC2 (Evidence Prepared for Assessment) with 15 rows.
+- Each row includes Evidence Type, Purpose, Location, and Manual Action Needed columns.
+
+Section 26: Summary
+- Closes with the approved individual submission wording.
+- Lists the items that still need to be completed before the final upload.
+
+
+==================================================================
+2. USER MANUAL SECTIONS EXPANDED
+==================================================================
+
+The user manual has been rewritten in the structure requested, with practical step-by-step wording.
+
+Section 1: Introduction
+- Records the purpose of the manual.
+- Includes the approved submission wording.
+
+Section 2: System Requirements
+- Provides a table of operating system, IDE, .NET runtime, database engine, optional database tool, browser, internet connection, and disk space.
+- Honestly records that SQL Server / LocalDB compatibility is [VERIFY].
+
+Section 3: Project Package Contents
+- Provides a table of every top-level project artefact (solution, project, Program.cs, Controllers, Models, ViewModels, Views, Data, Infrastructure, wwwroot, configuration, launch settings, documentation, README).
+
+Section 4: Installation Guide (9 sub-sections)
+- 4.1 Extracting the Project (with Git clone command).
+- 4.2 Opening the Solution in Visual Studio.
+- 4.3 Restoring NuGet Packages (with key package list).
+- 4.4 Checking appsettings.json (with redaction reminder).
+- 4.5 Configuring the Database Connection (with redacted connection string format).
+- 4.6 Applying Migrations or Creating the Database (with `dotnet ef database update` and `dotnet ef migrations list` commands).
+- 4.7 Building the Project (with expected console output).
+- 4.8 Running the Application (with detected URLs).
+- 4.9 Troubleshooting Build Errors (with a 10-row error table).
+
+Section 5: First-Time Setup
+- Explains that the seeder creates roles and users automatically.
+
+Section 6: Login and User Roles
+- Provides the seeded credentials table for Administrator, Lecturer, and Student.
+- Explains the role-based redirect behaviour and the registration flow.
+
+Section 7: Student User Guide
+- Step-by-step list of 10 actions a Student can perform.
+
+Section 8: Lecturer User Guide
+- Step-by-step list of 11 actions a Lecturer can perform.
+
+Section 9: Administrator User Guide
+- Step-by-step list of 6 actions an Administrator can perform.
+- Records the dedicated user-management screen as [VERIFY] in the manual.
+
+Section 10: Validation and Error Messages
+- Provides a table of 15 representative validation scenarios and the expected message wording.
+
+Section 11: Reporting and Analytics
+- Provides a table of the six reports with description and source-code evidence.
+- Explains CSV and PDF export.
+
+Section 12: Security Notes for Users
+- Lists 8 security considerations including HTTPS, anti-forgery, rate limiting, lockout, password hashing, audit log, configuration redaction, and personal-data redaction in screenshots.
+
+Section 13: Troubleshooting
+- Provides a 12-row troubleshooting table for runtime issues (start failure, login failure, lockout, anti-forgery, file upload, dashboard empty, error page, email failure, Google login disabled, migration failure, empty reports, etc.).
+
+Section 14: Notes for Viva Demonstration
+- Provides a 10-step demonstration script aligned with Appendix J of the main report.
+
+
+==================================================================
+3. SCREENSHOT PLACEHOLDERS ADDED
+==================================================================
+
+The user manual contains the requested 18 figure placeholders (UM1 to UM18). Each placeholder uses the format "[SCREENSHOT REQUIRED] Figure UMx: <Subject>. This screenshot shows ..." and is positioned next to the relevant section.
+
+| Figure | Subject | Section in User Manual | Caption Style |
+|---|---|---|---|
+| UM1 | Project Opened in Visual Studio | 4.1 | This screenshot shows... |
+| UM2 | appsettings.json Database Configuration | 4.4 | This screenshot shows... |
+| UM3 | Build Successful Output | 4.7 | This screenshot shows... |
+| UM4 | Login Page | 5 | This screenshot shows... |
+| UM5 | Registration Page | 5 | This screenshot shows... |
+| UM6 | Student Dashboard | 7 | This screenshot shows... |
+| UM7 | Lecturer Dashboard | 8 | This screenshot shows... |
+| UM8 | Administrator Dashboard | 9 | This screenshot shows... |
+| UM9 | Course Management | 9 | This screenshot shows... |
+| UM10 | Enrollment | 7 | This screenshot shows... |
+| UM11 | Assignment Creation | 8 | This screenshot shows... |
+| UM12 | Assignment Submission | 7 | This screenshot shows... |
+| UM13 | Grading | 8 | This screenshot shows... |
+| UM14 | Reports | 11 | This screenshot shows... |
+| UM15 | Messaging | 8 | This screenshot shows... |
+| UM16 | Meeting Scheduling | 8 | This screenshot shows... |
+| UM17 | Validation Error Example | 10 | This screenshot shows... |
+| UM18 | Database Evidence | 12 | This screenshot shows... |
+
+Total user manual figure placeholders: 18 (UM1 to UM18) as specified by the requirements.
+
+The Expanded_Individual_Contribution.md does not introduce new figure placeholders. It cross-references the figure numbers used in the main report (Figures 1 to 6 for diagrams, Figure 7 to Figure 20b for screenshots) so that the contribution report and the main report stay aligned.
+
+
+==================================================================
+4. REMAINING [VERIFY] ITEMS
+==================================================================
+
+The following items are marked [VERIFY] in the user manual or in the contribution report. They should be confirmed against the marker's environment or against the brief before the final submission.
+
+User manual [VERIFY] items:
+
+- Section 2 (System Requirements): SQL Server / LocalDB compatibility is [VERIFY]. The current implementation uses MySQL through Pomelo. If the marker requires SQL Server / LocalDB, replace `UseMySql` with `UseSqlServer` in `Program.cs` and regenerate the EF Core migrations.
+- Section 9 (Administrator User Guide): the dedicated user-management screen is referenced in the brief but is [VERIFY] against the source code. The Administrator dashboard exposes course management, reports, audit logs, and meetings, but a separate manage-users page has not been confirmed.
+
+Contribution report [VERIFY] items:
+
+- Section 13 (Administrator Dashboard): the dedicated user-management screen remains [NEEDS CONFIRMATION] in the main report and [VERIFY] in this manual.
+- Section 20 (UI/UX and Usability): a formal WCAG 2.1 AA accessibility audit is [VERIFY].
+
+Cross-document [VERIFY] markers (also recorded in main report and evidence checklist):
+
+- Hosted deployment URL: [VERIFY] in `Source_And_Build_Links.md`.
+- Packaged build (ZIP) link: [VERIFY] in `Source_And_Build_Links.md`.
+- Repository link: [VERIFY] in `Source_And_Build_Links.md` (current detected remote: `https://github.com/YasasPasinduFernando/AD-COURSEWORK-2.git`).
+- Audit log retention policy: [VERIFY] in the main report's data protection section.
+- Individual approval evidence file (lecturer email or note): [VERIFY] in `documentation_application_development/evidence/approval/`.
+- Title page lecturer / module leader name: `[INSERT IF REQUIRED]` placeholder retained.
+- Title page submission date: `[INSERT DATE]` placeholder retained.
+- References access dates: `[Accessed [INSERT DATE]]` placeholder retained.
+
+
+==================================================================
+5. MANUAL EVIDENCE STILL REQUIRED
+==================================================================
+
+The following manual evidence must be captured and inserted before the Word and PDF export. This list complements (and aligns with) Appendix B of the main report and the evidence checklist.
+
+5.1 User manual screenshots (18 items)
+
+- Figure UM1: Project Opened in Visual Studio.
+- Figure UM2: appsettings.json Database Configuration (with credentials redacted).
+- Figure UM3: Build Successful Output.
+- Figure UM4: Login Page.
+- Figure UM5: Registration Page.
+- Figure UM6: Student Dashboard.
+- Figure UM7: Lecturer Dashboard.
+- Figure UM8: Administrator Dashboard.
+- Figure UM9: Course Management.
+- Figure UM10: Enrollment.
+- Figure UM11: Assignment Creation.
+- Figure UM12: Assignment Submission.
+- Figure UM13: Grading.
+- Figure UM14: Reports.
+- Figure UM15: Messaging.
+- Figure UM16: Meeting Scheduling.
+- Figure UM17: Validation Error Example.
+- Figure UM18: Database Evidence (with personal data redacted).
+
+5.2 Diagram exports referenced from the contribution report (6 items)
+
+- Architecture diagram (Figure 1) from `documentation_application_development/diagrams/architecture_diagram.mmd`.
+- Use case diagram (Figure 2) from `documentation_application_development/diagrams/use_case_diagram.mmd`.
+- Entity relationship diagram (Figure 3) from `documentation_application_development/diagrams/er_diagram.mmd`.
+- UML class diagram (Figure 4) from `documentation_application_development/diagrams/class_diagram.mmd`.
+- Application flowchart (Figure 5) from `documentation_application_development/diagrams/application_flowchart.mmd`.
+- Authentication and RBAC flow (Figure 6) from `documentation_application_development/diagrams/security_flow_diagram.mmd`.
+
+5.3 Build, database, and audit evidence
+
+- `dotnet build --no-restore` console capture saved as plain text under `documentation_application_development/evidence/build/`.
+- `dotnet ef migrations list` console capture saved as plain text or screenshot under `documentation_application_development/evidence/database/`.
+- One redacted database table view (Courses, Enrollments, or Submissions).
+- One audit log review screenshot.
+
+5.4 Submission packaging artefacts
+
+- Repository link pasted into `Source_And_Build_Links.md`.
+- Packaged build (ZIP) or hosted deployment link pasted into `Source_And_Build_Links.md`.
+- Database evidence link pasted into `Source_And_Build_Links.md`.
+- Final Word version of the main report at `documentation_application_development/final_document/Application_Development_Final_Report.docx`.
+- Final PDF version of the main report at `documentation_application_development/final_document/`.
+- Word and PDF export of `User_Manual_Application_Development.md`.
+- Word export of `Expanded_Individual_Contribution.md` if a separate file is required by the marker.
+
+5.5 Final wording sweep
+
+- Re-confirm UK English spelling in both supporting documents (organise, behaviour, programme).
+- Re-confirm "the author" voice in the contribution report and the absence of "we" for implementation work.
+- Re-confirm that no other students are named, blamed, or compared.
+- Re-confirm screenshot caption style ("This screenshot shows...") in the user manual.
+- Re-confirm that no em dash, en dash, curly quote, or emoji has been reintroduced.
+
+End of supporting documents expansion summary.
