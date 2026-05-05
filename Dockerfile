@@ -27,4 +27,4 @@ EXPOSE 80
 # Pass MySQL at runtime with:
 #   -e ConnectionStrings__DefaultConnection="Server=...;Port=3306;Database=...;User=...;Password=...;TreatTinyAsBoolean=true;CharSet=utf8mb4;"
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "AD COURSEWORK 2.dll"]
+ENTRYPOINT ["dotnet", "AD_COURSEWORK_2.dll"]

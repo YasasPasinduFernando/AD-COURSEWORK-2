@@ -8,10 +8,10 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:80
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
       # ASP.NET Core maps this to ConnectionStrings:DefaultConnection.
-      ConnectionStrings__DefaultConnection: Server=mysql;Port=3306;Database=unimanage;User=appuser;Password=apppassword;
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=unimanage;User=appuser;Password=apppassword;TreatTinyAsBoolean=true;CharSet=utf8mb4;
       # Optional runtime secrets should also be supplied as environment variables:
       # Email__Password: ""
       # Authentication__Google__ClientSecret: ""
@@ -22,10 +22,10 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: unimanage
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppassword
-      MYSQL_ROOT_PASSWORD: rootpassword
+      - MYSQL_DATABASE=unimanage
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+      - MYSQL_ROOT_PASSWORD=rootpassword
     ports:
       - "3307:3306"
     volumes:
