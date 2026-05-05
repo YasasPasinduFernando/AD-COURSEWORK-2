@@ -1,36 +1,47 @@
-# Screenshot Guidance
+# Screenshot Evidence Guide
 
-This folder should contain screenshots for the final application development report and user manual.
+This folder stores screenshots for the approved individual UniManage submission.
 
-## Naming Convention
+## Required Screenshots
 
-Use short, numbered names:
+Use clear filenames:
 
-- `01_visual_studio_solution.png`
-- `02_build_success.png`
-- `03_home_page.png`
-- `04_login_page.png`
-- `05_student_dashboard.png`
-- `06_student_catalogue.png`
-- `07_student_submission.png`
-- `08_lecturer_dashboard.png`
-- `09_lecturer_grading.png`
-- `10_admin_dashboard.png`
-- `11_reports_index.png`
-- `12_messages_thread.png`
-- `13_meetings_index.png`
-- `14_audit_log.png`
-- `15_validation_error.png`
+- `figure_07_login_or_registration.png`
+- `figure_08_student_dashboard.png`
+- `figure_09_lecturer_dashboard.png`
+- `figure_10_administrator_dashboard.png`
+- `figure_11_course_management.png`
+- `figure_12_enrollment.png`
+- `figure_13_assignment_and_grading.png`
+- `figure_14_reporting_and_analytics.png`
+- `figure_15_communication_module.png`
+- `figure_16_validation_or_error_handling.png`
+- `figure_17_database_evidence.png`
+- `figure_18_source_repository_evidence.png`
+- `figure_19_packaged_build_or_deployment.png`
 
-## Screenshot Rules
+## User Manual Screenshots
 
-- Capture the full browser window where possible.
-- Do not show private passwords, SMTP credentials, Google secrets or database passwords.
-- Use seeded/demo data where possible.
-- Add screenshots for each role: Student, Lecturer and Administrator.
-- Keep filenames aligned with figure captions in the final report.
+- `um_01_project_opened_in_visual_studio.png`
+- `um_02_login_page.png`
+- `um_03_registration_page.png`
+- `um_04_student_dashboard.png`
+- `um_05_lecturer_dashboard.png`
+- `um_06_administrator_dashboard.png`
+- `um_07_course_management.png`
+- `um_08_enrollment.png`
+- `um_09_assignment_submission.png`
+- `um_10_grading.png`
+- `um_11_reports.png`
+- `um_12_messaging.png`
+- `um_13_validation_error_example.png`
 
-## Current Status
+## Capture Rules
 
-No coursework screenshots were detected during the repository scan. This folder is ready for captured evidence. [NEEDS CONFIRMATION]
+- Use seeded accounts or safe test accounts.
+- Hide passwords and secrets.
+- Use browser zoom that keeps text readable.
+- Capture the full page or the main evidence area.
+- Rename files before inserting them into Word.
+- Match each screenshot to the figure number in the report.
 

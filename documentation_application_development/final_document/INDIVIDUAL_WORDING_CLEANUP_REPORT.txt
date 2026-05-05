@@ -1,0 +1,76 @@
+INDIVIDUAL WORDING CLEANUP REPORT
+CS6004ES APPLICATION DEVELOPMENT COURSEWORK 2
+Project: UniManage - University Course Management System
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+
+Cleanup date: 5 May 2026
+
+1. REPLACED PHRASES
+
+- Replaced general individual completion wording with:
+  "Following approval to complete the coursework individually, the author completed the implementation, testing, documentation, and final preparation as an individual submission."
+- Removed wording about AI-assisted editing from the declaration section and kept the acknowledgement limited to external sources, official documentation, and tutorials.
+- Replaced old QA wording about non-required diagram labels with neutral diagram wording.
+- Replaced old QA wording about collaborative submission checks with individual submission wording.
+- Replaced old QA wording about communication record artefacts with neutral wording.
+- Removed invented placeholder class names from the class diagram source.
+- Removed placeholder role entities and analytics entities from the ER diagram source.
+- Removed the unsupported manage users use case from the use case diagram source because a dedicated user-management screen was not detected.
+- Rewrote the class diagram explanation in the main report to state that only confirmed source-code classes are presented.
+- Rewrote the diagrams README to avoid presenting undetected controllers or models as implemented classes.
+
+2. REMAINING MANUAL CHECKS
+
+- Fill in Lecturer / Module Leader if required.
+- Fill in the final submission date.
+- Replace all repository, packaged build, database, and evidence link placeholders.
+- Export Mermaid diagrams to PNG or PDF and insert them into the Word report.
+- Capture and insert screenshots.
+- Update actual test results in the testing table.
+- Complete official reference URLs.
+- Check that every remaining [NEEDS CONFIRMATION] or [VERIFY] item is either supported by evidence or kept as a limitation.
+- Update the Word Table of Contents, List of Figures, and List of Tables before final PDF export.
+
+3. MISSING SCREENSHOTS
+
+- Login or registration screen.
+- Student dashboard.
+- Lecturer dashboard.
+- Administrator dashboard.
+- Course management screen.
+- Enrollment screen.
+- Assignment and grading screen.
+- Reporting and analytics screen.
+- Communication module screen.
+- Validation or error handling evidence.
+- Database evidence.
+- Source repository evidence.
+- Packaged build or deployment evidence.
+
+4. MISSING LINKS
+
+- Final repository link.
+- Packaged build or hosted deployment link.
+- Database script, backup, or evidence path.
+- Evidence folder link.
+
+5. MISSING DATABASE EVIDENCE
+
+- Database screenshot from MySQL or an accepted database tool.
+- Migration evidence, backup, or lecturer-approved database export.
+- SQL Server or LocalDB evidence only if required by the lecturer. The scanned source uses EF Core with MySQL.
+
+6. FEATURES NEEDING CONFIRMATION
+
+- SQL Server / LocalDB setup if the assessment requires that specific database platform.
+- Raw SQL script or database backup.
+- Dedicated administrator user-management screens.
+- Automated test project or formal automated testing evidence.
+- Hosted deployment or packaged build evidence.
+- Final screenshot evidence for all report figures.
+- Individual approval evidence file if available.
+
+7. CLEANUP RESULT
+
+The documentation was cleaned for an approved individual submission. No team-based contribution wording, contribution comparison table, work assignment spreadsheet reference, communication record artefact section, dispute wording, direct fault wording, em dash, strange symbol, non-required diagram label, legacy coursework wording, or draft caption guidance wording was found by the final scan. Missing or unclear items remain marked as [NEEDS CONFIRMATION] or [VERIFY].

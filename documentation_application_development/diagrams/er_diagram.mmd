@@ -19,18 +19,6 @@ erDiagram
         string RoleId FK
     }
 
-    STUDENT_ROLE_VERIFY {
-        string RoleName "Student role via Identity [VERIFY]"
-    }
-
-    LECTURER_ROLE_VERIFY {
-        string RoleName "Lecturer role via Identity [VERIFY]"
-    }
-
-    ADMINISTRATOR_ROLE_VERIFY {
-        string RoleName "Administrator role via Identity [VERIFY]"
-    }
-
     COURSE {
         int CourseId PK
         string Code
@@ -71,11 +59,6 @@ erDiagram
         string Feedback
         datetime GradedAtUtc
         string GradedById FK
-    }
-
-    GRADE_VERIFY {
-        decimal Grade "Stored on Submission, not a separate model [VERIFY]"
-        string Feedback "Stored on Submission [VERIFY]"
     }
 
     COURSE_MATERIAL {
@@ -124,16 +107,8 @@ erDiagram
         bool Success
     }
 
-    REPORT_ANALYTICS_VIEW_VERIFY {
-        string Source "ReportsController query output [VERIFY]"
-        string Export "CSV and PDF generated from live data [VERIFY]"
-    }
-
     APPLICATION_USER ||--o{ USER_ROLE : has
     IDENTITY_ROLE ||--o{ USER_ROLE : assigned
-    IDENTITY_ROLE ||--o{ STUDENT_ROLE_VERIFY : may_represent
-    IDENTITY_ROLE ||--o{ LECTURER_ROLE_VERIFY : may_represent
-    IDENTITY_ROLE ||--o{ ADMINISTRATOR_ROLE_VERIFY : may_represent
 
     APPLICATION_USER ||--o{ COURSE : teaches
     COURSE |o--o{ COURSE : prerequisite_for
@@ -144,7 +119,6 @@ erDiagram
     ASSIGNMENT ||--o{ SUBMISSION : receives
     APPLICATION_USER ||--o{ SUBMISSION : submits
     APPLICATION_USER |o--o{ SUBMISSION : grades
-    SUBMISSION ||--o| GRADE_VERIFY : records
 
     COURSE ||--o{ COURSE_MATERIAL : has
     APPLICATION_USER ||--o{ COURSE_MATERIAL : uploads
@@ -156,7 +130,4 @@ erDiagram
     APPLICATION_USER ||--o{ MEETING : hosts
 
     APPLICATION_USER |o--o{ AUDIT_LOG : creates
-    COURSE ||--o{ REPORT_ANALYTICS_VIEW_VERIFY : feeds
-    ENROLLMENT ||--o{ REPORT_ANALYTICS_VIEW_VERIFY : feeds
-    SUBMISSION ||--o{ REPORT_ANALYTICS_VIEW_VERIFY : feeds
 

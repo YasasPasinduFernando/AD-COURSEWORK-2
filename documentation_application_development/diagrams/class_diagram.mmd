@@ -19,18 +19,6 @@ classDiagram
         +Administrator()
     }
 
-    class StudentController_VERIFY_WITH_CODE {
-        <<placeholder>>
-    }
-
-    class LecturerController_VERIFY_WITH_CODE {
-        <<placeholder>>
-    }
-
-    class AdminController_VERIFY_WITH_CODE {
-        <<placeholder>>
-    }
-
     class CoursesController {
         +Index()
         +MyCourses()
@@ -163,12 +151,6 @@ classDiagram
         +string GradedById
     }
 
-    class Grade_VERIFY_WITH_CODE {
-        <<placeholder>>
-        +decimal Grade
-        +string Feedback
-    }
-
     class Message {
         +int MessageId
         +string SenderId
@@ -237,8 +219,8 @@ classDiagram
         +Administrator
     }
 
-    note for DashboardController "Student, Lecturer and Administrator dashboard actions are implemented here. No dedicated StudentController, LecturerController or AdminController was detected [VERIFY WITH CODE]."
-    note for Grade_VERIFY_WITH_CODE "No separate Grade model was detected. Grade and feedback fields are stored on Submission [VERIFY WITH CODE]."
+    note for DashboardController "Student, Lecturer and Administrator dashboard actions are implemented here. Separate role-named controller files were not detected."
+    note for Submission "Grade and feedback fields are stored on Submission."
 
     AccountController --> ApplicationUser
     DashboardController --> ApplicationDbContext
@@ -277,7 +259,6 @@ classDiagram
     Course "1" --> "0..*" Assignment : contains
     Assignment "1" --> "0..*" Submission : receives
     ApplicationUser "1" --> "0..*" Submission : submits
-    Submission "1" --> "0..1" Grade_VERIFY_WITH_CODE : stores
     Course "1" --> "0..*" CourseMaterial : has
     ApplicationUser "1" --> "0..*" Message : sends_or_receives
     Course "1" --> "0..*" Meeting : has

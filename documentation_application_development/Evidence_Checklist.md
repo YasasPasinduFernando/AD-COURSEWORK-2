@@ -1,142 +1,58 @@
 # Evidence Checklist
 
-Coursework: CS6004ES Application Development Coursework 2  
-Application: UniManage - University Course Management System
+Student Name: Yasas Pasindu Fernando  
+Student ID: 25026764  
+Project: UniManage - University Course Management System  
+Submission Type: Approved individual submission
 
-## Status Key
+Following approval to complete the coursework individually, the author completed the implementation, testing, documentation, and final preparation as an individual submission.
 
-- Completed - evidence is present or has been verified.
-- Pending - evidence should be captured before final submission.
-- [NEEDS CONFIRMATION] - the repository scan cannot verify this item.
+Table 9: Individual Evidence Checklist
 
-## Repository and Build Evidence
-
-| Evidence item | Source/path | Status | Notes |
+| Evidence Item | Required Evidence | Current Location | Status |
 |---|---|---|---|
-| Visual Studio solution | `AD COURSEWORK 2.sln` | Completed | Single project solution detected. |
-| ASP.NET Core project file | `AD COURSEWORK 2.csproj` | Completed | Targets `net8.0`. |
-| Build output | `dotnet build --no-restore` | Completed | Succeeded with 0 warnings and 0 errors on 5 May 2026. |
-| Git remote | `origin` | Completed | `https://github.com/YasasPasinduFernando/AD-COURSEWORK-2.git` |
-| Current branch | `main` | Completed | Detected by repository scan. |
-| README/setup file | `README.md` | Completed | Includes features, setup and seeded accounts. |
-| Workflow files | `.github/workflows` | [NEEDS CONFIRMATION] | Directory exists but no workflow file was detected. |
-| Deployment artefacts | `artifacts_build/` | Completed | Build artefacts detected; deployment target still unclear. |
-| Public deployment URL | Not detected | [NEEDS CONFIRMATION] | Add if required by the coursework. |
+| Final main technical report | Completed report in Word/PDF | `Main_Application_Development_Report.md` | Draft complete |
+| Individual contribution report | Supporting individual contribution document | `Expanded_Individual_Contribution.md` | Draft complete |
+| Installation guide and user manual | User manual converted to Word/PDF | `User_Manual_Application_Development.md` | Draft complete |
+| Visual Studio solution/source code | Solution and project files | `AD COURSEWORK 2.sln`, `AD COURSEWORK 2.csproj` | Confirmed |
+| Repository link | Public or accessible source repository | `Source_And_Build_Links.md` | [NEEDS CONFIRMATION] |
+| Packaged build/deployment link | ZIP, hosted build, or packaged artefact link | `Source_And_Build_Links.md` | [NEEDS CONFIRMATION] |
+| Database script / migration / database evidence | Migration list, database screenshot, backup, or script | `Data/Migrations/` | Migrations confirmed, screenshot needed |
+| Architecture diagram | Exported Figure 1 | `diagrams/architecture_diagram.mmd` | Source complete, PNG/PDF export needed |
+| ER diagram | Exported Figure 3 | `diagrams/er_diagram.mmd` | Source complete, PNG/PDF export needed |
+| UML class diagram | Exported Figure 4 | `diagrams/class_diagram.mmd` | Source complete, PNG/PDF export needed |
+| Use case diagram | Exported Figure 2 | `diagrams/use_case_diagram.mmd` | Source complete, PNG/PDF export needed |
+| Application flowchart | Exported Figure 5 | `diagrams/application_flowchart.mmd` | Source complete, PNG/PDF export needed |
+| Authentication/role access flow diagram | Exported Figure 6 | `diagrams/security_flow_diagram.mmd` | Source complete, PNG/PDF export needed |
+| Login screenshot | Figure 7 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Registration screenshot | Figure 7 or user manual Figure UM3 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Student dashboard screenshot | Figure 8 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Lecturer dashboard screenshot | Figure 9 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Administrator dashboard screenshot | Figure 10 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Course management screenshot | Figure 11 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Enrollment screenshot | Figure 12 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Assignment/grading screenshot | Figure 13 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Reporting screenshot | Figure 14 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Communication module screenshot | Figure 15 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Validation/error handling screenshot | Figure 16 | `screenshots/` | [NEEDS CONFIRMATION] |
+| Test plan and results | Completed testing table with actual results | Section 13 of main report | Manual results needed |
+| Individual approval evidence if available | Approval screenshot, email, or note | `evidence/` | [NEEDS CONFIRMATION] |
+| Viva demonstration notes | Short feature explanation and order | User manual and QA report | Draft prepared |
 
-## Code Evidence
+## Source Features Confirmed
 
-| Area | Evidence files | Status |
-|---|---|---|
-| Application startup | `Program.cs` | Completed |
-| MVC controllers | `Controllers/` | Completed |
-| Razor views | `Views/` | Completed |
-| Entity models | `Models/` | Completed |
-| View models | `ViewModels/` | Completed |
-| Database context | `Data/ApplicationDbContext.cs` | Completed |
-| EF migrations | `Data/Migrations/` | Completed |
-| Seed data | `Data/DbInitializer.cs` | Completed |
-| Authentication | `AccountController.cs`, `Program.cs`, `ApplicationUser.cs` | Completed |
-| Role constants | `Models/AppRoles.cs` | Completed |
-| Security middleware | `Infrastructure/SecurityHeadersMiddleware.cs` | Completed |
-| Audit logging | `Infrastructure/AuditLogger.cs`, `AuditLogsController.cs` | Completed |
-| Email service | `Infrastructure/SmtpEmailService.cs`, `EmailTemplates.cs` | Completed |
-| Upload service | `Infrastructure/UploadedFileStore.cs` | Completed |
-| CSV export | `Infrastructure/CsvWriter.cs` | Completed |
-| PDF export | `Infrastructure/PdfReport.cs` | Completed |
-| SQL scripts | Not detected | [NEEDS CONFIRMATION] |
-| Automated tests | Not detected | [NEEDS CONFIRMATION] |
+- ASP.NET Core MVC project targeting .NET 8.
+- Entity Framework Core with Pomelo MySQL provider.
+- ASP.NET Core Identity and role constants.
+- Controllers, models, view models, Razor views, migrations, reports, messaging, meetings, validation, and security infrastructure.
+- Successful build with `dotnet build --no-restore`.
 
-## Screenshot Checklist
+## Manual Evidence Still Required
 
-Capture screenshots into `documentation_application_development/screenshots/`.
-
-- [ ] Visual Studio solution explorer.
-- [ ] Successful build output.
-- [ ] Home page.
-- [ ] Register page.
-- [ ] Login page.
-- [ ] Student dashboard.
-- [ ] Student catalogue/enrolment page.
-- [ ] Student assignment list.
-- [ ] Student submission form.
-- [ ] Student grade/feedback view.
-- [ ] Lecturer dashboard.
-- [ ] Lecturer course details.
-- [ ] Lecturer material upload.
-- [ ] Lecturer assignment create/edit.
-- [ ] Lecturer submissions list.
-- [ ] Lecturer grading page.
-- [ ] Administrator dashboard.
-- [ ] Administrator course list.
-- [ ] Administrator course create/edit.
-- [ ] Reports index.
-- [ ] Course popularity report.
-- [ ] Student performance report.
-- [ ] Lecturer workload report.
-- [ ] Enrolments report.
-- [ ] Pass/fail report.
-- [ ] Assignment attendance report.
-- [ ] CSV export file opened or downloaded.
-- [ ] PDF export file opened or downloaded.
-- [ ] Messaging inbox.
-- [ ] Messaging thread.
-- [ ] Meeting list.
-- [ ] Meeting create/edit page.
-- [ ] Audit log page.
-- [ ] Profile page.
-- [ ] Change password page.
-- [ ] Validation error example.
-- [ ] Access denied page.
-- [ ] Database tables or EF migration evidence. [NEEDS CONFIRMATION]
-
-## Diagram Checklist
-
-- [ ] MVC architecture diagram.
-- [ ] Entity relationship diagram.
-- [ ] Role access matrix.
-- [ ] Use case diagram.
-- [ ] Student enrolment workflow.
-- [ ] Assignment submission and grading sequence.
-- [ ] Reporting/export data flow.
-- [ ] Authentication flow.
-- [ ] Deployment/setup diagram. [NEEDS CONFIRMATION]
-
-## Testing Checklist
-
-| Test area | Suggested evidence | Status |
-|---|---|---|
-| Build test | Build output screenshot/log | Completed |
-| Login test | Screenshot of successful login | Pending |
-| Invalid login test | Screenshot of validation/error message | Pending |
-| Student enrolment test | Before/after screenshot | Pending |
-| Prerequisite block test | Screenshot or test note | [NEEDS CONFIRMATION] |
-| Course full block test | Screenshot or test note | [NEEDS CONFIRMATION] |
-| Assignment submission test | Screenshot and database evidence | Pending |
-| File upload validation test | Screenshot or test note | Pending |
-| Lecturer grading test | Screenshot and student grade evidence | Pending |
-| Report export test | CSV/PDF evidence | Pending |
-| Messaging test | Two-role conversation evidence | Pending |
-| Meeting scheduling test | Meeting page and email/calendar evidence | Pending |
-| Access control test | Access denied screenshot | Pending |
-
-## Configuration Evidence
-
-Configuration files are present, but sensitive values should be redacted in any submitted document:
-
-- `appsettings.json`
-- `appsettings.Development.json`
-- `Properties/launchSettings.json`
-
-Do not include database passwords, SMTP passwords, Google client secrets or other private configuration values in screenshots or appendices.
-
-## Individual Contribution Evidence
-
-The following must be confirmed before final submission:
-
-- [ ] Author name and student ID.
-- [ ] Feature ownership.
-- [ ] Commit evidence or task evidence.
-- [ ] Screenshots linked to the author's contribution.
-- [ ] Short reflective contribution statement.
-- [ ] Any group work evidence phrased neutrally.
-
+- Final screenshots.
+- Exported diagrams as PNG or PDF.
+- Repository link confirmation.
+- Packaged build or deployment link.
+- Database screenshot, backup, or migration evidence.
+- Individual approval evidence if available.
+- Final Word/PDF export.

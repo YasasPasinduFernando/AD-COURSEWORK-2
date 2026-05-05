@@ -1,25 +1,24 @@
-# Evidence Folder Guidance
+# Evidence Folder Guide
 
-This folder should store supporting evidence that does not belong directly inside the main report.
+This folder stores supporting evidence for the approved individual UniManage submission.
 
-## Suggested Evidence Files
+## Suggested Contents
 
 - `build_output.txt`
-- `database_migrations.txt`
-- `manual_test_cases.xlsx` or `manual_test_cases.md`
-- `report_exports/` for generated CSV/PDF samples
-- `commit_evidence/` for screenshots or exported commit logs
-- `database_schema/` for ERD or table screenshots
-- `redacted_configuration_sample.txt`
+- `database_migration_list.txt`
+- `database_screenshot.png`
+- `individual_approval_evidence.pdf` or `individual_approval_evidence.png` if available
+- `manual_test_results.md`
+- `report_export_course_popularity.csv`
+- `report_export_student_performance.pdf`
+- `repository_screenshot.png`
+- `packaged_build_screenshot.png`
 
 ## Evidence Rules
 
-- Keep evidence factual and dated.
-- Do not include passwords or private keys.
-- Redact database, SMTP and Google authentication secrets.
-- Use the same names in the report appendices and evidence folder.
-
-## Current Status
-
-The project build was verified successfully on 5 May 2026 using `dotnet build --no-restore`. A saved build log should still be added here if the final submission requires attached evidence. [NEEDS CONFIRMATION]
+- Keep evidence dated and readable.
+- Use source-code evidence only for confirmed features.
+- Mark unclear evidence as [NEEDS CONFIRMATION].
+- Redact passwords, SMTP credentials, Google secrets, and database secrets.
+- Store final exported report evidence separately in `final_document/`.
 

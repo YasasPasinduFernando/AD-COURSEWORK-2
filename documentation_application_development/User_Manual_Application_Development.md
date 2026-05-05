@@ -1,64 +1,105 @@
-# User Manual - UniManage Application
+# User Manual - UniManage Application Development Coursework
 
-Coursework: CS6004ES Application Development Coursework 2  
-Application: UniManage - University Course Management System  
-Framework: ASP.NET Core MVC on .NET 8
+## 1. Introduction
 
-## 1. Purpose
+This user manual explains how to install, run, and demonstrate UniManage, a University Course Management System developed for CS6004ES Application Development Coursework 2. The guide is based on the scanned ASP.NET Core MVC project and is prepared for an approved individual submission.
 
-This user manual explains how to run and use the UniManage web application. It is written for coursework demonstration and evidence preparation. The application supports three main roles: Student, Lecturer and Administrator.
+Following approval to complete the coursework individually, the author completed the implementation, testing, documentation, and final preparation as an individual submission.
 
-## 2. Prerequisites
+## 2. System Requirements
 
-Before running the application, the following should be available:
+- Visual Studio 2017 or higher. Visual Studio 2022 is recommended for .NET 8 projects.
+- .NET 8 SDK and ASP.NET Core MVC runtime.
+- SQL Server / LocalDB: [VERIFY]. The scanned project uses Entity Framework Core with MySQL through Pomelo.
+- MySQL 8.x for the current scanned configuration.
+- Modern browser such as Microsoft Edge, Chrome, or Firefox.
+- Internet connection if NuGet packages, Google login, SMTP email, or external fonts/CDN resources are required.
 
-- Visual Studio 2022 or a compatible .NET 8 development environment.
-- .NET 8 SDK.
-- MySQL 8.x.
-- Access to the project solution `AD COURSEWORK 2.sln`.
-- A configured connection string for the local or coursework database.
+## 3. Project Package Contents
 
-Sensitive values such as database passwords, SMTP passwords and Google client secrets should not be included in screenshots or final submission documents.
+The project package contains:
 
-## 3. Running the Application
+- `AD COURSEWORK 2.sln`
+- `AD COURSEWORK 2.csproj`
+- `Program.cs`
+- `Controllers/`
+- `Models/`
+- `ViewModels/`
+- `Views/`
+- `Data/`
+- `Infrastructure/`
+- `wwwroot/`
+- `appsettings.json`
+- `appsettings.Development.json`
+- `README.md`
+- `documentation_application_development/`
 
-### Visual Studio
+## 4. Installation Guide
 
-1. Open `AD COURSEWORK 2.sln`.
-2. Confirm that the startup project is `AD COURSEWORK 2`.
-3. Check that `appsettings.json` or user secrets contain the correct MySQL connection string.
-4. Run the project using the HTTPS or HTTP launch profile.
-5. The detected local launch URLs are:
-   - `https://localhost:7212`
-   - `http://localhost:5103`
+### 4.1 Extracting the Project
 
-### Command Line
+Extract the packaged project ZIP into a suitable local development folder. Keep the folder path short and avoid moving files out of the project structure.
 
-From the project root:
+Figure UM1: This screenshot shows the project opened in Visual Studio.
+
+### 4.2 Opening the Solution in Visual Studio
+
+Open `AD COURSEWORK 2.sln` in Visual Studio. Confirm that the web project is loaded and that `AD COURSEWORK 2.csproj` is visible in Solution Explorer.
+
+### 4.3 Restoring NuGet Packages
+
+Restore NuGet packages through Visual Studio or with:
 
 ```text
 dotnet restore
-dotnet build
-dotnet run
 ```
 
-The repository scan verified a successful build with:
+The scanned project uses packages for ASP.NET Core Identity, EF Core, Pomelo MySQL, Google authentication, and QuestPDF.
+
+### 4.4 Configuring the Database Connection
+
+The scanned project configures the database connection through `appsettings.json` and `appsettings.Development.json`. Sensitive values must be redacted in screenshots and the final report.
+
+The source code uses EF Core with MySQL. SQL Server or LocalDB setup is [VERIFY].
+
+### 4.5 Applying Migrations or Running SQL Script
+
+EF Core migrations are stored in `Data/Migrations/`. The application also calls `DbInitializer.SeedAsync` at startup, which applies migrations and seeds roles and demo data.
+
+Useful command:
+
+```text
+dotnet ef database update
+```
+
+Raw SQL scripts were not detected. If the lecturer requires a SQL script, this remains [NEEDS CONFIRMATION].
+
+### 4.6 Building the Project
+
+Build from Visual Studio or command line:
 
 ```text
 dotnet build --no-restore
 ```
 
-## 4. Database Initialisation
+The build was verified successfully with 0 warnings and 0 errors.
 
-The application uses Entity Framework Core migrations. At startup, `DbInitializer.cs` calls database migration logic and seeds default roles and sample records.
+### 4.7 Running the Application
 
-Default roles:
+Run through Visual Studio or command line:
 
-- Administrator
-- Lecturer
-- Student
+```text
+dotnet run
+```
 
-Seeded demo accounts:
+Detected launch URLs:
+
+- `https://localhost:7212`
+- `http://localhost:5103`
+
+## 5. Login and User Roles
+
+Seeded accounts are created by `DbInitializer.cs`:
 
 | Role | Email | Password |
 |---|---|---|
@@ -66,233 +107,99 @@ Seeded demo accounts:
 | Lecturer | `lecturer@unimanage.local` | `Lecturer123!` |
 | Student | `student@unimanage.local` | `Student123!` |
 
-Seeded academic data includes two demo courses, `CS101` and `CS201`, and one assignment.
+Figure UM2: This screenshot shows the login page.
 
-## 5. General Navigation
+Figure UM3: This screenshot shows the registration page.
 
-After login, the application redirects the user to the correct dashboard based on their role. The shared navigation bar changes depending on whether the user is a student, lecturer or administrator.
+## 6. Student User Guide
 
-Common options include:
+After login, the student is redirected to the Student dashboard. The student can:
 
-- Dashboard
-- Profile
-- Change password
-- Sign out
+- View enrolled courses.
+- Browse course catalogue.
+- Enrol on eligible courses.
+- View assignments.
+- Submit assignment text or file.
+- View grades and feedback.
+- Send and receive messages with lecturers linked to enrolled courses.
+- View and join course meetings.
 
-The system also displays success and error alerts when actions are completed or blocked.
+Figure UM4: This screenshot shows the Student dashboard.
 
-## 6. Student Guide
+Figure UM8: This screenshot shows the enrollment screen.
 
-### 6.1 Login
+Figure UM9: This screenshot shows the assignment submission screen.
 
-1. Open the application URL.
-2. Select Sign in.
-3. Enter the student email and password.
-4. Submit the login form.
+## 7. Lecturer User Guide
 
-### 6.2 Student Dashboard
+After login, the lecturer is redirected to the Lecturer dashboard. The lecturer can:
 
-The student dashboard provides:
+- View taught courses.
+- Open course details.
+- Upload course materials.
+- Create, edit, and delete assignments for own courses.
+- View submissions.
+- Record grades and feedback.
+- Send and receive messages with enrolled students.
+- Schedule meetings for own courses.
+- View workload reporting.
 
-- Enrolled courses.
-- Upcoming assignment deadlines.
-- Recent grades.
-- Unread message count.
-- Activity feed.
-- Upcoming meetings.
-- Calendar events.
+Figure UM5: This screenshot shows the Lecturer dashboard.
 
-### 6.3 Browse and Enrol on Courses
+Figure UM10: This screenshot shows the grading screen.
 
-1. Select Catalog.
-2. Review available courses.
-3. Check course capacity and prerequisite status.
-4. Select Enrol for an eligible course.
+Figure UM12: This screenshot shows the messaging screen.
 
-The system blocks enrolment if:
+## 8. Administrator User Guide
 
-- The student is already enrolled.
-- The course is full.
-- A prerequisite course has not been enrolled.
+After login, the administrator is redirected to the Administrator dashboard. The administrator can:
 
-### 6.4 View Course Details
+- View overall user, course, enrolment, assignment, submission, and message counts.
+- Create, edit, delete, search, and page through courses.
+- View reports and analytics.
+- Review audit logs.
+- View meeting records where authorised.
 
-1. Open an enrolled course.
-2. Review course information, lecturer details, materials and assignments.
-3. Download available materials where permitted.
+A dedicated user-management screen was not detected. This remains [NEEDS CONFIRMATION].
 
-### 6.5 Submit an Assignment
+Figure UM6: This screenshot shows the Administrator dashboard.
 
-1. Select Assignments.
-2. Choose the relevant assignment.
-3. Enter text content and/or upload an attachment.
-4. Submit the form.
+Figure UM7: This screenshot shows the course management screen.
 
-The system requires either text content or a file. File uploads are restricted by type and size.
+## 9. Validation and Error Messages
 
-### 6.6 View Grades and Feedback
+The application uses data annotations, `ModelState`, anti-forgery tokens, ownership checks, file validation, and role restrictions. Examples include invalid login, missing required fields, invalid course prerequisite, duplicate enrolment, full course capacity, invalid file upload, invalid meeting URL, and unauthorised access.
 
-After the lecturer grades a submission, the student can view:
+Figure UM13: This screenshot shows a validation error example.
 
-- Grade.
-- Maximum points.
-- Feedback.
-- Submission status.
+## 10. Reporting and Analytics
 
-### 6.7 Messaging
+The Reports area includes course popularity, student performance, lecturer workload, enrolments, pass/fail analysis, and assignment attendance. Reports can be exported as CSV or PDF where implemented.
 
-1. Select Messages.
-2. Open an existing conversation or compose a new message.
-3. Select an allowed lecturer recipient.
-4. Send the message.
+Figure UM11: This screenshot shows the reports screen.
 
-Students can communicate with lecturers connected to their enrolled courses.
+## 11. Troubleshooting
 
-### 6.8 Meetings
-
-1. Select Meetings.
-2. Review upcoming course meetings.
-3. Use Join to open the meeting link.
-4. Download or use calendar evidence where required.
-
-## 7. Lecturer Guide
-
-### 7.1 Lecturer Dashboard
-
-The lecturer dashboard provides:
-
-- Taught courses.
-- Enrolment counts.
-- Assignment counts.
-- Pending and graded submissions.
-- Recent submissions.
-- Upcoming meetings.
-- Activity and calendar events.
-
-### 7.2 Manage Own Courses
-
-1. Select My Courses.
-2. Open a course.
-3. Review enrolled student count, assignments and materials.
-
-Lecturers can only manage their assigned courses.
-
-### 7.3 Upload Course Materials
-
-1. Open a course details page.
-2. Enter a material title.
-3. Select a file.
-4. Submit the upload form.
-
-The upload process validates extension, content type and size.
-
-### 7.4 Create and Edit Assignments
-
-1. Open a course.
-2. Select the assignment management option.
-3. Create a new assignment with title, description, due date and maximum points.
-4. Edit or delete assignments where necessary.
-
-### 7.5 Grade Student Submissions
-
-1. Open an assignment.
-2. Review submitted work.
-3. Open the grading page.
-4. Enter a grade within the permitted range.
-5. Add feedback.
-6. Save the grade.
-
-### 7.6 Messaging Students
-
-Lecturers can message students enrolled in their own courses. The message inbox shows conversation threads and unread status.
-
-### 7.7 Schedule Meetings
-
-1. Select Meetings.
-2. Create a meeting for one of the lecturer's courses.
-3. Enter title, description, scheduled time and duration.
-4. Use auto-generated meeting link or provide a valid Google Meet, Zoom, Teams or Webex URL.
-5. Choose whether to notify students.
-
-The system can produce calendar attachments and links for meeting reminders.
-
-### 7.8 Lecturer Workload Report
-
-Lecturers can access the workload report for their own teaching workload. Administrators can access broader report data.
-
-## 8. Administrator Guide
-
-### 8.1 Administrator Dashboard
-
-The administrator dashboard includes:
-
-- User count.
-- Course count.
-- Enrolment count.
-- Assignment count.
-- Submission count.
-- Message count.
-- Popular courses.
-- Recent audit activity.
-
-### 8.2 Manage Courses
-
-1. Select Courses.
-2. Search or browse course records.
-3. Create a course by entering code, name, description, credits, enrolment limit, lecturer and optional prerequisite.
-4. Edit existing course details.
-5. Delete a course where appropriate.
-
-### 8.3 Reports
-
-The Reports area includes:
-
-- Course popularity.
-- Student performance.
-- Lecturer workload.
-- Enrolments.
-- Pass/fail analysis.
-- Assignment attendance.
-
-Reports can be exported as CSV and PDF where supported by the page.
-
-### 8.4 Audit Logs
-
-1. Select Audit.
-2. Filter by category or search text.
-3. Review user, action, detail, IP address and timestamp information.
-
-The audit log supports evidence of authentication, course, material, submission, enrolment, profile, security, meeting and message events where logged.
-
-### 8.5 User Management
-
-A dedicated administrator user-management screen was not detected in the repository. Administrator creation is currently evidenced through seed data. This remains `[NEEDS CONFIRMATION]` for the final submission.
-
-## 9. Profile and Password Management
-
-Authenticated users can:
-
-- View profile information.
-- Update full name and phone number.
-- Change password.
-- Sign out.
-
-Forgotten password and reset password flows are implemented through the account controller and email service.
-
-## 10. Troubleshooting
-
-| Issue | Suggested action |
+| Problem | Suggested fix |
 |---|---|
-| Application does not start | Check .NET 8 SDK, build output and launch profile. |
-| Database connection fails | Confirm MySQL is running and the connection string is correct. |
-| Migrations fail | Confirm database permissions and EF Core tooling. |
-| Login fails | Check seeded account credentials or registered user details. |
-| Google login fails | Confirm Google client configuration, or use local login. |
-| Email does not send | Confirm SMTP settings; avoid exposing credentials in evidence. |
-| Upload rejected | Check file extension, size and content type. |
-| Access denied | Confirm the user has the expected role. |
+| Project does not load | Confirm Visual Studio version and .NET 8 SDK installation |
+| NuGet restore fails | Check internet access and package sources |
+| Database connection fails | Check MySQL server, port, database name, and credentials |
+| Migration fails | Confirm database permissions and EF Core tools |
+| Login fails | Confirm seeded account details and database seeding |
+| Access denied | Confirm the signed-in user's role |
+| Upload fails | Check file extension, size, and content type |
+| Email does not send | Confirm SMTP settings, or continue without email for local testing |
 
-## 11. Evidence Capture Notes
+## 12. Notes for Viva Demonstration
 
-For coursework evidence, capture screenshots of the main workflows for each role. Avoid including private passwords, SMTP credentials, Google secrets or database passwords. Use the screenshot checklist in `screenshots/README_SCREENSHOTS.md`.
+For the viva, the author should be ready to explain:
 
+- Why ASP.NET Core MVC was used.
+- How controllers, models, views, and view models are separated.
+- How Identity and roles work.
+- How EF Core stores courses, enrolments, assignments, submissions, and messages.
+- How validation and security are implemented.
+- How reports are generated.
+- Which features are confirmed by source code.
+- Which evidence items remain [NEEDS CONFIRMATION].

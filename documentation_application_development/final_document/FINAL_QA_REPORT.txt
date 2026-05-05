@@ -1,0 +1,191 @@
+FINAL QA REPORT
+CS6004ES APPLICATION DEVELOPMENT COURSEWORK 2
+Project: UniManage - University Course Management System
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+
+SOURCE SCAN SUMMARY
+
+Files found:
+- Solution file: AD COURSEWORK 2.sln
+- Project file: AD COURSEWORK 2.csproj
+- Startup file: Program.cs
+- Controllers: AccountController, DashboardController, CoursesController, EnrollmentsController, AssignmentsController, SubmissionsController, ReportsController, MessagesController, MeetingsController, ProfileController, AuditLogsController, HomeController
+- Models/entities: ApplicationUser, AppRoles, Course, Enrollment, Assignment, Submission, SubmissionStatus, Message, CourseMaterial, Meeting, AuditLog, ErrorViewModel
+- ViewModels: RegisterViewModel, LoginViewModel, CourseInputViewModel, CourseBrowseRowViewModel, AssignmentInputViewModel, SubmissionSubmitViewModel, GradeSubmissionViewModel, DashboardViewModels, Message view models, MeetingInputViewModel, ProfileViewModel, password view models
+- Views: Account, Dashboard, Courses, Enrollments, Assignments, Submissions, Reports, Messages, Meetings, Profile, AuditLogs, Home, Shared
+- DbContext: Data/ApplicationDbContext.cs
+- Migrations: InitialUniManage, AddAuditLogAndSecurity, AddMeetings, ApplicationDbContextModelSnapshot
+- Configuration: appsettings.json, appsettings.Development.json, Properties/launchSettings.json
+- UI/layout: Views/Shared/_Layout.cshtml, Views/Shared/_Alerts.cshtml, Views/Shared/_DashboardCalendar.cshtml, wwwroot/css/site.css, wwwroot/js/site.js, wwwroot/lib, wwwroot/assets
+
+Features confirmed:
+- ASP.NET Core MVC project targeting .NET 8
+- Entity Framework Core with Pomelo MySQL provider
+- ASP.NET Core Identity authentication
+- Student, Lecturer, and Administrator roles
+- Role dashboards
+- Course management
+- Enrollment workflow
+- Assignment creation and student submission
+- Lecturer grading with feedback
+- Reporting and analytics with CSV/PDF support
+- Messaging and meeting communication features
+- Validation through data annotations and ModelState
+- Error handling through middleware and controller checks
+- Security controls including RBAC, anti-forgery, rate limiting, upload validation, security headers, and audit logging
+- Build confirmed with dotnet build --no-restore, 0 warnings and 0 errors
+
+Features not found:
+- Classic SQL Server or LocalDB scripts were not found
+- Automated test project was not found
+- Dedicated administrator user-management screen was not found
+- Final screenshot files were not found
+- Packaged build or hosted deployment link was not found
+- Database backup file was not found
+
+Features requiring manual confirmation:
+- SQL Server/LocalDB alignment if required by the lecturer
+- Final repository accessibility
+- Packaged build or deployment link
+- Database evidence screenshot or backup
+- Individual approval evidence file if available
+- Manual test results and screenshots
+
+QA scan checks:
+- Wrong module wording: no incorrect module name found in the prepared report files.
+- Diagram wording check: no non-required diagram type wording is used.
+- Editing artefact wording: removed from final submission drafts except where a manual QA item is clearly labelled.
+- Individual submission wording: no collaborative contribution section or work-splitting table is included.
+- Individual approval context: included in the title page, acknowledgement, contribution report, manual, checklist, and QA report.
+- Repository link: placeholder remains and must be replaced.
+- Build/deployment link: placeholder remains and must be replaced.
+- Database evidence: migrations confirmed, database screenshot or backup still required.
+- User manual: created.
+- Architecture diagram: Mermaid source created.
+- ER diagram: Mermaid source created.
+- UML diagram: Mermaid source created.
+- Installation guide: included in the user manual.
+- Own reflection: included in Section 18 of the main report.
+- Class, property, and method descriptions: included in Tables 4, 5, and 6.
+- Unsupported claims: unclear items are marked [NEEDS CONFIRMATION].
+- Direct fault wording: not included.
+- Em dashes: none found by automated text scan.
+- Strange symbols: none found by automated text scan.
+- Duplicated references: final reference URLs still require manual completion.
+- Placeholder text: title page, source links, evidence links, and confirmation markers remain for manual completion.
+- Figure numbering check: main report figure list and diagram README are aligned.
+- Table numbering check: main report table list and tables are aligned.
+- Draft screenshot guidance wording: not used in final captions.
+
+1. COMPLETED SECTIONS
+
+- Main technical report draft completed.
+- Individual contribution report draft completed.
+- User manual and installation guide draft completed.
+- Evidence checklist completed.
+- Source and build links file created with placeholders.
+- Diagram sources prepared in Mermaid format.
+- Screenshot and evidence folder guides created.
+- Word formatting guide created.
+- DOCX conversion script created.
+- Manual final checklist created.
+
+2. WEAK SECTIONS
+
+- Testing actual results remain incomplete until screenshots and manual testing are added.
+- Database evidence needs a screenshot, migration list export, backup, or lecturer-approved equivalent.
+- Deployment/build package evidence needs a link or ZIP location.
+- Final references need completed official source links.
+- Title page still contains lecturer/module leader and date placeholders.
+
+3. MISSING EVIDENCE
+
+- Login and registration screenshots.
+- Student dashboard screenshot.
+- Lecturer dashboard screenshot.
+- Administrator dashboard screenshot.
+- Course management screenshot.
+- Enrollment screenshot.
+- Assignment and grading screenshot.
+- Reporting screenshot.
+- Communication screenshot.
+- Validation or error handling screenshot.
+- Database evidence.
+- Source repository evidence.
+- Packaged build or deployment evidence.
+- Individual approval evidence if available.
+
+4. REQUIRED MANUAL EDITS
+
+- Replace [INSERT IF REQUIRED].
+- Replace [INSERT DATE].
+- Paste repository link.
+- Paste packaged build or deployment link.
+- Paste database script, backup, or evidence link.
+- Insert screenshots.
+- Insert exported diagram images.
+- Update actual test results.
+- Complete Harvard reference URLs.
+- Confirm SQL Server/LocalDB wording if required by the brief.
+- Remove or explain every remaining [NEEDS CONFIRMATION] marker before final PDF export.
+
+5. SUGGESTED SCREENSHOTS TO ADD
+
+- Figure 7: Login or registration screen.
+- Figure 8: Student dashboard.
+- Figure 9: Lecturer dashboard.
+- Figure 10: Administrator dashboard.
+- Figure 11: Course management screen.
+- Figure 12: Enrollment screen.
+- Figure 13: Assignment and grading screen.
+- Figure 14: Reporting and analytics screen.
+- Figure 15: Communication module screen.
+- Figure 16: Validation or error handling evidence.
+- Figure 17: Database evidence.
+- Figure 18: Source repository evidence.
+- Figure 19: Packaged build or deployment evidence.
+
+6. SUGGESTED DIAGRAMS TO EXPORT
+
+- architecture_diagram.mmd to PNG/PDF.
+- use_case_diagram.mmd to PNG/PDF.
+- er_diagram.mmd to PNG/PDF.
+- class_diagram.mmd to PNG/PDF.
+- application_flowchart.mmd to PNG/PDF.
+- security_flow_diagram.mmd to PNG/PDF.
+
+7. INDIVIDUAL SUBMISSION WORDING CHECK
+
+- Individual submission context is included.
+- Approved individual completion is stated neutrally.
+- No work-splitting section is included.
+- No contribution comparison table is included.
+- No communication record evidence section is included.
+- No direct fault wording is included.
+- The contribution report uses the author-focused wording.
+
+8. FINAL SUBMISSION CHECKLIST
+
+[ ] Confirm all title page details.
+[ ] Insert all screenshots.
+[ ] Export and insert all diagrams.
+[ ] Paste repository link.
+[ ] Paste build/deployment link.
+[ ] Add database evidence.
+[ ] Add individual approval evidence if available.
+[ ] Complete test results.
+[ ] Update Table of Contents.
+[ ] Update List of Figures.
+[ ] Update List of Tables.
+[ ] Check figure numbering.
+[ ] Check table numbering.
+[ ] Check references.
+[ ] Check for unsupported claims.
+[ ] Check for em dashes.
+[ ] Check for strange symbols.
+[ ] Check for non-required diagram wording.
+[ ] Check for editing artefact wording.
+[ ] Check for draft caption guidance wording in final captions.
+[ ] Export final PDF.
+[ ] Visually inspect the final PDF.

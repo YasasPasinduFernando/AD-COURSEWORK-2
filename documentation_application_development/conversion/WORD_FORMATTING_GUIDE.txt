@@ -1,40 +1,42 @@
 WORD FORMATTING GUIDE
-CS6004ES Application Development Coursework 2
+CS6004ES APPLICATION DEVELOPMENT COURSEWORK 2
 
-Recommended final document structure:
+Page setup:
+- A4 page size
+- Margins: 1 inch or lecturer-required margin
+- Font: Times New Roman
+- Body text: 12 pt
+- Line spacing: 1.5
+- Paragraph spacing after: 6 pt or 8 pt
+- Body text justified
 
-1. Title page
-2. Abstract
-3. Table of contents
-4. Introduction
-5. Requirements mapping
-6. System architecture
-7. Database design
-8. Feature implementation
-9. Validation, security and exception handling
-10. Testing and evaluation
-11. Individual contribution
-12. Conclusion
-13. References
-14. Appendices
+Headings:
+- Heading 1: 16 pt, bold, black
+- Heading 2: 14 pt, bold, black
+- Heading 3: 12 pt, bold, black
+- All headings black
 
-Suggested formatting:
+Tables:
+- Table text: 9 or 10 pt if needed
+- Table captions above tables
+- Table captions centred
+- Table captions 10 pt italic
 
-- Paper size: A4
-- Font: Aptos, Calibri or Times New Roman
-- Body font size: 11 or 12 pt
-- Line spacing: 1.15 or 1.5, depending on coursework guidance
-- Headings: use Word heading styles for automatic contents
-- Figure captions: Figure 1, Figure 2, etc.
-- Table captions: Table 1, Table 2, etc.
-- Code references: use monospace font
-- Appendix labels: Appendix A, Appendix B, etc.
+Figures:
+- Figure captions below images
+- Figure captions centred
+- Figure captions 10 pt italic
+- Export Mermaid diagrams as PNG or PDF before insertion
 
-Before export:
-
-- Replace every [NEEDS CONFIRMATION] marker or move it into limitations.
-- Check that screenshots and diagram numbers match the report text.
-- Redact all sensitive configuration values.
-- Confirm the GitHub/source link is accessible.
-- Export the final document to PDF if required.
+Final checks:
+- No em dashes
+- No strange symbols
+- UK English
+- Individual submission wording only
+- Update Table of Contents in Word before PDF export
+- Update List of Figures
+- Update List of Tables
+- Check all placeholders
+- Export final PDF
+- Visually inspect PDF pages
 

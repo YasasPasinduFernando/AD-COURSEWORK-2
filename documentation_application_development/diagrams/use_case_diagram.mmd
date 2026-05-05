@@ -25,7 +25,6 @@ flowchart LR
 
         UCReports["Generate reports"]
         UCAudit["Review audit logs"]
-        UCManageUsers["Manage users [VERIFY WITH CODE]"]
     end
 
     Student --> UCLogin
@@ -53,8 +52,6 @@ flowchart LR
     Administrator --> UCManageCourses
     Administrator --> UCReports
     Administrator --> UCAudit
-    Administrator -.-> UCManageUsers
-
     UCSubmit --> UCViewAssignments
     UCRecordGrades --> UCSubmit
     UCReports --> UCManageCourses

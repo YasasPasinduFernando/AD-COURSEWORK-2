@@ -1,0 +1,156 @@
+LECTURER MARKING ALIGNMENT REPORT
+CS6004ES Application Development Coursework 2
+UniManage - University Course Management System
+
+Review purpose:
+This report checks the current documentation against the expected marking areas for CS6004ES Application Development Coursework 2. The review is written from a lecturer-style quality assurance perspective and focuses on evidence, risk, and final submission readiness.
+
+Individual submission wording:
+Following approval to complete the coursework individually, the author completed the implementation, testing, documentation, and final preparation as an individual submission.
+
+MARKING ALIGNMENT TABLE
+
+| Marking Item | Evidence in Documentation | Evidence in Application | Risk Level | Fix Needed |
+|---|---|---|---|---|
+| Installation Guide and User Manual | User_Manual_Application_Development.md includes system requirements, setup, build, database configuration, role guidance, troubleshooting, and viva notes. | Solution file and project file are present. ASP.NET Core MVC project can be opened in Visual Studio. Build evidence has been recorded in QA notes. | MEDIUM | Insert final screenshots and confirm database setup steps against the local environment before PDF export. |
+| Concise logical solution | Main report Section 12 explains how the implemented system addresses the UCMS case study. | MVC structure separates controllers, models, views, data access, and services. Confirmed source includes dashboard, course, enrolment, assignment, reporting, messaging, and security modules. | LOW | Keep Section 12 concise during Word formatting and avoid adding unsupported claims. |
+| Architecture Diagram | Main report Section 8.1 and diagrams folder reference architecture_diagram.mmd. | Source confirms browser-facing ASP.NET Core MVC, controllers, views, models, EF Core, Identity, MySQL connection, services, uploads, and middleware. | MEDIUM | Export architecture_diagram.mmd to PNG or PDF and insert it as Figure 1. |
+| ER Diagram | Main report Section 8.3 and diagrams folder reference er_diagram.mmd. | ApplicationDbContext and model files confirm users, courses, enrolments, assignments, submissions, messages, course materials, meetings, and audit logs. | MEDIUM | Export er_diagram.mmd and ensure uncertain database evidence is marked [NEEDS CONFIRMATION] until a database screenshot or migration evidence is inserted. |
+| UML Diagram | Main report Section 8.4 and diagrams folder reference class_diagram.mmd. | Controllers, models, DbContext, infrastructure services, and view models were found in source. | MEDIUM | Export class_diagram.mmd and check that all class names match the final source before insertion. |
+| Detailed description of classes, properties, and methods | Main report Section 11 includes Tables 4, 5, and 6 for controllers, models, properties, methods, views, validation, and coursework mapping. | Source scan confirms AccountController, DashboardController, CoursesController, EnrollmentsController, AssignmentsController, SubmissionsController, ReportsController, MessagesController, MeetingsController, ProfileController, AuditLogsController, ApplicationDbContext, and model classes. | LOW | Recheck line references or screenshots if the lecturer requires source-code appendix evidence. |
+| Own reflection | Main report Section 18 and Expanded_Individual_Contribution.md include individual reflection and learning points using the author wording. | The application structure and documentation package support the individual approved submission context. | LOW | Keep reflection neutral and avoid adding non-individual wording. |
+| UI | Main report Sections 10 and 14 refer to the UI, layout, role views, and screenshot placeholders. User manual includes screenshot placeholders. | Views folder, Shared layout, Bootstrap assets, site.css, site.js, and role-specific pages are present. | MEDIUM | Capture final UI screenshots for the required pages and insert them with final figure captions. |
+| Registration/Login | Main report Sections 6, 10.2, and test plan cover registration and login. User manual includes login and role guidance. | AccountController, Identity setup in Program.cs, Account views, ApplicationUser, and authentication configuration are present. | MEDIUM | Add screenshots of login, registration, invalid login, and successful role redirect. |
+| Student Dashboard | Main report Sections 6 and 10.3 describe the Student dashboard. User manual includes Student guidance. | DashboardController has Student dashboard logic and student-related views are present. Enrolment, assignment, submission, grade, and messaging flows support the role. | MEDIUM | Add Student dashboard screenshot and brief viva evidence showing Student role access. |
+| Lecturer Dashboard | Main report Sections 6 and 10.4 describe the Lecturer dashboard. User manual includes Lecturer guidance. | DashboardController has Lecturer dashboard logic. Course, assignment, submission grading, material upload, reporting, and messaging source files support lecturer activity. | MEDIUM | Add Lecturer dashboard screenshot and one screenshot for assignment or grading workflow. |
+| Administrator Dashboard | Main report Sections 6 and 10.5 describe the Administrator dashboard. User manual includes Administrator guidance. | DashboardController has Administrator dashboard logic. Reports, audit logs, course management, and security configuration are present. Dedicated user-management screen remains [NEEDS CONFIRMATION]. | MEDIUM | Add Administrator dashboard screenshot and confirm whether manage-users functionality is implemented or mark it [NEEDS CONFIRMATION]. |
+| Course Management | Main report Sections 6 and 10.6 cover course management. | CoursesController, Course model, CourseInputViewModel, course views, ApplicationDbContext Courses DbSet, and course material upload logic are present. | MEDIUM | Add course list/create/edit screenshot and confirm database save evidence. |
+| Enrollment System | Main report Sections 6 and 10.7 cover enrolment. | EnrollmentsController, Enrollment model, BrowseCourseViewModel, enrolment views, dashboard links, and database relationships are present. | MEDIUM | Add enrolment browse/enrol screenshot and one database or page evidence screenshot. |
+| Assignment and Grading | Main report Sections 6 and 10.8 cover assignments, submissions, grades, and feedback. | AssignmentsController, SubmissionsController, Assignment model, Submission model, GradeSubmissionViewModel, file store service, and views are present. | MEDIUM | Add assignment creation, submission, and grading screenshots. |
+| Reporting and Analytics | Main report Sections 6 and 10.9 cover reporting and analytics. | ReportsController, report view models, report views, CsvWriter, PdfReport, QuestPDF package, and export actions are present. | MEDIUM | Add reporting dashboard screenshot and one CSV or PDF export evidence item. |
+| Communication Module | Main report Sections 6 and 10.10 cover communication. User manual includes messaging guidance. | MessagesController, Message model, message view models, Inbox, Thread, Reply, and Compose views are present. Meeting features are also present but should be described only as supporting functionality unless required. | MEDIUM | Add inbox/thread/compose screenshot and confirm role-based access behaviour. |
+| Security and Data Protection | Main report Sections 10.11, 14, and 15 cover security. | Program.cs includes Identity, authentication cookies, role authorisation, antiforgery, rate limiting, security headers, exception handling, and HTTPS/HSTS configuration. AuditLogger and AuditLogsController are present. | LOW | Add evidence screenshots for unauthorised access, validation, or audit log if available. |
+| Programming style | Main report Section 15 discusses naming, MVC separation, validation, services, and maintainability. | Source follows MVC folders, view models, services, data access, dependency injection, and EF Core patterns. Build succeeds. | LOW | Keep any final appendix code samples focused and readable. |
+| Validation and exception handling | Main report Sections 6, 10.11, 13, and 15 cover validation and error handling. | Data annotations, ModelState checks, antiforgery tokens, file validation, exception handling middleware, Error view, and service-level checks are present. | MEDIUM | Add validation/error handling screenshot and confirm expected error messages during manual testing. |
+
+1. SCREENSHOTS STILL NEEDED
+
+The following screenshots should be captured before final PDF export:
+
+| Screenshot | Purpose | Status |
+|---|---|---|
+| Login page | Evidence for authentication UI | [NEEDS CONFIRMATION] |
+| Registration page | Evidence for user registration | [NEEDS CONFIRMATION] |
+| Invalid login or validation error | Evidence for validation and error handling | [NEEDS CONFIRMATION] |
+| Student dashboard | Evidence for Student role | [NEEDS CONFIRMATION] |
+| Lecturer dashboard | Evidence for Lecturer role | [NEEDS CONFIRMATION] |
+| Administrator dashboard | Evidence for Administrator role | [NEEDS CONFIRMATION] |
+| Course list or course management page | Evidence for course management | [NEEDS CONFIRMATION] |
+| Course create or edit page | Evidence for CRUD operation | [NEEDS CONFIRMATION] |
+| Enrolment browse/enrol page | Evidence for enrolment workflow | [NEEDS CONFIRMATION] |
+| Assignment list or create page | Evidence for assignment feature | [NEEDS CONFIRMATION] |
+| Assignment submission page | Evidence for Student submission workflow | [NEEDS CONFIRMATION] |
+| Grading page | Evidence for Lecturer grading workflow | [NEEDS CONFIRMATION] |
+| Reporting and analytics page | Evidence for reporting | [NEEDS CONFIRMATION] |
+| CSV or PDF report export evidence | Evidence for export feature | [NEEDS CONFIRMATION] |
+| Messaging inbox, thread, or compose page | Evidence for communication feature | [NEEDS CONFIRMATION] |
+| Database table, migration, or data view | Evidence for database persistence | [NEEDS CONFIRMATION] |
+| Visual Studio solution opened | Evidence for build environment | [NEEDS CONFIRMATION] |
+| Successful build output | Evidence for build readiness | [NEEDS CONFIRMATION] |
+| Repository page | Evidence for source repository | [NEEDS CONFIRMATION] |
+| Packaged build or deployment evidence | Evidence for submission package | [NEEDS CONFIRMATION] |
+
+2. DIAGRAMS STILL NEEDED
+
+The Mermaid source files exist in the diagrams folder, but the following exported images should be inserted into the Word document:
+
+| Diagram | Source File | Final Action |
+|---|---|---|
+| System Architecture Diagram | documentation_application_development/diagrams/architecture_diagram.mmd | Export to PNG or PDF and insert as Figure 1. |
+| Use Case Diagram | documentation_application_development/diagrams/use_case_diagram.mmd | Export to PNG or PDF and insert as Figure 2. |
+| Entity Relationship Diagram | documentation_application_development/diagrams/er_diagram.mmd | Export to PNG or PDF and insert as Figure 3. |
+| UML Class Diagram | documentation_application_development/diagrams/class_diagram.mmd | Export to PNG or PDF and insert as Figure 4. |
+| Application Flowchart | documentation_application_development/diagrams/application_flowchart.mmd | Export to PNG or PDF and insert as Figure 5. |
+| Authentication and Role-Based Access Flow | documentation_application_development/diagrams/security_flow_diagram.mmd | Export to PNG or PDF and insert as Figure 6. |
+
+3. PLACEHOLDERS STILL REMAINING
+
+The following placeholder types are expected to remain until final manual evidence is added:
+
+| Placeholder | Where It Applies | Required Fix |
+|---|---|---|
+| [INSERT IF REQUIRED] | Title page lecturer/module leader field | Replace with lecturer or module leader name if required. |
+| [INSERT DATE] | Title page submission date | Replace with the final submission date. |
+| [PASTE REPOSITORY LINK HERE] | Source_And_Build_Links.md | Paste the final repository link. |
+| [PASTE ZIP OR HOSTED LINK HERE] | Source_And_Build_Links.md | Paste packaged build, ZIP, or hosted deployment link. |
+| [PASTE LINK OR FILE PATH HERE] | Source_And_Build_Links.md | Paste database script, backup, migration evidence, or database screenshot path. |
+| [PASTE LINK HERE] | Source_And_Build_Links.md | Paste evidence folder link if required. |
+| [NEEDS CONFIRMATION] | Evidence, screenshots, manual testing, database evidence, and unclear features | Replace only when evidence is available. Otherwise keep the marker. |
+| [VERIFY] | Setup instructions where local environment details may differ | Confirm local version, database server, and credentials before final submission. |
+
+4. FEATURES NOT PROVEN BY SOURCE CODE
+
+The following items are not fully proven by source code alone and require manual confirmation or external evidence:
+
+| Item | Current Evidence Position | Risk |
+|---|---|---|
+| SQL Server or LocalDB database setup | Actual project source uses EF Core with Pomelo MySQL provider. SQL Server or LocalDB is not confirmed in the scanned code. | MEDIUM |
+| Raw SQL script or database backup | EF Core migrations are present, but a separate SQL script or database backup has not been confirmed. | MEDIUM |
+| Automated test project | No dedicated automated test project has been confirmed. Manual test plan evidence is documented. | MEDIUM |
+| Dedicated administrator user-management screen | Administrator dashboard and audit/reporting evidence exists, but a full manage-users screen is [NEEDS CONFIRMATION]. | MEDIUM |
+| Hosted deployment | No hosted deployment link is currently confirmed. | HIGH |
+| Packaged build ZIP | No final packaged build link is currently confirmed. | HIGH |
+| Final screenshot evidence | Screenshot placeholders exist, but final inserted screenshots require manual capture. | HIGH |
+| Individual approval evidence file | Individual approval context is documented, but the actual approval evidence must be attached if available. | MEDIUM |
+
+5. VIVA QUESTIONS THE AUTHOR SHOULD PREPARE FOR
+
+The author should be prepared to answer the following questions:
+
+| Viva Question | Preparation Focus |
+|---|---|
+| Why was ASP.NET Core MVC used for the implementation? | Explain MVC separation, Visual Studio support, routing, controllers, views, models, Identity, and EF Core integration. |
+| How does registration and login work in UniManage? | Explain AccountController, Identity, ApplicationUser, validation, authentication cookie, and role-based redirects. |
+| How are Student, Lecturer, and Administrator roles controlled? | Explain roles, Authorize attributes, dashboard redirects, and unauthorised access handling. |
+| How does the database model support the UCMS case study? | Explain ApplicationDbContext, key entities, relationships, migrations, and persistence. |
+| How does course management work? | Explain CoursesController, Course model, create/edit/details/delete workflow, and material upload if demonstrated. |
+| How does enrolment work? | Explain EnrollmentsController, Enrollment model, duplicate checks, course capacity or validation if present, and Student dashboard links. |
+| How are assignments submitted and graded? | Explain AssignmentsController, SubmissionsController, Submission model, file upload, status, marks, and feedback. |
+| How are reports produced? | Explain ReportsController, report view models, database queries, CSV export, PDF export, and QuestPDF use. |
+| How does messaging work? | Explain MessagesController, Message model, inbox, thread, reply, compose, and role access. |
+| What security controls are implemented? | Explain Identity, password handling, antiforgery, cookies, rate limiting, security headers, HTTPS/HSTS, validation, and audit logging. |
+| What validation and exception handling are included? | Explain data annotations, ModelState checks, file validation, error view, exception page handling, and database validation. |
+| Which features remain [NEEDS CONFIRMATION]? | Be honest about screenshots, deployment link, database backup/script, automated tests, and any unverified admin user-management feature. |
+| How can the project be run during the viva? | Explain Visual Studio open, restore packages, configure connection string, apply migrations, run the application, and use seeded users if available. |
+| What would be improved in a future version? | Discuss automated tests, hosted deployment, accessibility testing, richer analytics, notification improvements, and stronger admin user management. |
+
+6. FINAL SUBMISSION ACTIONS BEFORE PDF EXPORT
+
+Complete the following actions before exporting the final submission:
+
+| Action | Priority | Status |
+|---|---|---|
+| Fill lecturer/module leader field if required. | HIGH | [NEEDS CONFIRMATION] |
+| Fill final submission date. | HIGH | [NEEDS CONFIRMATION] |
+| Paste final repository link. | HIGH | [NEEDS CONFIRMATION] |
+| Paste packaged build, ZIP, or hosted deployment link. | HIGH | [NEEDS CONFIRMATION] |
+| Add database script, migration, screenshot, or backup evidence. | HIGH | [NEEDS CONFIRMATION] |
+| Capture and insert all required screenshots. | HIGH | [NEEDS CONFIRMATION] |
+| Export all Mermaid diagrams to PNG or PDF. | HIGH | [NEEDS CONFIRMATION] |
+| Insert exported diagrams and screenshots into Word with captions. | HIGH | [NEEDS CONFIRMATION] |
+| Update Table of Contents in Word. | HIGH | [NEEDS CONFIRMATION] |
+| Update List of Figures and List of Tables in Word. | HIGH | [NEEDS CONFIRMATION] |
+| Check that all figure and table numbers match the body text. | HIGH | [NEEDS CONFIRMATION] |
+| Confirm all [VERIFY] markers are resolved or deliberately retained. | HIGH | [NEEDS CONFIRMATION] |
+| Confirm all [NEEDS CONFIRMATION] markers are acceptable or replaced with evidence. | HIGH | [NEEDS CONFIRMATION] |
+| Check that individual approved submission wording is retained. | HIGH | [NEEDS CONFIRMATION] |
+| Check that no non-individual wording has been reintroduced. | HIGH | [NEEDS CONFIRMATION] |
+| Run final spelling and grammar check using UK English. | MEDIUM | [NEEDS CONFIRMATION] |
+| Export final PDF. | HIGH | [NEEDS CONFIRMATION] |
+| Visually inspect every PDF page before upload. | HIGH | [NEEDS CONFIRMATION] |
+
+LECTURER-STYLE QA SUMMARY
+
+The documentation is broadly aligned with the coursework marking areas because the main report, user manual, individual contribution report, evidence checklist, diagrams, and QA files are present. The strongest areas are source-code structure, MVC explanation, role-based access, course/enrolment/assignment/reporting/messaging coverage, security explanation, and class/method documentation.
+
+The main marking risks are practical evidence risks rather than missing written sections. The final submission still needs real screenshots, exported diagrams, repository/build/database links, and final Word/PDF formatting. Any item not proven by source code or screenshot evidence should remain marked [NEEDS CONFIRMATION] or [VERIFY] until confirmed.

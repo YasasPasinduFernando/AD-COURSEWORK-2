@@ -1,0 +1,597 @@
+DOCUMENTATION EXPANSION PLAN
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student Name: Yasas Pasindu Fernando
+Student ID: 25026764
+Centre: ESOFT Metro Campus / London Metropolitan University
+Submission Type: Approved individual submission
+
+PURPOSE OF THIS PLAN
+
+This plan reviews the existing UniManage documentation set and identifies how to expand it into a substantial, high-quality individual technical report suitable for high marks at London Metropolitan University / ESOFT level. The plan is written before any rewriting takes place, so that the expansion work is structured, evidence based, and aligned with the CS6004ES marking criteria.
+
+The current package contains the following primary documents:
+
+- documentation_application_development/Main_Application_Development_Report.md
+- documentation_application_development/Expanded_Individual_Contribution.md
+- documentation_application_development/User_Manual_Application_Development.md
+- documentation_application_development/Evidence_Checklist.md
+- documentation_application_development/Source_And_Build_Links.md
+- documentation_application_development/diagrams/*.mmd (architecture, use case, ER, class, flow, security)
+- documentation_application_development/final_document/LECTURER_MARKING_ALIGNMENT_REPORT.txt
+- documentation_application_development/final_document/FINAL_QA_REPORT.txt
+- documentation_application_development/final_document/INDIVIDUAL_WORDING_CLEANUP_REPORT.txt
+- documentation_application_development/final_document/MANUAL_FINAL_CHECKLIST.txt
+- documentation_application_development/final_document/Application_Development_Final_Report.docx (early build)
+
+These documents are correct and consistent, but the written depth is far below what is expected for a high-mark individual technical report. This plan describes how to raise the depth without inventing unsupported claims and without copying unrelated coursework material.
+
+
+==================================================================
+1. CURRENT REPORT WEAKNESSES
+==================================================================
+
+The following weaknesses have been identified through a side by side review of the current Main_Application_Development_Report.md, the supporting individual contribution document, and the lecturer-style QA notes already produced for this project. Each weakness is expressed in marker-friendly language and is supported with a specific reason.
+
+1.1 Short sections
+
+- Most numbered sections in the main report are between one and three short paragraphs. For example, Section 2 (Project Motivation), Section 3 (Problem Description), Section 5 (Application Overview), and the implementation sub-sections (10.1 to 10.11) are short summaries rather than full academic discussions.
+- A high-mark London Met / ESOFT report normally develops each major section across multiple paragraphs that explain the academic problem, the chosen approach, the technical implementation, and the link to coursework requirements. The current report does not yet reach that depth.
+- The reflection section (Section 18) is currently only one paragraph. A strong individual reflection should cover learning outcomes, challenges, decisions, and personal development across at least one full page.
+
+1.2 Thin academic explanation
+
+- The narrative is mostly descriptive ("the system does X") rather than analytical ("the system does X because of requirement Y, supported by source file Z, addressing risk W").
+- Important academic concepts are mentioned but not explained, including separation of concerns, the MVC pattern, the role of view models, dependency injection, the Identity pipeline, EF Core change tracking, anti-forgery protection, and the rationale for role-based access control.
+- The report does not currently include a research and background section that links the chosen technologies to academic literature, official documentation, or established design principles. Section 7 (Research and Background) exists but is only one paragraph.
+- There is no explicit mapping between the case-study problem and software-engineering principles such as cohesion, coupling, single responsibility, layered architecture, and defence in depth.
+
+1.3 Lack of lecturer-style marking alignment
+
+- The current report includes a coursework task mapping (Table 7) but it is high level. It does not give per-criterion marking commentary that explicitly states what evidence the marker should look at and where it lives.
+- A lecturer-style alignment is already drafted separately in LECTURER_MARKING_ALIGNMENT_REPORT.txt, but the main report itself does not include the same per-item marking discussion in academic prose.
+- Items such as "Programming style", "Validation and exception handling", and "Interface design and usability" do not yet have their own focused sections inside the body of the report. They are only mentioned in tables.
+
+1.4 Need more screenshots and evidence
+
+- The main report references Figures 7 to 19 but no actual screenshot files are present in documentation_application_development/screenshots/ yet.
+- The Evidence Checklist confirms that screenshot capture is still pending across login, registration, dashboards, course management, enrolment, assignment, grading, reporting, communication, validation, database, repository, and packaged build evidence.
+- Diagrams are stored as Mermaid sources in documentation_application_development/diagrams/ but exported PNG or PDF images for the report have not been created and inserted yet.
+- There is no captured database evidence (table view, migration list export, or backup view) and no captured build evidence beyond a textual record of the build result.
+
+1.5 Need deeper implementation explanation
+
+- Section 10 (Implementation) lists each module in one short paragraph. It does not explain the controller actions, route templates, authorisation attributes, validation rules, view-model binding, EF Core query patterns, error responses, or the relationship between controller, service, and database for each feature.
+- The relationship between Razor views, view models, layout, partials, and Tag Helpers is not explained in detail.
+- The role of supporting infrastructure such as audit logging, rate limiting, file store services, security headers, CSV writer, and PDF report builder is mentioned but not explained in technical depth.
+- The implementation discussion does not include short, illustrative source-code snippets in fenced blocks, which are normally expected in a technical report at this level.
+
+1.6 Need clearer logical solution section
+
+- Section 12 (Logical Solution Explanation) is a single paragraph. It does not yet show the end-to-end logical flow from user request to controller action to service to EF Core to database and back to view.
+- A high-mark logical solution should explain how each requirement from the case study is mapped to a specific MVC structure (controllers, models, view models, views, infrastructure) and to a specific data flow (request, validation, business rules, persistence, response, audit).
+- The current section does not yet include a request-handling pipeline narrative, a transaction-style narrative for grading or enrolment, or a summary of cross-cutting concerns.
+
+1.7 Need stronger reflection
+
+- Section 18 (Own Reflection) is short and general. It does not yet describe specific decisions taken during implementation, alternatives considered, problems encountered, lessons learned, soft-skill development, time management, and the impact of the approved individual submission on planning and effort.
+- A high-mark reflection at London Met / ESOFT level normally covers technical learning, professional learning, ethical considerations (data protection, academic integrity), and a forward-looking statement about the author's continued development.
+
+1.8 Need stronger user manual
+
+- The user manual (User_Manual_Application_Development.md) covers installation, login, role guides, and troubleshooting at a basic level. The descriptions are adequate but lack the screenshot-walkthrough detail expected in a marked installation and user manual.
+- Pre-requisites are listed but not justified. Database options are listed but not visually illustrated. Each role-by-role workflow is described in bullet points rather than step-by-step procedures with figure references and expected outcomes.
+- The viva demonstration notes section is short and could be expanded into a full demonstration script that links each role to a planned screen sequence.
+
+1.9 Need better appendices
+
+- Appendices A to F are listed but most of them only have a heading and no detailed content yet.
+- A high-mark report normally includes:
+  * Appendix A: selected source-code listings with file path and line range references.
+  * Appendix B: full set of inserted screenshots with figure captions.
+  * Appendix C: editable diagram sources and exported diagram images.
+  * Appendix D: individual approval evidence and planning timeline.
+  * Appendix E: source repository link, packaged build link, and database evidence.
+  * Appendix F: full user manual either embedded or referenced.
+  * Additional appendices for test logs, audit log samples, validation messages, and reference URLs.
+
+1.10 Other secondary weaknesses
+
+- The List of Figures and List of Tables exist but the figures and tables they reference are not yet finalised inside the body of the report at academic depth.
+- The references list contains placeholders such as [official Microsoft documentation link]. Final Harvard-style citations have not yet been written.
+- The abbreviations list is short and could be extended to cover EF Core, Identity, RBAC, HSTS, CSRF, OWASP, and CDN, all of which are used in the discussion.
+- The abstract is brief and does not yet summarise the methodology, findings, and conclusion in the academic abstract style normally expected.
+
+
+==================================================================
+2. MARKING SCHEME COVERAGE PLAN
+==================================================================
+
+The following table compares the actual coursework marking items against the current report content and lists exactly what must be expanded for each item. The "Risk Level" column reflects the marker risk if the expansion is not completed.
+
+| Marking Item | Current Evidence | Expansion Needed | Risk Level |
+|---|---|---|---|
+| Application user interface | Razor views, Bootstrap layout, _Layout.cshtml, site.css, role-specific views referenced in Section 10. No inserted screenshots yet. | Add a dedicated UI/UX chapter that covers layout, navigation, role-aware menus, responsive design, accessibility considerations (skip link, semantic markup), Bootstrap usage, custom CSS, alert partial, form styling, and validation feedback styling. Insert screenshots for each major page with captions. | MEDIUM |
+| User Registration and Login | AccountController.cs, RegisterViewModel, LoginViewModel, ForgotPasswordViewModel, ResetPasswordViewModel, Identity configuration in Program.cs. Section 10.2 is short. | Expand into a full chapter covering registration flow, login flow, lockout, password hashing, password reset, optional Google login, anti-forgery, role assignment on registration, redirection by role, and audit logging on success and failure. Add login, registration, invalid login, and successful redirect screenshots. | MEDIUM |
+| Student Dashboard | DashboardController.Student, StudentDashboardViewModel, Views/Dashboard/Student.cshtml. Section 10.3 is short. | Expand to describe data sources (enrolled courses, deadlines, grades, messages, calendar, meetings), EF Core query patterns, AsNoTracking usage, paging or limiting, ordering, the role of view models, and screenshot walk-through. | MEDIUM |
+| Lecturer Dashboard | DashboardController.Lecturer, LecturerDashboardViewModel, Views/Dashboard/Lecturer.cshtml. Section 10.4 is short. | Expand to cover taught courses, enrolment counts, pending submissions, recent activity, messages, and meetings. Explain ownership filters that prevent a lecturer from seeing other lecturers' courses. Insert dashboard screenshot. | MEDIUM |
+| Administrator Dashboard | DashboardController.Administrator, AdminDashboardViewModel, Views/Dashboard/Administrator.cshtml. Section 10.5 is short. | Expand to cover system counts, popular courses, audit activity, and report access. Mark dedicated user-management screen as [NEEDS CONFIRMATION] honestly if not implemented. Insert dashboard screenshot. | MEDIUM |
+| Course Management | CoursesController, Course model, CourseInputViewModel, Views/Courses, course material upload. Section 10.6 is short. | Expand into create, read, update, delete, search, and paging discussion. Explain unique course code constraint, prerequisite handling, lecturer assignment, capacity, validation, and material upload pipeline through the file store service. Insert course list, create, edit, and material upload screenshots. | MEDIUM |
+| Enrollment System | EnrollmentsController, Enrollment entity, CourseBrowseRowViewModel, browse view. Section 10.7 is short. | Expand into business-rule walkthrough: open status, duplicate prevention, capacity check, prerequisite check, audit logging, dashboard linkage. Insert browse and enrol screenshots and a database screenshot of saved enrolment. | MEDIUM |
+| Assignment and Grading | AssignmentsController, SubmissionsController, Assignment entity, Submission entity, GradeSubmissionViewModel, file store service. Section 10.8 is short. | Expand to cover assignment creation by lecturer, due-date and points validation, ownership check, submission upload (text and file), file validation, grading workflow, score range, feedback, graded lock, and secure file download paths. Insert assignment, submission, and grading screenshots. | MEDIUM |
+| Reporting and Analytics | ReportsController, report view models, CsvWriter, PdfReport with QuestPDF. Section 10.9 is short. | Expand to cover each report (course popularity, student performance, lecturer workload, enrolments, pass/fail, assignment attendance), the underlying queries, role gating, CSV export pipeline, PDF export pipeline, and use of QuestPDF. Insert report screen and one CSV/PDF export evidence item. | MEDIUM |
+| Communication Module | MessagesController, Message entity, Views/Messages, MeetingsController, Meeting entity. Section 10.10 is short. | Expand to cover inbox, thread, reply, compose, allowed-recipient validation between lecturers and enrolled students, mark all read, meeting scheduling for course owners, join links, and ICS export. Insert inbox, thread, compose, and meeting screenshots. | MEDIUM |
+| Security and Data Protection | Identity, RBAC, anti-forgery, rate limiting, security headers, secure cookies, file upload validation, audit logging. Section 10.11 is short. | Expand into a full security chapter mapped to OWASP Top 10 themes such as injection (mitigated through EF Core parameterised queries), broken authentication (Identity, lockout, hashing), broken access control (Authorize attributes, ownership checks), CSRF (anti-forgery tokens), security misconfiguration (security headers, HSTS, HTTPS), and logging/monitoring (audit logger). Insert validation/error screenshot and audit log screenshot if available. | LOW |
+| Installation Guide and User Manual | User_Manual_Application_Development.md is a working draft. Screenshots not yet inserted. | Expand into a step-by-step installation walkthrough with figure references, full role-by-role usage walkthroughs, validation message tables, troubleshooting flow, and viva demonstration script. Convert to a Word/PDF version and link from the main report. | MEDIUM |
+| Concise logical solution | Main report Section 12 is one paragraph. | Replace with a structured logical solution chapter that walks the request pipeline, the role-based redirect, the controller validation pattern, the EF Core data flow, the response generation, and cross-cutting concerns. Keep it concise but evidence based. | LOW |
+| Architecture diagrams | architecture_diagram.mmd, use_case_diagram.mmd, er_diagram.mmd, class_diagram.mmd, application_flowchart.mmd, security_flow_diagram.mmd are present as Mermaid sources. | Export each diagram to PNG or PDF, insert as Figures 1 to 6, add academic descriptions of each diagram (purpose, actors/components, key relationships, link to coursework requirement). | MEDIUM |
+| Detailed description of classes, properties, and methods | Tables 4, 5, and 6 are present. | Keep tables and add a narrative discussion of each main controller, model, and supporting service. Add short illustrative code snippets for selected methods. Reference exact file paths and line ranges where useful. | LOW |
+| Own reflection | Main report Section 18 is short. | Expand into a full reflection chapter covering technical learning, professional learning, decisions taken, alternatives considered, individual approved submission impact, time management, ethical considerations, and forward plan. | MEDIUM |
+| Programming style | Section 15 is short. Source uses MVC structure and naming conventions. | Expand into a chapter that covers naming conventions, folder structure, separation of concerns, view models versus entities, dependency injection, the use of services in Infrastructure, asynchronous methods, exception-handling style, and code-readability practices. | LOW |
+| Validation and exception handling | Section 10.11 and Section 13 mention validation and exception middleware. | Expand into a chapter that lists each form, the data annotations used, ModelState behaviour, server-side ownership checks, file validation rules, anti-forgery, exception middleware, Error.cshtml, status code pages, and log entries. Insert one or two validation screenshots. | LOW |
+| Interface design and usability | UI work is referenced inside Section 10 only. | Add a dedicated chapter that explains the design language (Bootstrap-based), responsive layout, role-aware navigation, alerts, form layout, accessibility considerations (skip link, label association), error messaging style, and confirmation dialogs. Insert screenshots. | MEDIUM |
+
+Cross-cutting marker risks not tied to a single criterion:
+
+- HIGH: missing final screenshots, missing exported diagrams, missing repository link, missing packaged build/deployment link, missing database evidence.
+- MEDIUM: title page placeholders (lecturer name, submission date), references with placeholder URLs, [NEEDS CONFIRMATION] markers that should be resolved or kept honestly.
+- LOW: minor proof-reading, UK English consistency, table and figure cross-reference numbering after Word conversion.
+
+
+==================================================================
+3. PROPOSED FINAL REPORT STRUCTURE
+==================================================================
+
+The proposed final structure expands the current twenty-three section report into a longer, deeper, individually authored academic report. The structure is designed to read like a substantial London Met / ESOFT individual technical report while staying truthful to the source code that has actually been implemented.
+
+Style requirements applied throughout:
+
+- London Met / ESOFT academic tone.
+- UK English (organise, behaviour, programme where relevant, although "program" is retained when referring to executable software).
+- B2 to C1 reading level.
+- Human student writing voice; not over-polished or marketing-style.
+- Clear, evidence-based statements only. No unsupported claims.
+- No em dashes. Use hyphens, commas, colons, or "and" instead.
+- No strange symbols, no decorative quotes, no emoji.
+- Every figure and table is referenced from the body text.
+- Every code path mentioned exists in the actual project.
+- Wording remains compatible with the approved individual submission.
+
+Proposed structure:
+
+Front matter
+  i.   Title Page (with full name, ID, module, coursework, centre, lecturer, date, submission type)
+  ii.  Declaration / Academic Integrity Note
+  iii. Acknowledgement
+  iv.  Abstract (academic style, 200-300 words)
+  v.   Table of Contents
+  vi.  List of Figures
+  vii. List of Tables
+  viii. Abbreviations and Glossary
+
+Chapter 1: Introduction
+  1.1 Background and motivation
+  1.2 Module and coursework context (CS6004ES Coursework 2)
+  1.3 Approved individual submission context
+  1.4 Aim
+  1.5 Objectives
+  1.6 Scope and boundary of UniManage
+  1.7 Out-of-scope items
+  1.8 Report structure overview
+
+Chapter 2: Problem Description and Case Study Analysis
+  2.1 Academic management problem in the UCMS case study
+  2.2 Stakeholder analysis (Student, Lecturer, Administrator)
+  2.3 Pain points addressed by the system
+  2.4 Success criteria for the implemented solution
+
+Chapter 3: Aim, Objectives and Functional Scope
+  3.1 Aim restated and justified
+  3.2 SMART objectives mapped to coursework tasks
+  3.3 Functional scope statement
+  3.4 Non-functional scope statement
+  3.5 Assumptions and constraints
+
+Chapter 4: Research and Background
+  4.1 ASP.NET Core MVC and the MVC pattern
+  4.2 C# and the .NET 8 runtime
+  4.3 Razor views, Tag Helpers, and layouts
+  4.4 Entity Framework Core as ORM
+  4.5 Pomelo MySQL provider versus SQL Server / LocalDB
+  4.6 ASP.NET Core Identity for authentication and roles
+  4.7 Bootstrap and front-end design patterns
+  4.8 Software-engineering principles applied (separation of concerns, single responsibility, layered architecture, defence in depth)
+  4.9 Comparison with alternative approaches considered
+
+Chapter 5: Requirement Analysis
+  5.1 Methodology used to derive requirements (case study + source-code review)
+  5.2 Functional requirements (Table 1, expanded with rationale)
+  5.3 Non-functional requirements (Table 2, expanded with rationale)
+  5.4 Use case overview (Figure 2)
+  5.5 Traceability summary linking requirement to module to evidence
+
+Chapter 6: System Architecture and Design
+  6.1 High-level architecture (Figure 1) with component-by-component description
+  6.2 Use case model (Figure 2) with actor and use case discussion
+  6.3 Logical data model (Figure 3, ERD) with entity-by-entity discussion
+  6.4 Class model (Figure 4) with controller, model, service, and DbContext discussion
+  6.5 Application flowchart (Figure 5)
+  6.6 Authentication and role-based access flow (Figure 6)
+  6.7 Cross-cutting concerns (logging, validation, security, error handling)
+  6.8 Design decisions and rationale
+
+Chapter 7: Database Design
+  7.1 Database technology decision (EF Core + Pomelo MySQL)
+  7.2 ApplicationDbContext overview and inheritance from IdentityDbContext
+  7.3 Entity-by-entity description (Table 3, expanded)
+  7.4 Keys, foreign keys, and unique constraints
+  7.5 Indexes and performance considerations
+  7.6 Migrations and seeding (DbInitializer)
+  7.7 Data integrity rules
+  7.8 Database evidence (migration list, screenshot, backup approach)
+
+Chapter 8: Implementation
+  8.1 Project structure overview (Controllers, Models, ViewModels, Views, Data, Infrastructure, wwwroot)
+  8.2 Program.cs configuration (services, middleware, Identity, EF Core, rate limiting, security headers, routes)
+  8.3 User registration and login (AccountController in detail)
+  8.4 Role-based access control (AppRoles, [Authorize] attributes, dashboard redirects)
+  8.5 Student dashboard (DashboardController.Student, StudentDashboardViewModel)
+  8.6 Lecturer dashboard (DashboardController.Lecturer, LecturerDashboardViewModel)
+  8.7 Administrator dashboard (DashboardController.Administrator, AdminDashboardViewModel)
+  8.8 Course management (CoursesController, Course, CourseInputViewModel, material upload)
+  8.9 Enrollment system (EnrollmentsController, Enrollment, business rules)
+  8.10 Assignment and grading (AssignmentsController, SubmissionsController, Submission, GradeSubmissionViewModel)
+  8.11 Reporting and analytics (ReportsController, CsvWriter, PdfReport, QuestPDF)
+  8.12 Communication module (MessagesController, MeetingsController, Message, Meeting)
+  8.13 Profile and password management (ProfileController)
+  8.14 Audit logging (AuditLogger, AuditLogsController)
+  8.15 Infrastructure services (file store, email sender, security headers middleware, rate limiting)
+  8.16 wwwroot static assets and front-end pipeline
+
+Chapter 9: User Interface and Usability
+  9.1 Design language and visual style
+  9.2 Layout structure (_Layout.cshtml, _Alerts.cshtml, _DashboardCalendar.cshtml)
+  9.3 Role-aware navigation
+  9.4 Forms, labels, and validation feedback
+  9.5 Responsive design (Bootstrap)
+  9.6 Accessibility considerations (skip link, label association, semantic markup, colour contrast notes)
+  9.7 Error and confirmation messaging style
+  9.8 Screenshot walkthrough cross-reference
+
+Chapter 10: Detailed Description of Classes, Properties, and Methods
+  10.1 Controller-by-controller table (Table 4) with narrative discussion
+  10.2 Model-by-model table (Table 5) with narrative discussion
+  10.3 Method-by-method table (Table 6) with narrative discussion
+  10.4 Selected illustrative code snippets (with file paths)
+  10.5 Discussion of cohesion, coupling, and naming conventions
+
+Chapter 11: Logical Solution Explanation
+  11.1 Request to response pipeline narrative
+  11.2 Sample workflow: student enrol on course
+  11.3 Sample workflow: lecturer grades submission
+  11.4 Sample workflow: administrator runs report
+  11.5 Cross-cutting flow: validation, security, audit, response
+
+Chapter 12: Validation, Exception Handling, and Error Management
+  12.1 Data annotations and ModelState
+  12.2 Server-side ownership checks
+  12.3 Anti-forgery and request validation
+  12.4 File upload validation
+  12.5 Exception handling middleware and Error.cshtml
+  12.6 Status code pages and friendly errors
+  12.7 Logging and audit trail integration
+  12.8 Validation screenshots and evidence cross-reference
+
+Chapter 13: Security and Data Protection
+  13.1 Threat-model summary
+  13.2 Authentication (Identity, password hashing, lockout)
+  13.3 Authorisation (roles, [Authorize], ownership filters)
+  13.4 CSRF protection (anti-forgery tokens)
+  13.5 Transport security (HTTPS, HSTS, secure cookies)
+  13.6 Security headers and rate limiting
+  13.7 Input validation and output encoding
+  13.8 Audit logging and traceability
+  13.9 Data protection considerations (sensitive configuration, redaction in screenshots)
+
+Chapter 14: Programming Style and Maintainability
+  14.1 Naming conventions
+  14.2 Folder structure and layered separation
+  14.3 View models versus entities
+  14.4 Dependency injection
+  14.5 Asynchronous patterns (async/await)
+  14.6 Error-handling style
+  14.7 Code-readability practices
+  14.8 Future maintainability considerations
+
+Chapter 15: Testing
+  15.1 Testing strategy (manual, evidence-based)
+  15.2 Test environment
+  15.3 Test plan (Table 8 expanded)
+  15.4 Functional test results with screenshots
+  15.5 Validation and security test results
+  15.6 Build verification (dotnet build --no-restore)
+  15.7 Database persistence verification
+  15.8 Limitations of the testing approach (no automated test project)
+
+Chapter 16: Evaluation Against Coursework Brief
+  16.1 Marking-criterion-by-criterion evaluation (Table 7 expanded)
+  16.2 Strengths
+  16.3 Weaknesses
+  16.4 Risks accepted and risks mitigated
+
+Chapter 17: Challenges Faced and How They Were Addressed
+  17.1 Technical challenges
+  17.2 Documentation challenges
+  17.3 Evidence-handling challenges
+  17.4 Time-management challenges within the approved individual submission
+
+Chapter 18: Limitations
+  18.1 Functional limitations
+  18.2 Database limitations (EF Core MySQL versus SQL Server / LocalDB)
+  18.3 Testing limitations
+  18.4 Deployment limitations
+  18.5 Accessibility limitations
+
+Chapter 19: Reflection on Personal Experience
+  19.1 Technical learning outcomes
+  19.2 Professional learning outcomes
+  19.3 Decisions made and alternatives considered
+  19.4 Impact of approved individual submission on planning and effort
+  19.5 Ethical considerations (academic integrity, data protection)
+  19.6 Forward plan and continued professional development
+
+Chapter 20: Future Improvements
+  20.1 Automated testing
+  20.2 Continuous integration and deployment
+  20.3 Hosted demonstration environment
+  20.4 Accessibility audit
+  20.5 Advanced reporting and dashboards
+  20.6 Notification and email improvements
+  20.7 Dedicated administrator user-management screen if required
+
+Chapter 21: Conclusion
+  21.1 Summary of work completed
+  21.2 Confirmation of coursework alignment
+  21.3 Final statement
+
+Chapter 22: References (Harvard style, with completed URLs)
+
+Appendices
+  Appendix A: Selected source-code listings (file path, line range, brief commentary)
+  Appendix B: Screenshots (figure-by-figure)
+  Appendix C: Diagram sources and exported diagram images
+  Appendix D: Individual approval and planning evidence
+  Appendix E: Source repository, packaged build, and deployment evidence
+  Appendix F: User Manual (linked or embedded)
+  Appendix G: Test logs and audit log samples
+  Appendix H: Validation messages reference
+  Appendix I: Configuration redaction notes (no secrets included)
+  Appendix J: Viva demonstration script
+
+Word-count target guidance (excluding tables, figures, code listings, and appendices):
+
+- Front matter: 1 to 2 pages (excluding generated TOC).
+- Chapter 1 (Introduction): 800 to 1200 words.
+- Chapter 2 (Problem Description): 800 to 1000 words.
+- Chapter 3 (Aim and Objectives): 600 to 900 words.
+- Chapter 4 (Research and Background): 1500 to 2000 words.
+- Chapter 5 (Requirement Analysis): 1000 to 1500 words.
+- Chapter 6 (Architecture and Design): 1500 to 2000 words.
+- Chapter 7 (Database Design): 1200 to 1500 words.
+- Chapter 8 (Implementation): 4000 to 5000 words across all sub-sections.
+- Chapter 9 (UI and Usability): 1000 to 1300 words.
+- Chapter 10 (Classes, Properties, Methods): 1500 to 2000 words plus tables.
+- Chapter 11 (Logical Solution): 1000 to 1300 words.
+- Chapter 12 (Validation and Exception Handling): 1000 to 1300 words.
+- Chapter 13 (Security): 1500 to 2000 words.
+- Chapter 14 (Programming Style): 800 to 1000 words.
+- Chapter 15 (Testing): 1500 to 2000 words plus tables.
+- Chapter 16 (Evaluation): 1000 to 1500 words.
+- Chapter 17 (Challenges): 600 to 900 words.
+- Chapter 18 (Limitations): 500 to 700 words.
+- Chapter 19 (Reflection): 1200 to 1600 words.
+- Chapter 20 (Future Improvements): 600 to 900 words.
+- Chapter 21 (Conclusion): 400 to 600 words.
+- Chapter 22 (References): structured, page count depends on completed URLs.
+- Appendices: as long as evidence requires; aim for visually rich rather than padded.
+
+Total written body target: approximately 25 000 to 32 000 words excluding figures, tables, code listings, and appendices. With inserted screenshots, exported diagrams, code listings, and appendices, this comfortably reaches a 90+ page individual technical report when typeset in a standard A4 academic template.
+
+
+==================================================================
+4. EVIDENCE EXPANSION PLAN
+==================================================================
+
+This section lists the screenshots, diagrams, source-code evidence, database evidence, testing evidence, and viva evidence that must be added to bring the report to a high-mark standard. Items already prepared are noted, and items still required are clearly listed.
+
+4.1 Screenshots to add
+
+| Figure | Subject | Status |
+|---|---|---|
+| Figure 7  | Login screen | To capture |
+| Figure 7b | Registration screen | To capture |
+| Figure 7c | Invalid login validation message | To capture |
+| Figure 7d | Successful role-based redirect (URL bar visible) | To capture |
+| Figure 8  | Student dashboard | To capture |
+| Figure 8b | Student calendar / deadlines panel | To capture |
+| Figure 9  | Lecturer dashboard | To capture |
+| Figure 9b | Lecturer pending submissions view | To capture |
+| Figure 10 | Administrator dashboard | To capture |
+| Figure 10b | Administrator audit log review | To capture |
+| Figure 11  | Course list (administrator) | To capture |
+| Figure 11b | Course create form | To capture |
+| Figure 11c | Course edit form | To capture |
+| Figure 11d | Course material upload | To capture |
+| Figure 12  | Course browse (student) | To capture |
+| Figure 12b | Successful enrolment confirmation | To capture |
+| Figure 12c | Duplicate or full-capacity rejection message | To capture |
+| Figure 13  | Assignment list (lecturer) | To capture |
+| Figure 13b | Assignment create form | To capture |
+| Figure 13c | Submission form (student) | To capture |
+| Figure 13d | Grading form (lecturer) | To capture |
+| Figure 13e | Graded submission view (student) | To capture |
+| Figure 14  | Reports landing page | To capture |
+| Figure 14b | Sample report output (e.g. course popularity) | To capture |
+| Figure 14c | CSV export evidence | To capture |
+| Figure 14d | PDF export evidence | To capture |
+| Figure 15  | Inbox view | To capture |
+| Figure 15b | Message thread view | To capture |
+| Figure 15c | Compose message form | To capture |
+| Figure 15d | Meetings list / schedule | To capture |
+| Figure 16  | Validation error example (server-side) | To capture |
+| Figure 16b | Friendly error page | To capture |
+| Figure 17  | Database table view (e.g. Courses, Enrollments) | To capture |
+| Figure 17b | Migration list output | To capture |
+| Figure 18  | Source repository page | To capture |
+| Figure 19  | Packaged build / deployment evidence | To capture |
+| Figure 20  | Visual Studio solution open | To capture |
+| Figure 20b | Successful build output | To capture |
+
+4.2 Diagrams to export and embed
+
+| Diagram | Source File | Action |
+|---|---|---|
+| System Architecture | documentation_application_development/diagrams/architecture_diagram.mmd | Export to PNG and PDF, insert as Figure 1, add description paragraph. |
+| Use Case | documentation_application_development/diagrams/use_case_diagram.mmd | Export and insert as Figure 2, with actor/use-case description. |
+| ER Diagram | documentation_application_development/diagrams/er_diagram.mmd | Export and insert as Figure 3, with entity/relationship description. |
+| UML Class | documentation_application_development/diagrams/class_diagram.mmd | Export and insert as Figure 4, with class/responsibility description. |
+| Application Flowchart | documentation_application_development/diagrams/application_flowchart.mmd | Export and insert as Figure 5, with flow narrative. |
+| Authentication and RBAC Flow | documentation_application_development/diagrams/security_flow_diagram.mmd | Export and insert as Figure 6, with authentication narrative. |
+
+4.3 Source-code evidence to embed
+
+Selected listings (file path, role of code):
+
+- Program.cs: service registration, Identity setup, EF Core MySQL, rate limiting, security headers, routing, exception handling.
+- Data/ApplicationDbContext.cs: DbSets, fluent configuration, relationships, unique constraints.
+- Data/DbInitializer.cs: migration application, role seeding, demo user creation.
+- Controllers/AccountController.cs: Register, Login, Logout, ForgotPassword, ResetPassword.
+- Controllers/DashboardController.cs: Index router, Student, Lecturer, Administrator.
+- Controllers/CoursesController.cs: Index, MyCourses, Create, Edit, Delete, UploadMaterial.
+- Controllers/EnrollmentsController.cs: Browse, Enroll (capacity, duplicate, prerequisite).
+- Controllers/AssignmentsController.cs: Create, Edit, Delete, ForCourse, Mine.
+- Controllers/SubmissionsController.cs: Submit, Grade, ForAssignment, file download actions.
+- Controllers/ReportsController.cs: each report action and export action.
+- Controllers/MessagesController.cs: Inbox, Thread, Reply, Compose, MarkAllRead.
+- Controllers/MeetingsController.cs: Index, Create, Edit, Delete, Join, Ics.
+- Infrastructure: file store service, email sender, security headers, audit logger, CSV writer, PDF report builder.
+- Models: ApplicationUser, Course, Enrollment, Assignment, Submission, Message, CourseMaterial, Meeting, AuditLog.
+- ViewModels: Register, Login, CourseInput, CourseBrowseRow, AssignmentInput, SubmissionSubmit, GradeSubmission, dashboard view models, message view models, meeting input, profile and password view models.
+- Views: _Layout.cshtml, _Alerts.cshtml, role-specific dashboard views, key form views.
+
+Each listing must use a fenced code block in the report with the file path written above the block, and only short, illustrative excerpts (10 to 30 lines) rather than full files.
+
+4.4 Database evidence to capture
+
+- Database schema view (table list).
+- One or two sample table rows (Courses, Enrollments, or Submissions) with personal data redacted.
+- Migration list output produced by:
+  dotnet ef migrations list
+- Optional database backup or SQL export file path.
+
+4.5 Testing evidence to record
+
+- Functional test screenshots aligned with Table 8 (T1 to T15).
+- Validation test screenshots (missing fields, invalid file, duplicate enrolment, full capacity).
+- Security test screenshots (unauthorised access blocked, anti-forgery rejection if reproducible).
+- Build evidence: full console output of dotnet build --no-restore.
+- Optional smoke-test log for manual run-through.
+
+4.6 Viva evidence to prepare
+
+- Demonstration script aligned with Section 12 (Notes for Viva Demonstration) of the user manual.
+- Seeded credentials reference table (Administrator, Lecturer, Student) for live login during the viva.
+- A short "what does each layer do" summary card for use during the viva (controller -> service -> EF Core -> DbContext -> MySQL -> view).
+- Pre-prepared answers to the viva questions listed in LECTURER_MARKING_ALIGNMENT_REPORT.txt Section 5.
+- A clean copy of the project, opened and ready to run, with database connection verified.
+
+4.7 Evidence storage layout (proposed)
+
+- documentation_application_development/screenshots/  (final PNG screenshots, named by figure number)
+- documentation_application_development/diagrams/exported/  (PNG and PDF exports of each Mermaid file)
+- documentation_application_development/evidence/build/  (build output captures)
+- documentation_application_development/evidence/database/  (database evidence captures)
+- documentation_application_development/evidence/repository/  (repository page captures)
+- documentation_application_development/evidence/approval/  (individual approval evidence if available)
+- documentation_application_development/final_document/  (final Word and PDF report)
+
+
+==================================================================
+5. INDIVIDUAL SUBMISSION WORDING PLAN
+==================================================================
+
+This section explains how the report will remain a clear individual approved submission while honestly acknowledging that the coursework was originally group based. The wording must avoid blame, conflict, group contribution tables, group task allocation, and any negative comment about other students.
+
+5.1 Core wording principles
+
+- The author refers to themselves consistently as "the author" or in first person ("I") in reflective sections, with one consistent voice across the whole report.
+- The phrase "approved individual submission" is used in the title page, declaration, acknowledgement, abstract (briefly), introduction, contribution chapter, and conclusion.
+- The report does not list group members, does not split tasks between students, and does not include comparison tables of who did what.
+- The report does not blame, criticise, or describe disagreements with any other student.
+- The report does not state that other students failed to contribute. It also does not state that the author "took over" anyone's work. It simply states that the coursework was approved to be completed individually.
+
+5.2 Approved individual submission boilerplate
+
+A neutral wording block will be reused, in slightly varied forms, in the title page, declaration, acknowledgement, introduction, contribution chapter, and conclusion. Suggested base form:
+
+"This coursework was originally set as group work. Following approval from the lecturer / module team, the author has completed the implementation, testing, documentation, and final preparation as an individual submission. The full report and supporting evidence reflect the author's own work."
+
+Variations should be slightly rephrased so that the same exact sentence does not appear in every section, but the meaning stays neutral and honest.
+
+5.3 Section-by-section wording approach
+
+- Title page: a single line stating "Submission Type: Approved individual submission".
+- Declaration: a short paragraph confirming personal authorship and approved individual completion.
+- Acknowledgement: thanks the lecturer and module team for guidance and approval, without naming or blaming any other student.
+- Abstract: one short clause that the report represents an approved individual submission. No further detail.
+- Chapter 1 (Introduction): a short paragraph in Section 1.3 explaining the approved individual submission context in neutral, factual terms.
+- Chapter 8 (Implementation), Chapter 15 (Testing), Chapter 16 (Evaluation): the work is described as the author's own work. No "we" usage.
+- Chapter 19 (Reflection): the author may discuss the experience of preparing for an individual completion, including time management, scope control, and personal learning, without describing any conflict with other students.
+- Chapter 21 (Conclusion): closes with a brief restatement that this submission is the author's own work under the approved individual route.
+
+5.4 Wording to use
+
+Acceptable phrases:
+
+- "approved individual submission"
+- "the author"
+- "the author's own implementation"
+- "the author completed the implementation, testing, and documentation"
+- "following approval from the lecturer / module team"
+- "this report has been prepared as an individual submission"
+- "individual approved completion route"
+- "personal authorship is confirmed by the author"
+
+5.5 Wording to avoid
+
+The following types of wording must not appear anywhere in the report:
+
+- Names of other students.
+- Statements about who did or did not contribute to the original group.
+- Comparison tables of group member contributions.
+- Group task allocation tables.
+- Communication-record tables or screenshots of disputes.
+- Phrases that imply blame, such as "other members did not contribute", "I had to do everything", or "the group failed".
+- Phrases that imply emotional conflict, such as "unfair", "let down", or "abandoned".
+- Phrases that imply unauthorised individual completion, such as "I decided on my own to submit alone".
+- Use of "we" or "the team" when describing the actual implementation work that has been verified as the author's own.
+
+5.6 Voice consistency
+
+- First person singular ("I") is allowed in the reflection chapter and where the author describes personal learning.
+- "The author" is preferred in the body chapters (Implementation, Architecture, Database, Testing, Evaluation) so that the report reads as a neutral technical report.
+- "We" is not used for implementation work. It may only appear inside cited material from external references where the original source uses it.
+
+5.7 Final wording check before submission
+
+Before exporting the final PDF, perform a wording sweep that confirms:
+
+- "approved individual submission" appears in the title page, declaration, introduction, contribution chapter, and conclusion.
+- No other student is named, blamed, compared, or described.
+- No group contribution table, work-splitting table, or communication record is included.
+- No emotional or accusatory language is present.
+- The voice is consistent (first person in reflection, third-person "the author" elsewhere).
+- The report avoids em dashes and strange symbols and uses UK English spelling throughout.
+
+
+END OF DOCUMENTATION EXPANSION PLAN

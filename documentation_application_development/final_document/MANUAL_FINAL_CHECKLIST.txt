@@ -1,0 +1,19 @@
+MANUAL FINAL CHECKLIST
+CS6004ES APPLICATION DEVELOPMENT COURSEWORK 2
+
+[ ] Fill title page details.
+[ ] Confirm individual submission wording.
+[ ] Insert final screenshots.
+[ ] Insert exported diagrams.
+[ ] Paste repository link.
+[ ] Paste build/deployment link.
+[ ] Paste database link if required.
+[ ] Update Table of Contents.
+[ ] Update List of Figures.
+[ ] Update List of Tables.
+[ ] Check captions.
+[ ] Check references.
+[ ] Check all placeholders.
+[ ] Export final PDF.
+[ ] Visually inspect PDF pages.
+

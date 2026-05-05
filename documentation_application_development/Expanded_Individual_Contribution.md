@@ -1,80 +1,136 @@
-# Expanded Individual Contribution
+# Supporting Document: Individual Contribution Report
 
-Coursework: CS6004ES Application Development Coursework 2  
-Case study: UniManage - University Course Management System  
-Author: [NEEDS CONFIRMATION]  
-Student ID: [NEEDS CONFIRMATION]  
-Group: [NEEDS CONFIRMATION]
+Student Name: Yasas Pasindu Fernando  
+Student ID: 25026764  
+Module: CS6004ES Application Development  
+Assessment: Coursework 2  
+Project: UniManage - University Course Management System  
+Submission Context: Approved individual submission
 
-## Purpose
+## 1. Introduction
 
-This document provides a structured draft for the individual contribution section. The repository scan can identify implemented features, but it cannot prove which team member completed each part. Therefore, all personal ownership claims must be confirmed by the author and supported by evidence such as commits, task records, screenshots, issue notes or dated file history.
+This supporting document records the author's individual contribution to the final UniManage coursework submission. It is written as an approved individual submission and is based on the available source code, documentation, build evidence, and prepared submission artefacts.
 
-## Contribution Summary
+## 2. Project Context
 
-The author contributed to the design, implementation, testing and documentation of the UniManage application. The exact feature ownership is currently `[NEEDS CONFIRMATION]`. The final version should retain only the work that the author personally completed or significantly supported.
+UniManage is a University Course Management System implemented as an ASP.NET Core MVC application using C#, Razor views, Entity Framework Core, and a MySQL database provider. The system supports academic workflows for Student, Lecturer, and Administrator roles.
 
-## Evidence-Supported Application Areas
+## 3. Individual Submission Context
 
-The current repository contains implementation evidence for the following areas:
+Following approval to complete the coursework individually, the author completed the implementation, testing, documentation, and final preparation as an individual submission.
 
-| Area | Repository evidence | Author ownership |
+## 4. Personal Motivation and Project Selection
+
+The author selected and completed UniManage because it provides a practical academic management problem with clear technical requirements. The project allows demonstration of MVC structure, database relationships, authentication, validation, reporting, and user interface development.
+
+## 5. Summary of Main Contribution
+
+The author's final contribution focused on reviewing the source code, aligning the implementation with the coursework brief, preparing technical documentation, preparing diagrams, building the evidence checklist, and identifying remaining manual evidence required for submission.
+
+Table IC1: Area and Contribution Summary
+
+| Area | Contribution Summary | Evidence / Figure Reference |
 |---|---|---|
-| ASP.NET Core MVC solution setup | `.sln`, `.csproj`, `Program.cs` | [NEEDS CONFIRMATION] |
-| Identity authentication and roles | `AccountController.cs`, `AppRoles.cs`, `ApplicationUser.cs`, `DbInitializer.cs` | [NEEDS CONFIRMATION] |
-| Course management | `CoursesController.cs`, Course views and models | [NEEDS CONFIRMATION] |
-| Enrolment | `EnrollmentsController.cs`, `Enrollment.cs`, Browse view | [NEEDS CONFIRMATION] |
-| Assignment management | `AssignmentsController.cs`, Assignment views and view models | [NEEDS CONFIRMATION] |
-| Submission and grading | `SubmissionsController.cs`, `Submission.cs`, grading view | [NEEDS CONFIRMATION] |
-| Reporting and exports | `ReportsController.cs`, `CsvWriter.cs`, `PdfReport.cs` | [NEEDS CONFIRMATION] |
-| Messaging | `MessagesController.cs`, `Message.cs`, message views | [NEEDS CONFIRMATION] |
-| Meeting scheduling | `MeetingsController.cs`, `Meeting.cs`, calendar helpers | [NEEDS CONFIRMATION] |
-| Audit logging and security | `AuditLogger.cs`, `AuditLogsController.cs`, `SecurityHeadersMiddleware.cs` | [NEEDS CONFIRMATION] |
-| UI styling | `Views/Shared/_Layout.cshtml`, `wwwroot/css/site.css`, static assets | [NEEDS CONFIRMATION] |
-| Documentation | `documentation_application_development/` files | [NEEDS CONFIRMATION] |
+| Requirement analysis | Mapped confirmed features to coursework requirements | Table 1, Table 7 |
+| Architecture and diagrams | Prepared Mermaid diagram sources | Figures 1 to 6, Appendix C |
+| Database design | Documented EF Core entities and relationships | Figure 3, Table 3 |
+| Authentication | Documented Identity login, registration, and roles | Figure 6, Section 10.2 |
+| Dashboards | Documented Student, Lecturer, and Administrator dashboard flows | Figures 8 to 10 |
+| Course management | Documented course CRUD and material upload | Figure 11 |
+| Enrollment | Documented student enrolment workflow | Figure 12 |
+| Assignment and grading | Documented assignment, submission, and grading flow | Figure 13 |
+| Reporting | Documented analytics and export features | Figure 14 |
+| Communication | Documented messages and meeting workflow | Figure 15 |
+| Security and validation | Documented RBAC, validation, anti-forgery, rate limiting, audit logging | Figure 16 |
+| Testing and evidence | Prepared test plan and evidence checklist | Table 8, Table 9 |
+| User manual | Prepared installation and role-based user guide | Appendix F |
 
-## Suggested Individual Contribution Narrative
+## 6. Contribution to Requirement Analysis
 
-The following draft should be edited after confirming the author's actual work:
+The author reviewed the project structure and identified confirmed requirements through controllers, models, views, and configuration files. Confirmed requirements include login, role-based dashboards, course management, enrolment, assignments, grading, reporting, communication, validation, and security. Items not found or not manually evidenced were marked as [NEEDS CONFIRMATION].
 
-The author was responsible for `[NEEDS CONFIRMATION]` within the UniManage ASP.NET Core MVC application. This contribution focused on translating the UCMS case study into working MVC components, database-backed entities and role-specific user workflows. The author worked with the Visual Studio solution structure and followed the existing pattern of controllers, view models, Razor views and Entity Framework Core data access.
+## 7. Contribution to System Architecture and Diagrams
 
-For implementation, the author contributed to `[NEEDS CONFIRMATION]`. The work included designing or updating relevant models, controller actions, validation rules and user interface pages. The implementation used ASP.NET Core Identity to support role-based access and Entity Framework Core to persist the system data in MySQL. Where appropriate, the author also considered validation, exception handling and user feedback through model annotations, `ModelState` checks and status messages.
+The author prepared editable Mermaid diagram sources for architecture, use case, ERD, UML class, application flow, and authentication flow. These diagrams are stored in `documentation_application_development/diagrams/` and can be exported to PNG or PDF for the report.
 
-For testing and evidence preparation, the author contributed to `[NEEDS CONFIRMATION]`. The project was built successfully using `dotnet build --no-restore`, and the documentation pack identifies the screenshots and appendices still required for final submission. Any final claim about testing should be supported by screenshots, build logs or a test table.
+## 8. Contribution to Database Design
 
-## Technical Skills Demonstrated
+The author documented the database design using actual source-code evidence from `ApplicationDbContext.cs`, model classes, and EF Core migrations. The documentation records the MySQL EF Core approach and marks SQL Server or LocalDB evidence as [NEEDS CONFIRMATION] because it was not detected.
 
-The application evidence supports the following technical skill areas:
+## 9. Contribution to User Registration and Login
 
-- ASP.NET Core MVC project structure.
-- C# controllers, models and view models.
-- Razor view development.
-- Entity Framework Core relationship configuration.
-- ASP.NET Core Identity and role-based authorisation.
-- Input validation and anti-forgery protection.
-- File upload validation and controlled file access.
-- CSV and PDF export generation.
-- Email notification integration.
-- Academic technical documentation.
+The author documented the registration, login, Google login, forgotten password, reset password, and logout flows implemented in `AccountController.cs`. The author also linked these features to Identity configuration in `Program.cs`.
 
-The author's personal use of each skill remains `[NEEDS CONFIRMATION]`.
+## 10. Contribution to Role-Based Access Control
 
-## Contribution Evidence To Attach
+The author documented role constants in `AppRoles.cs`, seeded roles in `DbInitializer.cs`, and controller-level `[Authorize]` attributes. The documentation explains Student, Lecturer, and Administrator access in a viva-friendly way.
 
-The author should attach or reference:
+## 11. Contribution to Student Dashboard
 
-1. Git commit history filtered by the author's account. [NEEDS CONFIRMATION]
-2. Screenshots of completed feature pages. [NEEDS CONFIRMATION]
-3. Build output evidence. Completed: `dotnet build --no-restore` succeeded on 5 May 2026.
-4. Code snippets or file references showing personally completed features. [NEEDS CONFIRMATION]
-5. Meeting notes, task allocation notes or issue tracker records. [NEEDS CONFIRMATION]
-6. Testing notes for features implemented by the author. [NEEDS CONFIRMATION]
-7. Final report sections written or edited by the author. [NEEDS CONFIRMATION]
+The author documented the student dashboard implementation using `DashboardController.Student`, `StudentDashboardViewModel`, and `Views/Dashboard/Student.cshtml`. The documented flow includes enrolled courses, deadlines, grades, messages, activity, and meetings.
 
-## Neutral Group Work Statement
+## 12. Contribution to Lecturer Dashboard
 
-The final report may include a neutral statement such as:
+The author documented the lecturer dashboard using `DashboardController.Lecturer`, `LecturerDashboardViewModel`, and `Views/Dashboard/Lecturer.cshtml`. The documented flow includes teaching courses, submissions, grading status, messages, and meetings.
 
-The author contributed to the application within the agreed group scope and focused on the areas evidenced in the submitted artefacts. Any incomplete or unclear tasks are recorded as confirmation items so that the final submission remains accurate and evidence-based.
+## 13. Contribution to Administrator Dashboard
 
+The author documented the administrator dashboard using `DashboardController.Administrator`, `AdminDashboardViewModel`, and `Views/Dashboard/Administrator.cshtml`. The documentation covers counts, popular courses, reports, and audit activity.
+
+## 14. Contribution to Course Management
+
+The author documented `CoursesController.cs`, the `Course` entity, course input validation, administrator CRUD operations, lecturer course access, and material upload.
+
+## 15. Contribution to Enrollment System
+
+The author documented `EnrollmentsController.cs`, the `Enrollment` entity, course browsing, duplicate enrolment prevention, capacity checking, and prerequisite checking.
+
+## 16. Contribution to Assignment and Grading
+
+The author documented `AssignmentsController.cs`, `SubmissionsController.cs`, `Assignment.cs`, `Submission.cs`, assignment creation, submission upload, grading, feedback, and secure file access.
+
+## 17. Contribution to Reporting and Analytics
+
+The author documented reports implemented in `ReportsController.cs`, including course popularity, student performance, lecturer workload, enrolments, pass/fail analysis, and assignment attendance. CSV and PDF export helpers were also documented.
+
+## 18. Contribution to Communication Module
+
+The author documented `MessagesController.cs`, the `Message` entity, message inbox, conversation threads, replies, and compose workflow. Meeting scheduling was also documented as an additional communication feature through `MeetingsController.cs`.
+
+## 19. Contribution to Security, Validation, and Error Handling
+
+The author documented security and validation features including Identity, RBAC, anti-forgery tokens, rate limiting, security headers, upload validation, audit logging, `ModelState`, data annotations, and error handling middleware.
+
+## 20. Contribution to Testing and Debugging
+
+The author verified that the project builds successfully using `dotnet build --no-restore`, with 0 warnings and 0 errors. Manual screenshots, browser testing, database screenshots, and exported report evidence remain [NEEDS CONFIRMATION] until captured.
+
+## 21. Contribution to UI/UX, Screenshots, and Evidence Preparation
+
+The author reviewed the UI structure in Razor views, `_Layout.cshtml`, `site.css`, and static assets. The screenshots README and evidence checklist define the screenshots required for final submission.
+
+## 22. Contribution to Documentation, User Manual, and Research
+
+The author prepared the main technical report, this individual contribution report, the user manual, evidence checklist, source/build links file, diagram README, screenshot README, evidence README, conversion guide, manual checklist, and final QA report.
+
+## 23. Challenges, Learning, and Final Preparation
+
+The main challenge was aligning the actual scanned project with the coursework wording while avoiding unsupported claims. The author learned the importance of evidence-based documentation, careful source-code review, and clear marking of uncertain items.
+
+## 24. Supporting Evidence
+
+Table IC2: Evidence Type and Location
+
+| Evidence Type | Purpose | Location |
+|---|---|---|
+| Source code | Confirms implemented features | Project root and controller/model/view folders |
+| Build evidence | Confirms project compiles | `dotnet build --no-restore` output |
+| Diagrams | Supports architecture and design explanation | `documentation_application_development/diagrams/` |
+| Screenshots | Supports final report figures | `documentation_application_development/screenshots/` |
+| Evidence checklist | Tracks completion | `Evidence_Checklist.md` |
+| User manual | Installation and usage guidance | `User_Manual_Application_Development.md` |
+| Final QA report | Submission readiness check | `final_document/FINAL_QA_REPORT.txt` |
+
+## 25. Summary
+
+The author completed the final documentation and evidence preparation as an approved individual submission. The source-code review confirms a substantial ASP.NET Core MVC UCMS implementation, while remaining screenshot, link, deployment, and database evidence tasks are clearly marked for manual completion.
