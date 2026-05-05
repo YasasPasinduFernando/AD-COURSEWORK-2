@@ -1,0 +1,41 @@
+services:
+  lms-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lms-app:local
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      # ASP.NET Core maps this to ConnectionStrings:DefaultConnection.
+      ConnectionStrings__DefaultConnection: Server=mysql;Port=3306;Database=unimanage;User=appuser;Password=apppassword;
+      # Optional runtime secrets should also be supplied as environment variables:
+      # Email__Password: ""
+      # Authentication__Google__ClientSecret: ""
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: unimanage
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
