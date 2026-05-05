@@ -1,0 +1,63 @@
+---
+title: UniManage Use Case Diagram
+---
+flowchart LR
+    Student((Student))
+    Lecturer((Lecturer))
+    Administrator((Administrator))
+
+    subgraph UCMS["UniManage UCMS"]
+        UCLogin["Register / Login"]
+        UCDashboard["View dashboard"]
+        UCBrowse["Browse courses"]
+        UCEnroll["Enroll in course"]
+        UCViewAssignments["View assignments"]
+        UCSubmit["Submit assignment"]
+        UCGrades["View grades and feedback"]
+        UCMessages["Send / receive messages"]
+        UCMeetings["View or join meetings"]
+
+        UCManageCourses["Manage courses"]
+        UCUploadMaterials["Upload materials"]
+        UCCreateAssignments["Create assignments"]
+        UCRecordGrades["Record grades"]
+        UCManageMeetings["Schedule meetings"]
+
+        UCReports["Generate reports"]
+        UCAudit["Review audit logs"]
+        UCManageUsers["Manage users [VERIFY WITH CODE]"]
+    end
+
+    Student --> UCLogin
+    Student --> UCDashboard
+    Student --> UCBrowse
+    Student --> UCEnroll
+    Student --> UCViewAssignments
+    Student --> UCSubmit
+    Student --> UCGrades
+    Student --> UCMessages
+    Student --> UCMeetings
+
+    Lecturer --> UCLogin
+    Lecturer --> UCDashboard
+    Lecturer --> UCManageCourses
+    Lecturer --> UCUploadMaterials
+    Lecturer --> UCCreateAssignments
+    Lecturer --> UCRecordGrades
+    Lecturer --> UCMessages
+    Lecturer --> UCManageMeetings
+    Lecturer --> UCReports
+
+    Administrator --> UCLogin
+    Administrator --> UCDashboard
+    Administrator --> UCManageCourses
+    Administrator --> UCReports
+    Administrator --> UCAudit
+    Administrator -.-> UCManageUsers
+
+    UCSubmit --> UCViewAssignments
+    UCRecordGrades --> UCSubmit
+    UCReports --> UCManageCourses
+    UCReports --> UCEnroll
+    UCReports --> UCRecordGrades
+

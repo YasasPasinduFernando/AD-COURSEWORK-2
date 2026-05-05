@@ -1,0 +1,162 @@
+---
+title: UniManage Entity Relationship Diagram
+---
+erDiagram
+    APPLICATION_USER {
+        string Id PK
+        string FullName
+        string Email
+        string PhoneNumber
+    }
+
+    IDENTITY_ROLE {
+        string Id PK
+        string Name
+    }
+
+    USER_ROLE {
+        string UserId FK
+        string RoleId FK
+    }
+
+    STUDENT_ROLE_VERIFY {
+        string RoleName "Student role via Identity [VERIFY]"
+    }
+
+    LECTURER_ROLE_VERIFY {
+        string RoleName "Lecturer role via Identity [VERIFY]"
+    }
+
+    ADMINISTRATOR_ROLE_VERIFY {
+        string RoleName "Administrator role via Identity [VERIFY]"
+    }
+
+    COURSE {
+        int CourseId PK
+        string Code
+        string Name
+        string Description
+        int Credits
+        int EnrollmentLimit
+        string LecturerId FK
+        int PrerequisiteId FK
+    }
+
+    ENROLLMENT {
+        int EnrollmentId PK
+        string StudentId FK
+        int CourseId FK
+        datetime EnrolledAtUtc
+    }
+
+    ASSIGNMENT {
+        int AssignmentId PK
+        int CourseId FK
+        string Title
+        string Description
+        datetime DueDateUtc
+        decimal MaxPoints
+        datetime CreatedAtUtc
+    }
+
+    SUBMISSION {
+        int SubmissionId PK
+        int AssignmentId FK
+        string StudentId FK
+        datetime SubmittedAtUtc
+        string TextContent
+        string StoredFileName
+        string Status
+        decimal Grade
+        string Feedback
+        datetime GradedAtUtc
+        string GradedById FK
+    }
+
+    GRADE_VERIFY {
+        decimal Grade "Stored on Submission, not a separate model [VERIFY]"
+        string Feedback "Stored on Submission [VERIFY]"
+    }
+
+    COURSE_MATERIAL {
+        int CourseMaterialId PK
+        int CourseId FK
+        string Title
+        string StoredFileName
+        string ContentType
+        long FileSizeBytes
+        string UploadedById FK
+        datetime UploadedAtUtc
+    }
+
+    MESSAGE {
+        int MessageId PK
+        string SenderId FK
+        string ReceiverId FK
+        string Subject
+        string Content
+        datetime SentAtUtc
+        bool IsRead
+    }
+
+    MEETING {
+        int MeetingId PK
+        int CourseId FK
+        string LecturerId FK
+        string Title
+        string Description
+        datetime ScheduledAtUtc
+        int DurationMinutes
+        string MeetingUrl
+        datetime CreatedAtUtc
+    }
+
+    AUDIT_LOG {
+        long AuditLogId PK
+        datetime CreatedAtUtc
+        string UserId FK
+        string UserName
+        string Category
+        string Action
+        string Detail
+        string IpAddress
+        string UserAgent
+        bool Success
+    }
+
+    REPORT_ANALYTICS_VIEW_VERIFY {
+        string Source "ReportsController query output [VERIFY]"
+        string Export "CSV and PDF generated from live data [VERIFY]"
+    }
+
+    APPLICATION_USER ||--o{ USER_ROLE : has
+    IDENTITY_ROLE ||--o{ USER_ROLE : assigned
+    IDENTITY_ROLE ||--o{ STUDENT_ROLE_VERIFY : may_represent
+    IDENTITY_ROLE ||--o{ LECTURER_ROLE_VERIFY : may_represent
+    IDENTITY_ROLE ||--o{ ADMINISTRATOR_ROLE_VERIFY : may_represent
+
+    APPLICATION_USER ||--o{ COURSE : teaches
+    COURSE |o--o{ COURSE : prerequisite_for
+    APPLICATION_USER ||--o{ ENROLLMENT : enrols_as_student
+    COURSE ||--o{ ENROLLMENT : has
+
+    COURSE ||--o{ ASSIGNMENT : contains
+    ASSIGNMENT ||--o{ SUBMISSION : receives
+    APPLICATION_USER ||--o{ SUBMISSION : submits
+    APPLICATION_USER |o--o{ SUBMISSION : grades
+    SUBMISSION ||--o| GRADE_VERIFY : records
+
+    COURSE ||--o{ COURSE_MATERIAL : has
+    APPLICATION_USER ||--o{ COURSE_MATERIAL : uploads
+
+    APPLICATION_USER ||--o{ MESSAGE : sends
+    APPLICATION_USER ||--o{ MESSAGE : receives
+
+    COURSE ||--o{ MEETING : schedules
+    APPLICATION_USER ||--o{ MEETING : hosts
+
+    APPLICATION_USER |o--o{ AUDIT_LOG : creates
+    COURSE ||--o{ REPORT_ANALYTICS_VIEW_VERIFY : feeds
+    ENROLLMENT ||--o{ REPORT_ANALYTICS_VIEW_VERIFY : feeds
+    SUBMISSION ||--o{ REPORT_ANALYTICS_VIEW_VERIFY : feeds
+

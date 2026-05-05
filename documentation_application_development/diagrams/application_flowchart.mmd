@@ -1,0 +1,84 @@
+---
+title: UniManage Application Flowchart
+---
+flowchart TD
+    Start([Start])
+    OpenApp["Open UniManage in browser"]
+    AuthChoice{"Register or login?"}
+    Register["Register<br/>student or lecturer self-registration"]
+    Login["Login<br/>local Identity or configured Google login"]
+    ValidateInput{"Input valid?"}
+    ShowValidation["Show validation errors"]
+    CheckCredentials{"Credentials accepted?"}
+    AuthFailed["Show login failure or access denied"]
+    SetCookie["Create authentication cookie"]
+    RoleCheck{"Identify role"}
+
+    StudentDash["Student dashboard"]
+    LecturerDash["Lecturer dashboard"]
+    AdminDash["Administrator dashboard"]
+
+    StudentActions["Student actions<br/>browse courses, enrol, view assignments,<br/>submit work, view grades, messages, meetings"]
+    LecturerActions["Lecturer actions<br/>own courses, upload materials,<br/>create assignments, grade submissions,<br/>messages, meetings"]
+    AdminActions["Administrator actions<br/>course CRUD, reports,<br/>audit logs, dashboard analytics"]
+
+    ValidateAction{"Action data valid?"}
+    RejectAction["Return validation message<br/>or forbid unauthorised access"]
+    DbRead["Retrieve data through ApplicationDbContext"]
+    Crud["Create / read / update / delete operation"]
+    DbSave["Save changes to MySQL via EF Core"]
+    Audit["Write audit log where implemented"]
+    Notify["Send email or calendar notification where implemented"]
+
+    ReportRequest{"Report requested?"}
+    ReportQuery["Query courses, enrolments,<br/>assignments and submissions"]
+    ReportOutput["Display report or export CSV/PDF"]
+
+    Continue{"Continue session?"}
+    Logout["Logout"]
+    End([End])
+
+    Start --> OpenApp
+    OpenApp --> AuthChoice
+    AuthChoice -->|Register| Register
+    AuthChoice -->|Login| Login
+    Register --> ValidateInput
+    Login --> ValidateInput
+    ValidateInput -->|No| ShowValidation
+    ShowValidation --> AuthChoice
+    ValidateInput -->|Yes| CheckCredentials
+    CheckCredentials -->|No| AuthFailed
+    AuthFailed --> AuthChoice
+    CheckCredentials -->|Yes| SetCookie
+    SetCookie --> RoleCheck
+
+    RoleCheck -->|Student| StudentDash
+    RoleCheck -->|Lecturer| LecturerDash
+    RoleCheck -->|Administrator| AdminDash
+
+    StudentDash --> StudentActions
+    LecturerDash --> LecturerActions
+    AdminDash --> AdminActions
+
+    StudentActions --> ValidateAction
+    LecturerActions --> ValidateAction
+    AdminActions --> ValidateAction
+
+    ValidateAction -->|No| RejectAction
+    RejectAction --> Continue
+    ValidateAction -->|Yes| DbRead
+    DbRead --> Crud
+    Crud --> DbSave
+    DbSave --> Audit
+    Audit --> Notify
+    Notify --> ReportRequest
+
+    ReportRequest -->|Yes| ReportQuery
+    ReportQuery --> ReportOutput
+    ReportOutput --> Continue
+    ReportRequest -->|No| Continue
+
+    Continue -->|Yes| RoleCheck
+    Continue -->|No| Logout
+    Logout --> End
+

@@ -1,0 +1,285 @@
+---
+title: UniManage Class Diagram
+---
+classDiagram
+    class AccountController {
+        +Register()
+        +Login()
+        +LoginWithGoogle()
+        +GoogleCallback()
+        +Logout()
+        +ForgotPassword()
+        +ResetPassword()
+    }
+
+    class DashboardController {
+        +Index()
+        +Student()
+        +Lecturer()
+        +Administrator()
+    }
+
+    class StudentController_VERIFY_WITH_CODE {
+        <<placeholder>>
+    }
+
+    class LecturerController_VERIFY_WITH_CODE {
+        <<placeholder>>
+    }
+
+    class AdminController_VERIFY_WITH_CODE {
+        <<placeholder>>
+    }
+
+    class CoursesController {
+        +Index()
+        +MyCourses()
+        +Details()
+        +Create()
+        +Edit()
+        +Delete()
+        +UploadMaterial()
+    }
+
+    class EnrollmentsController {
+        +Browse()
+        +Enroll()
+    }
+
+    class AssignmentsController {
+        +ForCourse()
+        +Create()
+        +Edit()
+        +Delete()
+        +Mine()
+    }
+
+    class SubmissionsController {
+        +ForAssignment()
+        +Submit()
+        +Grade()
+        +CourseMaterialFile()
+        +SubmissionFile()
+    }
+
+    class ReportsController {
+        +Index()
+        +CoursePopularity()
+        +StudentPerformance()
+        +LecturerWorkload()
+        +Enrollments()
+        +PassFail()
+        +AssignmentAttendance()
+    }
+
+    class MessagesController {
+        +Inbox()
+        +Thread()
+        +Reply()
+        +Compose()
+        +MarkAllRead()
+    }
+
+    class MeetingsController {
+        +Index()
+        +Create()
+        +Edit()
+        +Delete()
+        +Join()
+        +Ics()
+    }
+
+    class ProfileController {
+        +Index()
+        +ChangePassword()
+    }
+
+    class AuditLogsController {
+        +Index()
+    }
+
+    class ApplicationDbContext {
+        +DbSet Courses
+        +DbSet Enrollments
+        +DbSet Assignments
+        +DbSet Submissions
+        +DbSet Messages
+        +DbSet CourseMaterials
+        +DbSet AuditLogs
+        +DbSet Meetings
+        +OnModelCreating()
+    }
+
+    class ApplicationUser {
+        +string Id
+        +string FullName
+        +string Email
+        +string PhoneNumber
+        +ICollection TeachingCourses
+        +ICollection Enrollments
+        +ICollection Submissions
+        +ICollection SentMessages
+        +ICollection ReceivedMessages
+    }
+
+    class Course {
+        +int CourseId
+        +string Code
+        +string Name
+        +string Description
+        +int Credits
+        +int EnrollmentLimit
+        +string LecturerId
+        +int PrerequisiteId
+    }
+
+    class Enrollment {
+        +int EnrollmentId
+        +string StudentId
+        +int CourseId
+        +DateTime EnrolledAtUtc
+    }
+
+    class Assignment {
+        +int AssignmentId
+        +int CourseId
+        +string Title
+        +string Description
+        +DateTime DueDateUtc
+        +decimal MaxPoints
+    }
+
+    class Submission {
+        +int SubmissionId
+        +int AssignmentId
+        +string StudentId
+        +DateTime SubmittedAtUtc
+        +string TextContent
+        +string StoredFileName
+        +SubmissionStatus Status
+        +decimal Grade
+        +string Feedback
+        +DateTime GradedAtUtc
+        +string GradedById
+    }
+
+    class Grade_VERIFY_WITH_CODE {
+        <<placeholder>>
+        +decimal Grade
+        +string Feedback
+    }
+
+    class Message {
+        +int MessageId
+        +string SenderId
+        +string ReceiverId
+        +string Subject
+        +string Content
+        +DateTime SentAtUtc
+        +bool IsRead
+    }
+
+    class CourseMaterial {
+        +int CourseMaterialId
+        +int CourseId
+        +string Title
+        +string StoredFileName
+        +string ContentType
+        +long FileSizeBytes
+        +string UploadedById
+    }
+
+    class Meeting {
+        +int MeetingId
+        +int CourseId
+        +string LecturerId
+        +string Title
+        +DateTime ScheduledAtUtc
+        +int DurationMinutes
+        +string MeetingUrl
+    }
+
+    class AuditLog {
+        +long AuditLogId
+        +DateTime CreatedAtUtc
+        +string UserId
+        +string Category
+        +string Action
+        +string Detail
+        +bool Success
+    }
+
+    class UploadedFileStore {
+        +SaveAsync()
+        +GetPhysicalPath()
+        +TryDelete()
+    }
+
+    class SmtpEmailService {
+        +SendAsync()
+    }
+
+    class AuditLogger {
+        +LogAsync()
+    }
+
+    class CsvWriter {
+        +Build()
+    }
+
+    class PdfReport {
+        +Build()
+    }
+
+    class AppRoles {
+        +Student
+        +Lecturer
+        +Administrator
+    }
+
+    note for DashboardController "Student, Lecturer and Administrator dashboard actions are implemented here. No dedicated StudentController, LecturerController or AdminController was detected [VERIFY WITH CODE]."
+    note for Grade_VERIFY_WITH_CODE "No separate Grade model was detected. Grade and feedback fields are stored on Submission [VERIFY WITH CODE]."
+
+    AccountController --> ApplicationUser
+    DashboardController --> ApplicationDbContext
+    CoursesController --> ApplicationDbContext
+    EnrollmentsController --> ApplicationDbContext
+    AssignmentsController --> ApplicationDbContext
+    SubmissionsController --> ApplicationDbContext
+    ReportsController --> ApplicationDbContext
+    MessagesController --> ApplicationDbContext
+    MeetingsController --> ApplicationDbContext
+    ProfileController --> ApplicationUser
+    AuditLogsController --> ApplicationDbContext
+
+    CoursesController --> UploadedFileStore
+    CoursesController --> SmtpEmailService
+    CoursesController --> AuditLogger
+    SubmissionsController --> UploadedFileStore
+    SubmissionsController --> SmtpEmailService
+    SubmissionsController --> AuditLogger
+    ReportsController --> CsvWriter
+    ReportsController --> PdfReport
+
+    ApplicationDbContext --> ApplicationUser
+    ApplicationDbContext --> Course
+    ApplicationDbContext --> Enrollment
+    ApplicationDbContext --> Assignment
+    ApplicationDbContext --> Submission
+    ApplicationDbContext --> Message
+    ApplicationDbContext --> CourseMaterial
+    ApplicationDbContext --> Meeting
+    ApplicationDbContext --> AuditLog
+
+    ApplicationUser "1" --> "0..*" Course : teaches
+    ApplicationUser "1" --> "0..*" Enrollment : enrols
+    Course "1" --> "0..*" Enrollment : has
+    Course "1" --> "0..*" Assignment : contains
+    Assignment "1" --> "0..*" Submission : receives
+    ApplicationUser "1" --> "0..*" Submission : submits
+    Submission "1" --> "0..1" Grade_VERIFY_WITH_CODE : stores
+    Course "1" --> "0..*" CourseMaterial : has
+    ApplicationUser "1" --> "0..*" Message : sends_or_receives
+    Course "1" --> "0..*" Meeting : has
+    AppRoles --> AccountController
+

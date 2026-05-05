@@ -1,0 +1,88 @@
+---
+title: UniManage System Architecture Diagram
+---
+flowchart TB
+    subgraph Users["Browser / Users"]
+        StudentUser["Student"]
+        LecturerUser["Lecturer"]
+        AdminUser["Administrator"]
+        Browser["Web browser"]
+    end
+
+    StudentUser --> Browser
+    LecturerUser --> Browser
+    AdminUser --> Browser
+
+    Browser -->|"HTTP/HTTPS requests"| App["ASP.NET Core MVC application<br/>C# / .NET 8 / Visual Studio"]
+
+    subgraph MvcLayer["ASP.NET Core MVC application layer"]
+        Program["Program.cs<br/>routing, DI, middleware, Identity, EF Core"]
+        Controllers["Controllers<br/>Account, Dashboard, Courses, Enrollments,<br/>Assignments, Submissions, Reports,<br/>Messages, Meetings, Profile, AuditLogs"]
+        Views["Razor Views<br/>Account, Dashboard, Courses, Enrollments,<br/>Assignments, Submissions, Reports,<br/>Messages, Meetings, Profile, Shared"]
+        Models["Models<br/>ApplicationUser, Course, Enrollment,<br/>Assignment, Submission, Message,<br/>CourseMaterial, Meeting, AuditLog"]
+        ViewModels["ViewModels<br/>forms, dashboard models, report rows,<br/>message and meeting models"]
+    end
+
+    App --> Program
+    Program --> Controllers
+    Controllers --> Views
+    Controllers --> Models
+    Controllers --> ViewModels
+    Views -->|"HTML responses"| Browser
+
+    subgraph AuthLayer["Authentication and role-based access"]
+        Identity["ASP.NET Core Identity<br/>ApplicationUser + IdentityRole"]
+        Roles["AppRoles<br/>Student, Lecturer, Administrator"]
+        AuthRules["Authorize attributes<br/>role-restricted controller actions"]
+        Cookie["Authentication cookie / session"]
+    end
+
+    Controllers --> Identity
+    Identity --> Roles
+    Roles --> AuthRules
+    AuthRules --> Controllers
+    Identity --> Cookie
+    Cookie --> Browser
+
+    subgraph Services["Services and infrastructure"]
+        Email["SmtpEmailService / IEmailService"]
+        Audit["AuditLogger / IAuditLogger"]
+        UploadStore["UploadedFileStore"]
+        Csv["CsvWriter"]
+        Pdf["PdfReport / QuestPDF"]
+        Calendar["CalendarLink / MeetLinkGenerator"]
+        Security["SecurityHeadersMiddleware"]
+    end
+
+    Program --> Security
+    Controllers --> Email
+    Controllers --> Audit
+    Controllers --> UploadStore
+    Controllers --> Csv
+    Controllers --> Pdf
+    Controllers --> Calendar
+
+    subgraph DataLayer["Entity Framework / ORM"]
+        DbContext["ApplicationDbContext<br/>IdentityDbContext<ApplicationUser>"]
+        Migrations["EF Core migrations<br/>InitialUniManage, AddAuditLogAndSecurity, AddMeetings"]
+        DbInit["DbInitializer<br/>roles, demo users, demo courses, demo assignment"]
+    end
+
+    Controllers --> DbContext
+    Program --> DbInit
+    DbInit --> Migrations
+    DbInit --> DbContext
+
+    DbContext -->|"Pomelo EF Core MySQL provider"| Database[("MySQL database<br/>Identity tables and UCMS tables")]
+    UploadStore --> Uploads[("wwwroot/uploads<br/>materials and submissions")]
+    Views --> StaticAssets["wwwroot static assets<br/>CSS, JS, Bootstrap, jQuery, images"]
+
+    subgraph External["External integrations where configured"]
+        Google["Google authentication"]
+        Smtp["SMTP mail server"]
+        MeetingLinks["Meeting providers<br/>Google Meet, Zoom, Teams, Webex"]
+    end
+
+    Identity --> Google
+    Email --> Smtp
+    Calendar --> MeetingLinks

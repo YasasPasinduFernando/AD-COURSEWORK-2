@@ -1,0 +1,68 @@
+---
+title: Authentication and Role-Based Access Flow
+---
+flowchart TD
+    Start([Login request])
+    LoginPage["Account/Login view"]
+    Submit["Submit email, password and return URL"]
+    Antiforgery["Anti-forgery token check"]
+    RateLimit["Authentication rate limit policy"]
+    Validate{"ModelState valid?"}
+    ValidationError["Return login view with validation errors"]
+    FindUser{"ApplicationUser found?"}
+    UnknownUser["Audit login failure<br/>return invalid login message"]
+    PasswordCheck{"PasswordSignInAsync succeeds?"}
+    Locked{"Account locked out?"}
+    LockoutMsg["Return lockout message<br/>after repeated failed attempts"]
+    FailedPassword["Audit wrong password<br/>return invalid login message"]
+    AuditSuccess["Audit login success"]
+    Cookie["Issue ASP.NET Core Identity auth cookie"]
+    RoleLookup["Read role assignment<br/>Student, Lecturer or Administrator"]
+    Redirect{"Role-based redirect"}
+    StudentDash["Dashboard/Student"]
+    LecturerDash["Dashboard/Lecturer"]
+    AdminDash["Dashboard/Administrator"]
+    LocalReturn["Redirect to local return URL if supplied"]
+    AccessRequest["Request protected action"]
+    Authorize{"Authorize attribute allows role?"}
+    Allowed["Execute controller action"]
+    Denied["AccessDenied or Forbid response"]
+    Logout["Logout clears cookies"]
+    End([End])
+
+    Start --> LoginPage
+    LoginPage --> Submit
+    Submit --> Antiforgery
+    Antiforgery --> RateLimit
+    RateLimit --> Validate
+    Validate -->|No| ValidationError
+    ValidationError --> LoginPage
+    Validate -->|Yes| FindUser
+    FindUser -->|No| UnknownUser
+    UnknownUser --> LoginPage
+    FindUser -->|Yes| PasswordCheck
+    PasswordCheck -->|No| Locked
+    Locked -->|Yes| LockoutMsg
+    Locked -->|No| FailedPassword
+    LockoutMsg --> LoginPage
+    FailedPassword --> LoginPage
+    PasswordCheck -->|Yes| AuditSuccess
+    AuditSuccess --> Cookie
+    Cookie --> RoleLookup
+    RoleLookup --> Redirect
+    Redirect -->|Student| StudentDash
+    Redirect -->|Lecturer| LecturerDash
+    Redirect -->|Administrator| AdminDash
+    Redirect -->|Valid local URL| LocalReturn
+
+    StudentDash --> AccessRequest
+    LecturerDash --> AccessRequest
+    AdminDash --> AccessRequest
+    LocalReturn --> AccessRequest
+    AccessRequest --> Authorize
+    Authorize -->|Yes| Allowed
+    Authorize -->|No| Denied
+    Allowed --> Logout
+    Denied --> End
+    Logout --> End
+
