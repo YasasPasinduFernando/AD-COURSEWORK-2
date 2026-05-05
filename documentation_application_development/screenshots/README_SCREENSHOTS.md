@@ -35,6 +35,8 @@ Use clear filenames:
 - `um_11_reports.png`
 - `um_12_messaging.png`
 - `um_13_validation_error_example.png`
+- `Figure_UM21_Cloudflare_DNS_Record_Evidence.png` (Cloudflare DNS A record for `lms` to the VM public IP; DNS only proxy status)
+- `Figure_UM22_Nginx_Default_Page_Evidence.png` (default Nginx welcome page on `lms.yasaboy.com`; server reachability only, not the UniManage UI)
 
 ## Capture Rules
 

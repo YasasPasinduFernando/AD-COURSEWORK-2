@@ -237,9 +237,41 @@ The following links must be pasted into `documentation_application_development/S
 | Link Type | Target Field in Source_And_Build_Links.md | Priority | Notes |
 |---|---|---|---|
 | Source repository | Project Repository | HIGH | Paste the final public or accessible repository URL. |
-| Packaged build / hosted deployment | Packaged Build / Deployment | HIGH | Paste either a ZIP download URL or a hosted deployment URL. |
+| Packaged build / hosted deployment | Packaged Build / Deployment + Hosted Demonstration | DONE for hosted | Intended custom-domain URL `https://lms.yasaboy.com/` with Figure UM21 DNS evidence and Figure UM22 Nginx reachability evidence; application homepage on the custom domain remains Figure UM19. The earlier IP-based endpoint `http://34.171.6.234:8080` is retained as backup evidence. ZIP packaging remains optional. |
 | Database script / backup | Database Script / Backup | MEDIUM | Either paste the path to an exported SQL script or a backup file, or retain the current note that EF Core migrations are the supported approach. |
 | Evidence folder | Evidence Folder | LOW | Paste a shared link if the evidence folder is hosted online; otherwise leave blank. |
+
+
+==================================================================
+5A. HOSTING AND DEPLOYMENT EVIDENCE (UPDATED 6 MAY 2026)
+==================================================================
+
+The application is hosted for demonstration on Google Cloud using a Docker container. The intended public address is the custom-domain URL `https://lms.yasaboy.com/`, with the earlier IP-based endpoint retained as backup evidence. Figure UM21 (Cloudflare DNS A record, DNS only) and Figure UM22 (default Nginx page over HTTP, Not secure) are embedded in the Markdown sources and are picked up by the DOCX converter as raster images. They do not replace Figure UM19 (UniManage homepage on the custom domain) or separate HTTPS padlock evidence.
+
+| Item | Value | Status | Notes |
+|---|---|---|---|
+| Intended hosted application URL | https://lms.yasaboy.com/ | [VERIFY] for application UI | Treat as fully evidenced when Figure UM19 shows the UniManage homepage on the custom domain. |
+| Previous IP-based endpoint | http://34.171.6.234:8080 | Retained as backup evidence | Earlier Google Cloud hosted endpoint, kept as a fallback in case the custom-domain endpoint is temporarily unreachable. |
+| Hosting platform | Google Cloud | Added | Compute Engine virtual machine. |
+| Containerisation | Docker | Added | The application is packaged as a Docker image. |
+| HTTPS session on custom domain (browser evidence) | [VERIFY] | Needs confirmation | Figure UM22 is not HTTPS evidence; it shows HTTP with Not secure for the default Nginx page. |
+| Cloudflare DNS record | lms A to 34.171.6.234 | Completed | Figure UM21; proxy status DNS only, not proxied. |
+| Nginx server reachability | Default Nginx page on lms.yasaboy.com | Completed as server evidence | Figure UM22; further configuration was still required at capture time. |
+| Cloudflare proxy/CDN | Not shown as enabled | Limitation / future improvement | DNS only in Figure UM21. |
+| Nginx reverse proxy to UniManage | [VERIFY] | Needs confirmation | Claim only with configuration or application routing evidence. |
+| Local Visual Studio assessment | Required | Confirmed | Local build verified with `dotnet build --no-restore` (zero warnings, zero errors). The coursework brief assesses the application using Visual Studio 2017 or higher. |
+| Hosted endpoint screenshot (UniManage UI) | To capture | Manual evidence | Figure UM19 placeholder; capture the UniManage home page on the custom domain when HTTPS is correct for that state. |
+| Docker / Google Cloud deployment screenshot | To capture | Manual evidence | Figure UM20 placeholder; capture either a Dockerfile, a `docker ps` output, or the Google Cloud VM dashboard. |
+| Secrets and credentials | Not in report | Safe | The author has confirmed that no database password, SMTP password, Google client secret, SSH key, DNS or provider credential, or cloud service account key appears in the body of the report or in any screenshot intended for inclusion. |
+
+Verification check:
+
+- The hosted URLs (custom domain and backup IP) are included in the Markdown sources and in `Source_And_Build_Links.md`.
+- The hosting information is presented as supporting demonstration evidence, not as production-readiness.
+- The hosted URL must be re-verified before the final submission because cloud instances can be stopped, restarted, or reconfigured. If the custom-domain URL is unreachable, the IP-based endpoint may be tried as a fallback. If neither endpoint is reachable, the local Visual Studio installation route documented in the user manual is the supported alternative.
+- Figure UM19 and Figure UM20 placeholders remain. Figures UM21 and UM22 are embedded from `documentation_application_development/screenshots/` for Markdown and are inserted by `convert_to_docx_expanded.py` when regenerating the combined DOCX.
+- Chapter 21 (Table 22) includes TLS maintenance, Cloudflare proxy enablement if required, Nginx reverse proxy completion, custom-domain homepage capture, DNS documentation, and related operational items.
+- See `documentation_application_development/final_document/CLOUDFLARE_NGINX_EVIDENCE_UPDATE_REPORT.txt` for the detailed change log for this evidence pass.
 
 
 ==================================================================
@@ -280,7 +312,7 @@ The following actions are required before the final PDF upload. Each action is a
 
 7.2 Outside Word
 
-10. Capture the 38 main-report screenshots and the 18 user-manual screenshots listed in Sections 2.1 and 2.2 of this QA report. Save into `documentation_application_development/screenshots/` using consistent file names.
+10. Capture the main-report screenshots and the user-manual screenshots listed in Sections 2.1 and 2.2 of this QA report. Figures UM21 and UM22 are already saved under `documentation_application_development/screenshots/` with fixed filenames for Cloudflare DNS and Nginx reachability. Save remaining captures into `documentation_application_development/screenshots/` using consistent file names.
 11. Export the six Mermaid diagrams listed in Section 3 of this QA report. Save into `documentation_application_development/diagrams/exported/`.
 12. Capture build evidence (`dotnet build --no-restore` console output) and migration list evidence (`dotnet ef migrations list` output) into `documentation_application_development/evidence/build/` and `documentation_application_development/evidence/database/`.
 13. Capture a redacted database table view into `documentation_application_development/evidence/database/`.

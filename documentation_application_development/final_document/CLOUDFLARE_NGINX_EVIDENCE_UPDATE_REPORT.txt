@@ -1,0 +1,98 @@
+CLOUDFLARE AND NGINX EVIDENCE UPDATE REPORT
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+Report date: 6 May 2026
+
+This report summarises the evidence-based documentation pass that added Cloudflare DNS and Nginx default-page screenshots while avoiding overclaims about Cloudflare proxy, HTTPS in the Nginx capture, reverse proxy completion, or the Nginx page being the UniManage application.
+
+
+==================================================================
+1. FILES UPDATED
+==================================================================
+
+- documentation_application_development/Main_Application_Development_Report.md (Section 8.20 narrative and Table 23; deployment paragraph after Table 23; Chapter 18.3 Deployment Limitations; Chapter 21 Table 22 future improvements; Appendix E.4 table, figures UM21 and UM22, marker notes)
+- documentation_application_development/User_Manual_Application_Development.md (Section 5A; figures UM21 and UM22 after UM20)
+- documentation_application_development/Source_And_Build_Links.md (Hosted Demonstration and Reverse Proxy and DNS blocks)
+- documentation_application_development/Evidence_Checklist.md (Source Features Confirmed line; Hosting and Deployment Evidence Checklist)
+- documentation_application_development/screenshots/README_SCREENSHOTS.md (new screenshot filenames)
+- documentation_application_development/conversion/convert_to_docx_expanded.py (Markdown image lines `![](relative/path)` embed into DOCX)
+- documentation_application_development/final_document/HOSTING_DOMAIN_UPDATE_SUMMARY.txt (new Section 8 addendum)
+- documentation_application_development/final_document/FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt (Section 5A table and verification bullets; Section 7.2 step 10 wording)
+
+Binary assets added under screenshots:
+
+- documentation_application_development/screenshots/Figure_UM21_Cloudflare_DNS_Record_Evidence.png
+- documentation_application_development/screenshots/Figure_UM22_Nginx_Default_Page_Evidence.png
+
+
+==================================================================
+2. NEW FIGURES ADDED
+==================================================================
+
+- Figure UM21: Cloudflare DNS Record Evidence (image file: Figure_UM21_Cloudflare_DNS_Record_Evidence.png)
+- Figure UM22: Nginx Server Reachability Evidence (image file: Figure_UM22_Nginx_Default_Page_Evidence.png)
+
+These appear in the user manual and in Appendix E.4 of the main report, with the same caption lines in each location.
+
+
+==================================================================
+3. EXACT CAPTION TEXT
+==================================================================
+
+Figure UM21 title line (centred caption style in Word export):
+
+Figure UM21: Cloudflare DNS Record Evidence
+
+Caption body immediately after the image:
+
+This screenshot shows the Cloudflare DNS A record used to point the lms.yasaboy.com subdomain to the Google Cloud public IP address.
+
+Figure UM22 title line:
+
+Figure UM22: Nginx Server Reachability Evidence
+
+Caption body immediately after the image:
+
+This screenshot shows the default Nginx page loading from the lms.yasaboy.com host, confirming that Nginx was installed and reachable on the server at the time of evidence capture.
+
+
+==================================================================
+4. CLOUDFLARE LIMITATION RECORDED
+==================================================================
+
+The evidence screenshot shows the A record for `lms` pointing to 34.171.6.234 with proxy status DNS only (not proxied through Cloudflare). The report therefore does not claim Cloudflare proxy, CDN, or Cloudflare security features as completed for that capture. Table 23 includes an explicit row for Cloudflare proxy or CDN as a limitation or future improvement.
+
+
+==================================================================
+5. NGINX LIMITATION RECORDED
+==================================================================
+
+The evidence screenshot shows the default Nginx welcome page on `lms.yasaboy.com` with the browser indicating Not secure and HTTP, so it is not used as proof of HTTPS or of the UniManage application UI. The default page text states that further configuration was required; reverse proxy routing from the public hostname to the UniManage Docker container remains `[VERIFY]` unless separate configuration or application routing evidence is supplied.
+
+
+==================================================================
+6. ITEMS STILL REQUIRING VERIFICATION
+==================================================================
+
+- Hosted UniManage home page on `https://lms.yasaboy.com/` (Figure UM19 or equivalent).
+- HTTPS or TLS session evidence for the custom domain when demonstrating UniManage (not satisfied by Figure UM22).
+- Nginx reverse proxy completion from the public domain to the application container (configuration or routing evidence).
+- Optional Cloudflare proxied mode and updated evidence if proxy or CDN features must be claimed.
+- Docker and Google Cloud operational evidence (Figure UM20 and related checklist items) where still outstanding.
+
+
+==================================================================
+7. FINAL MANUAL STEPS BEFORE WORD OR PDF EXPORT
+==================================================================
+
+1. Regenerate the combined Word document from Markdown using `documentation_application_development/conversion/convert_to_docx_expanded.py` so that Figures UM21 and UM22 embed automatically from the Markdown `![](screenshots/...)` lines.
+2. Open `documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx` in Microsoft Word. Press Ctrl+A, then F9, to refresh the Table of Contents, List of Figures, and List of Tables.
+3. Manually insert or replace images for every remaining `Figure X: [INSERT SCREENSHOT HERE]` placeholder (including Figure UM19 and Figure UM20) using Insert, Pictures, This Device, then remove the placeholder line if your house style requires the image to sit directly under the figure title.
+4. Confirm that no secrets appear in any screenshot (database password, SMTP password, Google client secret, SSH keys, provider credentials, service account keys).
+5. Run a UK English spell and grammar check, save the DOCX, and export the final PDF (File, Export, Create PDF/XPS Document, or rerun `documentation_application_development/conversion/export_pdf_via_word.ps1`).
+6. Update the Evidence Checklist checkboxes from `[ ]` to `[x]` as each remaining manual capture is completed.
+
+End of Cloudflare and Nginx evidence update report.

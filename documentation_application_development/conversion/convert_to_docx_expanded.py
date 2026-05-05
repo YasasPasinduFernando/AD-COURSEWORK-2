@@ -265,6 +265,28 @@ IMAGE_PLACEHOLDER_RE = re.compile(
     r"^Figure\s+[A-Za-z0-9]+(?:\s*\([^)]+\))?:\s*\[INSERT (?:SCREENSHOT|EXPORTED DIAGRAM IMAGE)\s+HERE\]\s*$"
 )
 
+MD_IMAGE_RE = re.compile(r"^!\[([^\]]*)\]\(([^)]+)\)\s*$")
+
+
+def add_markdown_image(document, image_path: Path) -> None:
+    """Insert a centred raster image from a Markdown `![](path)` line."""
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.shared import Inches, Pt
+
+    paragraph = document.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.paragraph_format.space_before = Pt(4)
+    paragraph.paragraph_format.space_after = Pt(4)
+    paragraph.paragraph_format.line_spacing = 1.0
+    try:
+        run = paragraph.add_run()
+        run.add_picture(str(image_path), width=Inches(6.2))
+    except Exception as exc:  # pragma: no cover - depends on local image validity
+        warn(f"Could not embed image {image_path}: {exc}")
+        fail = paragraph.add_run(f"[Image embed failed: {image_path.name}]")
+        fail.font.name = "Times New Roman"
+        fail.font.size = Pt(11)
+
 
 def add_markdown_to_docx(document, markdown_text: str) -> None:
     lines = markdown_text.splitlines()
@@ -297,6 +319,20 @@ def add_markdown_to_docx(document, markdown_text: str) -> None:
             paragraph.paragraph_format.line_spacing = 1.0
             paragraph.paragraph_format.space_after = Pt(6)
             paragraph.paragraph_format.left_indent = None
+            continue
+
+        m_img = MD_IMAGE_RE.match(stripped)
+        if m_img:
+            raw_rel = m_img.group(2).strip()
+            candidate = Path(raw_rel)
+            image_path = candidate.resolve() if candidate.is_absolute() else (ROOT / raw_rel).resolve()
+            if not image_path.is_file():
+                warn(f"Missing image file for markdown embed: {image_path}")
+                add_body_paragraph(document, f"[Image file not found: {raw_rel}]")
+            else:
+                add_markdown_image(document, image_path)
+            expect_caption = True
+            index += 1
             continue
 
         if stripped.startswith("|") and stripped.endswith("|"):

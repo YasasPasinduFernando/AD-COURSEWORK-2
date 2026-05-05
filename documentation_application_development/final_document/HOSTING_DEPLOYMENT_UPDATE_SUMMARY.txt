@@ -1,0 +1,197 @@
+HOSTING AND DEPLOYMENT UPDATE SUMMARY
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+Original update date: 5 May 2026
+Superseded by: HOSTING_DOMAIN_UPDATE_SUMMARY.txt (custom HTTPS domain update on 5 May 2026)
+
+NOTE FOR THE READER
+
+This file records the original hosted deployment using the IP-based endpoint `http://34.171.6.234:8080`. The hosted demonstration has since been moved to the custom HTTPS domain `https://lms.yasaboy.com/`. The IP-based endpoint is retained as backup evidence. The newer file `HOSTING_DOMAIN_UPDATE_SUMMARY.txt` records the changes that introduced the HTTPS custom-domain endpoint and supersedes the IP-only sections of this file. References below to "the hosted endpoint" should be read in light of the newer file when there is any conflict.
+
+PURPOSE OF THIS UPDATE
+
+The author has hosted the UniManage application on Google Cloud using a Docker container as supporting demonstration evidence. The original hosted endpoint was `http://34.171.6.234:8080`; the current main hosted endpoint is `https://lms.yasaboy.com/` (see `HOSTING_DOMAIN_UPDATE_SUMMARY.txt`). This update documents the original hosted deployment across the report, the user manual, the source/build links file, the evidence checklist, the final QA file, and the regenerated Word and PDF outputs. The hosted demonstration is treated as supporting evidence; the local Visual Studio assessment route required by the CS6004ES Application Development brief remains the primary path.
+
+
+==================================================================
+1. SECTIONS UPDATED
+==================================================================
+
+1.1 documentation_application_development/Main_Application_Development_Report.md
+- Added Section 8.20 "Hosting and Docker Deployment Evidence" with five academic paragraphs and Table 23.
+- Added a new paragraph in Section 18.3 "Deployment Limitations" that records the hosted endpoint and clearly states it is supporting evidence only (no production-readiness claim).
+- Added four new rows to Chapter 21 (Table 22 - Future Improvements):
+  * Configure HTTPS and a custom domain for the Google Cloud deployment.
+  * Move secrets to environment variables or a managed secret store.
+  * Add CI/CD deployment automation for Docker images.
+  * Add uptime monitoring and database backup procedures.
+- Added a new subsection "Appendix E.4 Hosted Deployment Evidence" with a 6-row evidence table, two screenshot placeholders (Figure UM19 and Figure UM20), and three notes for the marker.
+
+1.2 documentation_application_development/User_Manual_Application_Development.md
+- Added a new Section 5A "Hosted Demonstration Access" with six sub-sections:
+  * 5A.1 Hosted URL.
+  * 5A.2 Browser Access Steps (4 numbered steps).
+  * 5A.3 Expected Landing Page.
+  * 5A.4 Login on the Hosted Version.
+  * 5A.5 Availability Warning.
+  * 5A.6 Security Notes for the Hosted Demonstration.
+- Added Figure UM19 placeholder ("This screenshot shows the UniManage application running from the Google Cloud hosted demonstration URL.").
+- Added Figure UM20 placeholder ("This screenshot shows the Docker container or Google Cloud deployment evidence used to support the hosted demonstration.").
+
+1.3 documentation_application_development/Source_And_Build_Links.md
+- Added a new "Hosted Demonstration" block including:
+  * Hosted URL: `http://34.171.6.234:8080`
+  * Hosting Platform: Google Cloud (Compute Engine virtual machine)
+  * Deployment Method: Docker container deployment
+  * Deployment Notes paragraph (supporting evidence only, fall back to local Visual Studio if URL unreachable)
+  * Security Note paragraph (no database password, SSH key, service account key, or SMTP credentials in the report or repository)
+- Removed the bracket placeholder "[PASTE ZIP OR HOSTED LINK HERE]" because the hosted URL has been pasted in the new block. The repository placeholder and the database script placeholder are retained because they are separate items.
+- The existing "Configuration Warning" section is retained.
+
+1.4 documentation_application_development/Evidence_Checklist.md
+- Updated "Source Features Confirmed" to include the supporting Google Cloud hosted demonstration on `http://34.171.6.234:8080`.
+- Added a new "Hosting and Deployment Evidence Checklist" section with nine checklist items (see Section 4 of this summary).
+- Updated "Manual Evidence Still Required" to reference the hosted demonstration screenshots and the new future improvements (HTTPS, custom domain, environment-based secrets, CI/CD, uptime monitoring, database backup automation).
+
+1.5 documentation_application_development/final_document/FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt
+- Updated Section 5 "Missing Repository / Build / Database Links" to mark the hosted deployment row as DONE for the hosted URL.
+- Added a new Section 5A "Hosting and Deployment Evidence (NEW)" with an evidence table, a verification check, and a note that the hosted IP must be re-verified before the final submission.
+
+1.6 documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx (regenerated)
+1.7 documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.pdf (regenerated)
+
+After regeneration:
+- Page count (Word ComputeStatistics): 116 (up from 112 before the hosting update).
+- Word count (Word ComputeStatistics): 33,417 (up from 31,667 before the hosting update).
+- DOCX size: 137,199 bytes; PDF size: 988,134 bytes; PDF header `%PDF-1.7` and EOF marker valid.
+
+
+==================================================================
+2. HOSTED URL INSERTED
+==================================================================
+
+The hosted URL `http://34.171.6.234:8080` has been inserted in the following places:
+
+| File | Section | Notes |
+|---|---|---|
+| Main_Application_Development_Report.md | Section 8.20 (body), Table 23 row 1 | Hosted application URL |
+| Main_Application_Development_Report.md | Section 18.3 (Deployment Limitations) | Hosted endpoint with HTTP/IP-only honest framing |
+| Main_Application_Development_Report.md | Appendix E.4 | Hosted Deployment Evidence table |
+| User_Manual_Application_Development.md | Section 5A.1 (Hosted URL) | Code-fenced URL block |
+| User_Manual_Application_Development.md | Section 5A.2-5A.6 | Browser steps, expected landing page, login, availability warning, security notes |
+| Source_And_Build_Links.md | Hosted Demonstration block | Code-fenced URL block plus platform and method |
+| Evidence_Checklist.md | Source Features Confirmed | Single-line reference |
+| final_document/FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt | Section 5A | Hosting and deployment evidence summary |
+
+Total occurrences of the hosted URL across the documentation set: 8 in Markdown sources plus the QA file and the regenerated DOCX/PDF.
+
+
+==================================================================
+3. DOCKER AND GOOGLE CLOUD WORDING ADDED
+==================================================================
+
+The hosting wording is consistent across the documentation set. Key principles applied:
+
+- The hosted demonstration is described as supporting evidence, not as a production-ready deployment.
+- Docker is described as the packaging format that keeps the runtime environment consistent between the developer's machine and the cloud host.
+- Google Cloud is named as the hosting platform; the specific service is identified as a Compute Engine virtual machine.
+- The hosted endpoint uses HTTP and an IP address, which is documented as a current limitation.
+- The local Visual Studio assessment route is preserved as the primary path because the CS6004ES Application Development brief assesses the application using Visual Studio 2017 or higher.
+- HTTPS, custom domain, environment-based secret management, deployment automation, uptime monitoring, and database backup automation are listed as future improvements rather than as defects.
+
+The hosting wording does not embed any Dockerfile content, any cloud-side script, any private IP, any service account key fragment, or any password fragment. The hosting wording does not name any other student and does not describe any group dynamic.
+
+
+==================================================================
+4. NEW SCREENSHOT PLACEHOLDERS ADDED
+==================================================================
+
+Two new screenshot placeholders have been added. They follow the standard "Figure X: [INSERT SCREENSHOT HERE] / This screenshot shows ..." format used elsewhere in the document.
+
+| Figure | Subject | Caption | Locations |
+|---|---|---|---|
+| UM19 | Google Cloud Hosted Application | This screenshot shows the UniManage application running from the Google Cloud hosted demonstration URL. | User_Manual_Application_Development.md Section 5A.6, Main_Application_Development_Report.md Appendix E.4 |
+| UM20 | Docker Deployment Evidence | This screenshot shows the Docker container or Google Cloud deployment evidence used to support the hosted demonstration. | User_Manual_Application_Development.md Section 5A.6, Main_Application_Development_Report.md Appendix E.4 |
+
+Suggested capture targets:
+
+- Figure UM19: open `http://34.171.6.234:8080` in a browser, sign in or stay on the home page, and capture the rendered UniManage page. The address bar should be visible to confirm the hosted URL.
+- Figure UM20: capture either a Dockerfile snippet, the `docker ps` output showing the running container, the Google Cloud Compute Engine VM dashboard showing the running instance, or a combination of these in a single composite screenshot. Personal data and credentials must be redacted before insertion.
+
+The user has provided three reference images that may be used as input to the Figure UM19/UM20 captures. They are stored in the workspace's `assets/` folder. Suitable cropping and redaction may be required before final insertion in the report.
+
+
+==================================================================
+5. SECURITY WARNINGS ADDED
+==================================================================
+
+The hosting update introduces the following security-related notes:
+
+5.1 Section 8.20 of the main report reminds the marker that secrets and connection strings must be kept outside the report and that the hosted IP should be re-verified before submission.
+
+5.2 Section 5A.6 of the user manual lists three concrete security notes for the hosted demonstration:
+- The hosted endpoint uses HTTP, so the connection is not encrypted; the marker is asked not to enter real personal data on the demonstration site.
+- Database passwords, SMTP passwords, Google client secrets, and cloud service account keys are not included in this manual or in the body of the report.
+- The seeded demonstration credentials are sufficient for any on-screen demonstration, so no other account information needs to be exposed.
+
+5.3 Section 18.3 of the main report adds an explicit limitation paragraph stating that HTTPS, domain binding, firewall hardening, environment-based secret management, monitoring, backups, and deployment automation would be required for production use.
+
+5.4 Source_And_Build_Links.md adds a Security Note paragraph stating that database passwords, SSH keys, Google Cloud service account keys, and SMTP credentials must not be included in the report or in the public repository.
+
+5.5 Evidence_Checklist.md ends the new Hosting and Deployment Evidence Checklist with the item "Confirmation that secrets are not visible in screenshots" and adds the note that HTTPS, custom domain, secret management, CI/CD, uptime monitoring, and database backup automation are tracked as future improvements rather than as outstanding evidence.
+
+Verification check carried out at the end of this update:
+
+- 0 em or en dashes across the three Markdown files.
+- 0 em or en dashes in the FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt file.
+- 0 occurrences of "we", "We", "our", or "Our" in the main report.
+- The hosted URL appears 8 times across the four target files plus the QA file.
+- No database password, SMTP password, Google client secret, SSH key, or service account key is present in any added text.
+
+
+==================================================================
+6. REMAINING MANUAL EVIDENCE REQUIRED
+==================================================================
+
+The following items remain manual capture or verification steps before the final upload.
+
+6.1 Hosted demonstration verification
+
+- Open `http://34.171.6.234:8080` in a browser shortly before submission to confirm that the Google Cloud virtual machine and the Docker container are running. If the URL is unreachable, restart the cloud instance or fall back to the local Visual Studio installation route.
+- If the public IP has changed (because the VM was recreated or reconfigured), update the hosted URL in the four target files and rerun the conversion script to refresh the DOCX and PDF.
+
+6.2 Hosted screenshot evidence
+
+- Figure UM19: hosted application landing page from `http://34.171.6.234:8080`.
+- Figure UM20: Docker container or Google Cloud deployment evidence.
+
+6.3 Hosting and Deployment Evidence Checklist (Evidence_Checklist.md)
+
+- [ ] Google Cloud hosted URL screenshot.
+- [ ] Dockerfile screenshot or short code listing.
+- [ ] `docker build` command evidence.
+- [ ] `docker run` or `docker ps` evidence showing the running container.
+- [ ] Google Cloud VM dashboard screenshot showing the instance in the running state.
+- [ ] Hosted application landing page screenshot.
+- [ ] Hosted login page screenshot.
+- [ ] Firewall port 8080 evidence (only if safe to show without exposing other configuration).
+- [ ] Confirmation that no secrets are visible in any of the screenshots above.
+
+6.4 Word file finalisation
+
+- Open `documentation_application_development/final_document/Application_Development_Final_Report_EXPANDED.docx` in Microsoft Word.
+- Press Ctrl+A and F9 to update the Table of Contents, the List of Figures (now includes Figure UM19 and Figure UM20), and the List of Tables (now includes Table 23).
+- Insert the captured Figure UM19 and Figure UM20 images at the placeholder lines.
+- Re-export to PDF using `documentation_application_development/conversion/export_pdf_via_word.ps1`.
+
+6.5 Future improvements (tracked, not blocking)
+
+- Configure HTTPS and a custom domain for the Google Cloud deployment.
+- Move secrets to environment variables or a managed secret store.
+- Add CI/CD deployment automation for Docker images.
+- Add uptime monitoring and database backup procedures.
+
+End of hosting and deployment update summary.

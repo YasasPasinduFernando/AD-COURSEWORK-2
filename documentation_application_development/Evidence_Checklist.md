@@ -46,6 +46,27 @@ Table 9: Individual Evidence Checklist
 - ASP.NET Core Identity and role constants.
 - Controllers, models, view models, Razor views, migrations, reports, messaging, meetings, validation, and security infrastructure.
 - Successful build with `dotnet build --no-restore`.
+- Supporting hosted demonstration on Google Cloud through the intended custom-domain URL `https://lms.yasaboy.com/`, with DNS record evidence in Figure UM21, server reachability evidence in Figure UM22, and the earlier IP-based endpoint `http://34.171.6.234:8080` retained as backup evidence.
+
+## Hosting and Deployment Evidence Checklist
+
+The following items support the hosted demonstration described in Section 8.20 of the main report and Section 5A of the user manual. Each item is a manual capture step that must be completed before the final submission. The items remain `[ ]` until the evidence file has been saved into `documentation_application_development/screenshots/` or `documentation_application_development/evidence/`.
+
+- [x] Figure UM21 Cloudflare DNS A record screenshot inserted
+- [x] Figure UM22 Nginx default page screenshot inserted
+- [x] Cloudflare proxy status checked and described accurately
+- [ ] Nginx reverse proxy status verified or left as [VERIFY]
+- [ ] Final custom domain application homepage screenshot inserted
+- [ ] Figure UM19 custom HTTPS domain homepage screenshot showing `https://lms.yasaboy.com/` rendered in a browser, with the address bar and application UI visible.
+- [ ] Hosted login page screenshot taken from the custom-domain URL.
+- [ ] Domain / HTTPS browser padlock evidence (a clear capture of the padlock icon and the certificate summary) once UniManage is confirmed on HTTPS for the custom domain.
+- [ ] Google Cloud VM or deployment dashboard screenshot showing the virtual machine in the running state.
+- [ ] Docker container running evidence (`docker ps` output, the Docker desktop window, or an equivalent screenshot).
+- [ ] Optional: earlier IP-based endpoint screenshot showing `http://34.171.6.234:8080` rendered in a browser, retained as backup evidence.
+- [ ] Optional: Dockerfile screenshot or short code listing showing the .NET 8 base image and the application entry point.
+- [ ] Optional: `docker build` command evidence showing the image being created locally or on the host.
+- [ ] Confirmation that no secrets are visible in any of the screenshots above (database password, SMTP password, Google client secret, SSH key, DNS or provider credential, service account key).
+- [ ] Local Visual Studio build evidence retained (from `dotnet build --no-restore` and from Visual Studio 2022 opening the solution successfully).
 
 ## Manual Evidence Still Required
 
@@ -55,4 +76,6 @@ Table 9: Individual Evidence Checklist
 - Packaged build or deployment link.
 - Database screenshot, backup, or migration evidence.
 - Individual approval evidence if available.
+- Hosted demonstration screenshots and Docker / Google Cloud evidence as listed in the section above.
+- HTTPS, custom domain, environment-based secret management, deployment automation, uptime monitoring, and database backup automation are tracked as future improvements rather than as outstanding evidence items.
 - Final Word/PDF export.

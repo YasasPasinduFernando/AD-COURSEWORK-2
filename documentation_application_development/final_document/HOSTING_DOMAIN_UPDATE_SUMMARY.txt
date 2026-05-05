@@ -1,0 +1,160 @@
+HOSTING DOMAIN UPDATE SUMMARY
+CS6004ES Application Development Coursework 2
+Project: UniManage - University Course Management System (UCMS)
+Student: Yasas Pasindu Fernando
+Student ID: 25026764
+Submission Type: Approved individual submission
+Update date: 5 May 2026
+Supersedes: HOSTING_DEPLOYMENT_UPDATE_SUMMARY.txt for the IP-only sections.
+
+PURPOSE OF THIS UPDATE
+
+The hosted demonstration of UniManage is now reachable through a custom HTTPS domain. The author has updated the report, the user manual, the source and build links file, the evidence checklist, the final QA file, the previous hosting summary, and the regenerated Word and PDF outputs to reflect this change. The earlier IP-based endpoint is retained as backup evidence in case the custom-domain endpoint is temporarily unreachable. Throughout the documentation, the hosted demonstration remains supporting evidence; the local Visual Studio assessment route required by the CS6004ES Application Development brief remains the primary path. No production-readiness claim is made.
+
+
+==================================================================
+1. NEW HOSTED URL ADDED
+==================================================================
+
+The new main hosted demonstration URL is:
+
+  https://lms.yasaboy.com/
+
+This URL has been inserted into every customer-facing location across the documentation set:
+
+| File | Section | Notes |
+|---|---|---|
+| Main_Application_Development_Report.md | Section 8.20 (paragraphs and Table 23) | Custom-domain URL is the primary value; the IP-based URL appears as a separate row labelled "Previous IP-based endpoint" and as fallback narrative. |
+| Main_Application_Development_Report.md | Chapter 18.3 (Limitations) | Limitations paragraph rewritten to acknowledge the custom HTTPS domain while keeping the supporting-evidence framing. |
+| Main_Application_Development_Report.md | Chapter 21 (Table 22 Future Improvements) | "Add HTTPS" replaced with TLS maintenance and renewal; reverse proxy and DNS / provider items added with a "[VERIFY]" tone. |
+| Main_Application_Development_Report.md | Appendix E.4 (Hosted Deployment Evidence) | Table updated to lead with the custom domain and Nginx/Cloudflare marked [VERIFY]. |
+| User_Manual_Application_Development.md | Section 5A (Hosted Demonstration Access) | Section 5A.1 leads with the custom-domain URL; access steps updated; backup endpoint retained as a fallback. |
+| Source_And_Build_Links.md | Hosted Demonstration block | "Hosted Demonstration" now points at the custom domain; "Previous IP-Based Endpoint" preserved; Domain / HTTPS line added. |
+| Evidence_Checklist.md | Source Features Confirmed and Hosting and Deployment Evidence Checklist | Confirmation line updated; checklist items renumbered for the custom-domain workflow. |
+| final_document/FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt | Section 5 and Section 5A | Hosted row updated; new Section 5A reflects the custom-domain status. |
+| final_document/HOSTING_DEPLOYMENT_UPDATE_SUMMARY.txt | Header and Purpose | Marked as superseded by this file for the IP-only sections; pointer to this summary added. |
+
+
+==================================================================
+2. OLD IP ENDPOINT RETAINED AS EARLIER / BACKUP EVIDENCE
+==================================================================
+
+The earlier IP-based endpoint `http://34.171.6.234:8080` has been retained in the documentation as a backup evidence item. It is not removed, because:
+
+- It documents the genuine deployment history of the project.
+- It provides a fallback that the marker can try if the custom-domain URL is temporarily unreachable.
+- It supports the screenshots already collected during the IP-only phase, where applicable.
+
+The earlier endpoint is referenced in the following places, in each case clearly labelled as "Previous IP-based endpoint" or "earlier IP-based endpoint":
+
+- Main_Application_Development_Report.md Section 8.20 paragraphs and Table 23.
+- Main_Application_Development_Report.md Chapter 18.3 Limitations.
+- Main_Application_Development_Report.md Appendix E.4.
+- User_Manual_Application_Development.md Section 5A.1 and Section 5A.5 (availability warning).
+- Source_And_Build_Links.md Hosted Demonstration block.
+- Evidence_Checklist.md confirmation line and an optional checklist item.
+- final_document/FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt Section 5 and Section 5A.
+- final_document/HOSTING_DEPLOYMENT_UPDATE_SUMMARY.txt as the original record.
+
+
+==================================================================
+3. HTTPS / CUSTOM DOMAIN WORDING UPDATED
+==================================================================
+
+The author has rewritten the deployment wording to reflect the HTTPS custom-domain status while keeping it accurate and modest:
+
+- The previous wording "the link uses HTTP and an IP address rather than a custom domain" has been replaced with the correct statement that the main hosted endpoint now uses the custom HTTPS domain `https://lms.yasaboy.com/`.
+- The previous statement that "the author has not configured an HTTPS certificate or a custom domain at this stage" has been removed because it is no longer accurate.
+- The previous limitation "Add HTTPS" in Chapter 21 has been replaced with "Maintain and renew HTTPS / TLS configuration and document the certificate setup" to acknowledge that HTTPS is configured but still requires ongoing operational care.
+- The deployment is consistently described as "supporting demonstration evidence" rather than as a production deployment. There is no claim of production readiness anywhere in the updated wording.
+- The user manual now instructs the marker to "confirm that the UniManage homepage loads. The address bar should display the padlock indicator that comes with a valid HTTPS certificate."
+- The author makes no claim about TLS protocol versions, certificate authority chain, or HSTS preload status because these specifics have not been verified through screenshot evidence.
+
+
+==================================================================
+4. NGINX AND CLOUDFLARE MARKED [VERIFY] UNLESS PROVEN
+==================================================================
+
+To avoid overclaiming, every reference to a reverse proxy or to a DNS / content-delivery provider is marked `[VERIFY]` in the documentation:
+
+- Table 23 in Section 8.20 contains a "Nginx reverse proxy" row with status `[VERIFY]` and a "Cloudflare or DNS provider" row with status `[VERIFY]`.
+- The Appendix E.4 evidence table contains the same two rows with the same `[VERIFY]` flag.
+- Chapter 18.3 (Limitations) and Chapter 21 (Future Improvements) both note that any Nginx or Cloudflare claim should only be made when supporting configuration or screenshot evidence is included.
+- The new Source_And_Build_Links.md "Reverse Proxy and DNS" subsection records the same `[VERIFY]` position.
+
+The author has therefore not claimed Nginx or Cloudflare as confirmed components. If the marker provides redacted Nginx configuration or a DNS / Cloudflare dashboard screenshot, the relevant `[VERIFY]` rows can be flipped to "Configured" before the next documentation pass.
+
+
+==================================================================
+5. FUTURE IMPROVEMENTS ADJUSTED
+==================================================================
+
+The Future Improvements table in Chapter 21 has been adjusted as follows:
+
+- Removed the previous entry "Configure HTTPS and a custom domain for the Google Cloud deployment" because HTTPS is now in place through the custom domain.
+- Added "Maintain and renew HTTPS / TLS configuration and document the certificate setup" to make ongoing TLS care visible.
+- Added "Document and harden the reverse proxy configuration if Nginx is used" in case a reverse proxy is introduced or already in use.
+- Added "Document DNS and Cloudflare configuration if used" in case a DNS or content-delivery provider is in use.
+- Renamed "Move secrets to environment variables or a managed secret store" to "Move sensitive settings to environment variables or a managed secret store" and broadened the description to include DNS and provider credentials.
+- Retained "Add CI/CD deployment automation for Docker images" without change.
+- Retained "Add uptime monitoring and database backup procedures" without change.
+
+The other future improvements unrelated to hosting (automated tests, accessibility audit, dedicated administrator user-management screen, advanced reports and dashboards, notifications, two-factor authentication, structured logging, caching, internationalisation, mobile-friendly enhancements, database backup automation) are unchanged.
+
+
+==================================================================
+6. SCREENSHOTS STILL REQUIRED
+==================================================================
+
+The two figure placeholders in the user manual and in Appendix E.4 have been retained, with their captions updated to reflect the custom-domain demonstration. The author still needs to capture the following images before the final upload:
+
+- Figure UM19: This screenshot shows the UniManage application running through the custom HTTPS domain.
+  Capture target: `https://lms.yasaboy.com/` rendered in a modern browser, with the address bar and the HTTPS padlock visible.
+- Figure UM20: This screenshot shows the Google Cloud and Docker deployment evidence used to support the hosted demonstration.
+  Capture target: a composite or two-frame screenshot that includes either a Dockerfile snippet, the `docker ps` output showing the running container, or the Google Cloud Compute Engine VM dashboard showing the running instance. Personal data and credentials must be redacted before insertion.
+
+In addition, the Hosting and Deployment Evidence Checklist in `Evidence_Checklist.md` now lists the following items, all of which require manual capture:
+
+- Custom HTTPS domain homepage screenshot.
+- Hosted login page screenshot from the custom-domain URL.
+- Domain / HTTPS browser padlock evidence.
+- Google Cloud VM or deployment dashboard screenshot.
+- Docker container running evidence (`docker ps` or equivalent).
+- DNS or Cloudflare evidence if used and safe to show.
+- Nginx or reverse proxy evidence if used and safe to show.
+- Optional: earlier IP-based endpoint screenshot for backup evidence.
+- Optional: Dockerfile listing and `docker build` evidence.
+- Confirmation that no secrets are visible in any of the screenshots.
+- Local Visual Studio build evidence retained.
+
+
+==================================================================
+7. SECURITY / SECRETS CHECK REMINDER
+==================================================================
+
+The hosting update introduces a slightly larger risk surface for sensitive data because it brings DNS configuration and possibly reverse-proxy or content-delivery configuration into scope. The author has applied the following security guidance and has propagated it across the documentation:
+
+- No database password, SMTP password, Google OAuth client secret, SSH private key, DNS or provider credential, or cloud service account key appears in the body of the report, in the user manual, in the source and build links file, in the evidence checklist, in the QA files, or in any prepared screenshot.
+- Source_And_Build_Links.md "Security Note" lists the prohibited categories explicitly and instructs the author to redact any screenshot of `appsettings.json`, the Google Cloud console, the SSH session, the DNS provider dashboard, or the reverse proxy configuration before insertion.
+- The Evidence Checklist hosting block ends with a confirmation item that no secrets are visible in any screenshot.
+- The user manual Section 5A.6 reminds the marker that the demonstration site is for coursework purposes and that real personal data should not be entered.
+- Section 8.20 of the main report restates the secrets-redaction rule in the body text.
+
+Verification check after the update:
+
+- 0 em or en dashes across all four target Markdown files (Unicode regex check).
+- 0 em or en dashes in the FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt and the two hosting summary files.
+- 0 occurrences of "we", "We", "our", or "Our" in the main report.
+- The hosted custom-domain URL appears across the documentation set; the previous IP-based URL appears with a clear "Previous" or "earlier" qualifier.
+- Nginx and Cloudflare are recorded as `[VERIFY]` rather than as confirmed components.
+
+The DOCX and PDF have been regenerated from the updated Markdown sources. The Word document contains the updated hosting wording, the new Table 23, the updated Limitations paragraph in Section 18.3, the updated Future Improvements table, and the updated Appendix E.4. The marker should still press Ctrl+A and F9 in Word once the screenshots are inserted, so that the Table of Contents, the List of Figures, and the List of Tables refresh.
+
+End of hosting domain update summary.
+
+
+==================================================================
+8. CLOUDFLARE DNS AND NGINX REACHABILITY EVIDENCE (6 MAY 2026)
+==================================================================
+
+This addendum records a second pass after `HOSTING_DOMAIN_UPDATE_SUMMARY.txt` Section 3. Two screenshots were saved into `documentation_application_development/screenshots/` as `Figure_UM21_Cloudflare_DNS_Record_Evidence.png` and `Figure_UM22_Nginx_Default_Page_Evidence.png`, embedded in the user manual and Appendix E.4 using Markdown image syntax, and described in Section 8.20 Table 23 with explicit limitations (DNS only; default Nginx page over HTTP; no claim of Cloudflare proxy or completed reverse proxy without further evidence). Section 18.3 and Chapter 21 were updated so that HTTPS on the custom domain and the UniManage UI on `https://lms.yasaboy.com/` are not inferred from Figure UM22. `Source_And_Build_Links.md`, `Evidence_Checklist.md`, `README_SCREENSHOTS.md`, `FINAL_PLACEHOLDER_AND_SUBMISSION_QA.txt` Section 5A, and `convert_to_docx_expanded.py` (Markdown `![](...)` embedding) were updated in the same pass. Full file list and captions are in `final_document/CLOUDFLARE_NGINX_EVIDENCE_UPDATE_REPORT.txt`.

@@ -219,6 +219,74 @@ Figure UM5: [INSERT SCREENSHOT HERE]
 
 This screenshot shows the registration page with the role selector visible.
 
+## 5A. Hosted Demonstration Access
+
+In addition to the local installation route described in Section 4, the author has prepared a supporting hosted demonstration of UniManage on Google Cloud. The intended public address is the custom domain `https://lms.yasaboy.com/`, with supporting DNS and server evidence in Figures UM21 and UM22. Figure UM22 shows the default Nginx welcome page over HTTP with a Not secure browser warning, so it is not evidence of the UniManage user interface or of HTTPS on the custom domain. Figure UM19 should show the UniManage home page on `https://lms.yasaboy.com/` before that combination is treated as fully evidenced in the submission package. The hosted route can be used during the viva, during marker review, or for any quick demonstration that does not require a local development environment. The hosted route is supporting evidence only. The CS6004ES Application Development brief still expects the marker to assess the application using Visual Studio 2017 or higher, so the local installation route remains the primary path.
+
+### 5A.1 Hosted URL
+
+The intended primary hosted demonstration URL is:
+
+```text
+https://lms.yasaboy.com/
+```
+
+The earlier IP-based endpoint, which was used during the initial deployment phase and is retained as a backup in case the custom-domain endpoint is temporarily unreachable, is:
+
+```text
+http://34.171.6.234:8080
+```
+
+When HTTPS is correctly configured and the UniManage site is served on the custom domain, a modern browser should show a secure session for `https://lms.yasaboy.com/`. The earlier IP-based URL uses HTTP and is provided only as a fallback evidence item. The Figure UM22 capture does not replace either of those statements because it documents the default Nginx page over HTTP, not the finished application route.
+
+### 5A.2 Browser Access Steps
+
+1. Open a modern browser such as Microsoft Edge, Google Chrome, or Mozilla Firefox.
+2. Go to `https://lms.yasaboy.com/`.
+3. Confirm that the UniManage homepage loads. If the page is correct, the address bar should reflect a secure HTTPS session for that deployment state.
+4. Use Sign in or Register depending on the demonstration task. The seeded demonstration credentials listed in Section 6 of this manual are sufficient.
+5. If the hosted URL is unavailable, use the local Visual Studio run method described in Section 4 of this manual. The earlier IP-based endpoint `http://34.171.6.234:8080` may also be tried as a temporary backup.
+
+### 5A.3 Expected Landing Page
+
+The expected landing page is the UniManage public home page rendered by `Views/Home/Index.cshtml`. The page offers two primary actions: "Create your account" linking to `/Account/Register` and "I already have an account" linking to `/Account/Login`. The footer shows the project name and the copyright line.
+
+### 5A.4 Login on the Hosted Version
+
+After the home page loads, the marker can sign in using the seeded demonstration users defined in `Data/DbInitializer.cs`. The credentials are listed in Section 6 of this manual. The hosted version uses the same role-based redirection as the local version, so signing in as the seeded administrator, lecturer, or student opens the appropriate dashboard.
+
+The author has not exposed any additional credentials beyond the seeded demonstration users. Real student data, real lecturer data, and any production-style credentials are not used on the hosted demonstration.
+
+### 5A.5 Availability Warning
+
+The hosted demonstration depends on the underlying Google Cloud virtual machine and the Docker container being in a running state. Cloud instances can be stopped, restarted, or reconfigured between the time of writing and the marking session. Before relying on the hosted URL, the marker should verify it by opening it in a browser. If the custom-domain URL does not open, the earlier IP-based endpoint may be tried as a temporary fallback. If neither endpoint is reachable, please use the local installation route in Section 4 instead.
+
+### 5A.6 Security Notes for the Hosted Demonstration
+
+- The intended custom-domain endpoint is HTTPS, but the wider deployment is still a coursework demonstration rather than a production service. The marker is asked not to enter real personal data on the demonstration site.
+- Database passwords, SMTP passwords, Google client secrets, SSH keys, DNS or provider credentials, and cloud service account keys are not included in this manual or in the body of the report. The marker is asked not to add these values to any future copy of the document.
+- If the marker chooses to demonstrate the hosted login on screen, the seeded demonstration credentials are sufficient. There is no need to expose any other account information.
+
+Figure UM19: [INSERT SCREENSHOT HERE]
+
+This screenshot shows the UniManage application running through the custom HTTPS domain.
+
+Figure UM20: [INSERT SCREENSHOT HERE]
+
+This screenshot shows the Google Cloud and Docker deployment evidence used to support the hosted demonstration.
+
+Figure UM21: Cloudflare DNS Record Evidence
+
+![](screenshots/Figure_UM21_Cloudflare_DNS_Record_Evidence.png)
+
+This screenshot shows the Cloudflare DNS A record used to point the lms.yasaboy.com subdomain to the Google Cloud public IP address.
+
+Figure UM22: Nginx Server Reachability Evidence
+
+![](screenshots/Figure_UM22_Nginx_Default_Page_Evidence.png)
+
+This screenshot shows the default Nginx page loading from the lms.yasaboy.com host, confirming that Nginx was installed and reachable on the server at the time of evidence capture.
+
 ## 6. Login and User Roles
 
 The seeded demonstration accounts are created by `Data/DbInitializer.cs`. The credentials are intended for the viva and for marking, not for production use.

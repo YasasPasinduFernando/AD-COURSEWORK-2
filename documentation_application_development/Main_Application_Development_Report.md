@@ -968,6 +968,38 @@ The UI layout is centralised in `Views/Shared/_Layout.cshtml`. The layout define
 
 Static assets live under `wwwroot/`. The `lib/` folder holds Bootstrap and any other client libraries; the `css/site.css` file holds project-specific styles; the `js/site.js` file holds custom client-side behaviour; the `assets/` folder holds images and icons used by the UI. The author has kept the custom CSS and JavaScript small to avoid duplicating the framework features and to keep the code reviewable.
 
+## 8.20 Hosting and Docker Deployment Evidence
+
+In addition to the local Visual Studio build path, the author has prepared supporting hosting evidence that shows the application running outside the local development environment. The application has been packaged into a Docker container and deployed to a Google Cloud virtual machine. The author intends the primary public demonstration address to be the custom-domain URL `https://lms.yasaboy.com/`, with the earlier IP-based endpoint `http://34.171.6.234:8080` retained as backup evidence. Figure UM19 should show the UniManage home page loading on that custom domain before the submission package treats the custom-domain application view as fully evidenced; until that figure is inserted, some rows in Table 23 record `[VERIFY]` rather than `Completed` so that the table matches the screenshots actually embedded in the report. The deployment remains supporting evidence only, because the coursework brief still requires the application to be assessable through Visual Studio 2017 or higher.
+
+Docker has been used because it provides a consistent runtime environment across the developer's machine and the cloud host. A Dockerfile is used to describe the .NET 8 base image, the build steps for the ASP.NET Core MVC application, and the entry point for the published binary. Once the image is built locally, it can be pushed to a container registry or transferred directly to the Google Cloud virtual machine and started with a single `docker run` command. This approach removes most of the differences between the developer's machine and the host machine, which makes the demonstration easier to reproduce. The author has not embedded the Dockerfile content in this report because the contents may include configuration details that should remain in the source repository.
+
+The intended primary hosted demonstration URL is `https://lms.yasaboy.com/`. Figures UM21 and UM22 provide supporting infrastructure evidence from Cloudflare DNS and from the default Nginx welcome page loading on `lms.yasaboy.com`. The Figure UM22 capture loaded over HTTP and was marked Not secure in the browser, so this report does not use that capture as proof of HTTPS or of the UniManage application user interface on the custom domain. An earlier IP-based endpoint, `http://34.171.6.234:8080`, was used during the initial deployment phase and is retained in this report as backup evidence in case the custom-domain endpoint is temporarily unreachable. After the UniManage site loads on whichever hosted endpoint is available, the seeded demonstration users (`admin@unimanage.local`, `lecturer@unimanage.local`, and `student@unimanage.local`) can be used to sign in and walk through the role-based dashboards. The hosted version mirrors the local build because it runs the same Docker image when the container is exposed correctly through the host configuration.
+
+The hosted demonstration is supporting evidence rather than the primary assessment artefact. The CS6004ES Application Development brief specifies that the application should be assessed using Visual Studio 2017 or higher, which is the local development environment used by the marker. The local build path remains the main assessment route. The author confirms that `dotnet build --no-restore` returns zero warnings and zero errors, that Visual Studio 2022 opens the solution file `AD COURSEWORK 2.sln` correctly, and that the application starts on `https://localhost:7212` and `http://localhost:5103` from the local machine.
+
+Several practical considerations apply to the hosted version. HTTPS on the custom domain may be configured on the server, but the embedded evidence set must be read carefully: the Figure UM22 capture does not demonstrate a secure HTTPS view of UniManage, and Figure UM19 is still required to demonstrate the UniManage home page on `https://lms.yasaboy.com/`. The wider deployment is still a coursework demonstration rather than a production service. The connection string, the SMTP password, the Google client secret, the SSH private keys, the DNS or provider credentials, and the cloud service account key are kept outside the report and outside any screenshot used as evidence. Where a screenshot of the configuration is required, the credentials are redacted before insertion. The marker is asked to verify the hosted URL shortly before the submission because cloud instances can be stopped, restarted, or reconfigured, which can temporarily make the endpoint unreachable. If the custom-domain URL is unavailable, the earlier IP-based endpoint may be used as a fallback, and the local Visual Studio run instructions in the user manual remain the supported demonstration path.
+
+The full evidence checklist for the hosted deployment is summarised in Table 23 below and is repeated as a tracking list in Appendix E.4.
+
+Table 23: Hosting and Deployment Evidence
+
+| Evidence Item | Details | Status | Notes |
+|---|---|---|---|
+| Hosted application on custom domain (UniManage UI) | `https://lms.yasaboy.com/` | [VERIFY] | Figure UM19 should show the UniManage homepage; not established by the default Nginx page in Figure UM22 |
+| Previous IP-based endpoint | `http://34.171.6.234:8080` | Completed / Backup evidence | Earlier Google Cloud hosted endpoint, retained as fallback evidence |
+| Hosting platform | Google Cloud | Completed | VM-hosted deployment evidence |
+| Containerisation | Docker | Completed | Application packaged for deployment |
+| HTTPS / TLS on custom domain (browser session evidence) | Valid HTTPS view of UniManage on `https://lms.yasaboy.com/` | [VERIFY] | Figure UM22 shows HTTP with Not secure for the default Nginx page on the same host label |
+| Cloudflare DNS record | lms A record points to 34.171.6.234 | Completed | DNS only status shown in screenshot, not Cloudflare proxy |
+| Nginx server reachability | Default Nginx page loads on lms.yasaboy.com | Completed as server evidence | Further reverse proxy configuration still requires confirmation |
+| Cloudflare proxy/CDN | Not enabled in screenshot | Limitation / Future improvement | Proxy status shown as DNS only |
+| Nginx reverse proxy to application | [VERIFY] | Needs confirmation | Only claim if configuration or application routing evidence is provided |
+| Visual Studio local assessment | Required | Completed for build, To verify by marker | Coursework assessment route as per the brief |
+| Secrets and credentials | Not included in report | Safe | Kept outside `appsettings.json` screenshots and outside the body of the report |
+
+Additional deployment evidence was collected from Cloudflare and Nginx. The Cloudflare DNS record shows that the lms subdomain was configured as an A record pointing to the Google Cloud public IP address 34.171.6.234. The record was shown as DNS only, so the report does not claim Cloudflare proxy, CDN, or security features as completed. A separate browser screenshot shows the default Nginx welcome page loading from lms.yasaboy.com. This confirms that Nginx was installed and reachable on the server, but the default page also states that further configuration was required. Therefore, Nginx is recorded as server-level evidence, while reverse proxy completion is only claimed if separate configuration evidence is included.
+
 # 9. User Interface and Usability
 
 ## 9.1 Design Language
@@ -1608,7 +1640,13 @@ Automated tests are not present. Manual testing has been used to validate functi
 
 ## 18.3 Deployment Limitations
 
-A hosted deployment is not available. The application has been verified to run locally on `https://localhost:7212` and `http://localhost:5103`. A packaged build (ZIP) and an optional hosted deployment URL are listed in `Source_And_Build_Links.md` and remain placeholders until the author fills them in.
+The application has been verified to run locally on `https://localhost:7212` and `http://localhost:5103`. A supporting hosted demonstration has been deployed to Google Cloud using a Docker container, with the intended public address `https://lms.yasaboy.com/` and an earlier IP-based endpoint `http://34.171.6.234:8080` retained as backup evidence. Section 8.20 and Appendix E.4 distinguish between DNS and server-reachability screenshots on the one hand, and application or HTTPS session evidence on the other.
+
+The Cloudflare DNS evidence shows DNS-only routing rather than proxied Cloudflare protection. The Nginx screenshot confirms that the server responded with the default Nginx page, but it does not by itself prove that Nginx was fully configured as a reverse proxy to the UniManage Docker container. Reverse proxy hardening, Cloudflare proxy configuration, and documented HTTPS/TLS configuration remain areas for final verification or future improvement unless additional evidence is inserted.
+
+The hosted demonstration is still presented as coursework demonstration evidence rather than a fully production-ready deployment. For production use, the author would need to document and harden the complete deployment pipeline, including reverse proxy configuration if used, DNS configuration, secret management, firewall rules, monitoring, database backup procedures, and CI/CD automation.
+
+The marker is asked to verify the hosted URL shortly before submission. Cloud instances can be stopped, restarted, or reconfigured, and the public domain or IP may temporarily become unreachable. If the custom-domain URL is unreachable, the earlier IP-based endpoint may be used as a fallback. If neither hosted endpoint is reachable, the local Visual Studio assessment route documented in the user manual remains supported.
 
 ## 18.4 Accessibility Limitations
 
@@ -1692,6 +1730,15 @@ Table 22: Future Improvements and Justification
 | Internationalisation and localisation | Support multiple languages where required. |
 | Mobile-friendly enhancements beyond Bootstrap defaults | Improve the experience on small viewports. |
 | Database backup automation | Provide a routine backup script and a restore process. |
+| Maintain HTTPS/TLS certificate configuration and document renewal steps | Once a secure HTTPS session on the custom domain is evidenced for UniManage, document the certificate authority used, the renewal cadence, and any automation so that TLS remains valid over time. |
+| Enable and document Cloudflare proxy/CDN protection if it is required for the final hosted demonstration | Figure UM21 shows DNS only; proxied Cloudflare mode is not claimed. Enable and capture updated evidence only if required, without exposing secrets. |
+| Complete and document Nginx reverse proxy configuration from the public domain to the UniManage Docker container | Figure UM22 shows the default Nginx page only; capture redacted configuration or routing evidence before claiming full reverse proxy completion. |
+| Add a final hosted application screenshot showing the UniManage homepage through the custom domain | Insert as Figure UM19 or equivalent so the custom-domain application view is evidenced alongside infrastructure captures. |
+| Document and harden the reverse proxy configuration if Nginx is used | If the deployment uses Nginx in front of the Docker container, capture the relevant configuration (with secrets redacted) and harden the proxy with appropriate timeouts, headers, and rate limits. |
+| Document DNS and Cloudflare configuration if used | Figure UM21 provides partial DNS evidence; extend with any further redacted records needed for assessment, including proxy status if that mode is enabled later. |
+| Move sensitive settings to environment variables or a managed secret store | Avoid keeping connection strings, SMTP credentials, Google client secrets, and DNS or provider credentials in committed configuration files; use environment variables, Google Secret Manager, or a similar managed store. |
+| Add CI/CD deployment automation for Docker images | Automate the build, image push, and deployment of the Docker container so that updates to the source repository can be pushed to the hosted demonstration without manual steps. |
+| Add uptime monitoring and database backup procedures | Add a basic uptime monitor for the hosted endpoint and a routine MySQL backup so that the demonstration link remains reliable across the assessment window. |
 
 # 22. Conclusion
 
@@ -1858,6 +1905,50 @@ This screenshot shows the Visual Studio 2022 solution open with the `AD COURSEWO
 Figure 20b: [INSERT SCREENSHOT HERE]
 
 This screenshot shows the console output of `dotnet build --no-restore` reporting zero warnings and zero errors.
+
+### Appendix E.4 Hosted Deployment Evidence
+
+In addition to the local Visual Studio build, the application has been deployed to a Google Cloud virtual machine using a Docker container as supporting demonstration evidence. The intended hosted application URL, the backup IP-based endpoint, and the infrastructure evidence figures are listed below.
+
+| Item | Value | Notes |
+|---|---|---|
+| Hosted application on custom domain (UniManage UI) | `https://lms.yasaboy.com/` | [VERIFY] until Figure UM19 (or equivalent) shows the UniManage homepage on the custom domain. |
+| Previous IP-based endpoint | `http://34.171.6.234:8080` | Earlier Google Cloud hosted endpoint, retained as backup evidence. |
+| Hosting platform | Google Cloud | Hosted on a Compute Engine virtual machine. |
+| Containerisation | Docker | The application is packaged as a Docker image. |
+| HTTPS / TLS on custom domain (browser session evidence) | [VERIFY] | Figure UM22 shows HTTP with Not secure for the default Nginx page on `lms.yasaboy.com`; it is not HTTPS evidence for UniManage. |
+| Cloudflare DNS record | lms A record to 34.171.6.234 | Completed in Figure UM21; DNS only, not proxied. |
+| Nginx server reachability | Default Nginx page on lms.yasaboy.com | Completed as server evidence in Figure UM22; further configuration was still required at capture time. |
+| Cloudflare proxy/CDN | Not shown as enabled | Limitation / future improvement; proxy status DNS only in Figure UM21. |
+| Nginx reverse proxy to application | [VERIFY] | Only claim with configuration or application routing evidence. |
+| Deployment purpose | Supporting viva and demonstration evidence | Not a replacement for the local Visual Studio assessment route. |
+| Visual Studio local assessment | Required | The coursework brief assesses the application using Visual Studio 2017 or higher. |
+
+Figure UM19: [INSERT SCREENSHOT HERE]
+
+This screenshot shows the UniManage application running through the custom HTTPS domain.
+
+Figure UM20: [INSERT SCREENSHOT HERE]
+
+This screenshot shows the Google Cloud and Docker deployment evidence used to support the hosted demonstration.
+
+Figure UM21: Cloudflare DNS Record Evidence
+
+![](screenshots/Figure_UM21_Cloudflare_DNS_Record_Evidence.png)
+
+This screenshot shows the Cloudflare DNS A record used to point the lms.yasaboy.com subdomain to the Google Cloud public IP address.
+
+Figure UM22: Nginx Server Reachability Evidence
+
+![](screenshots/Figure_UM22_Nginx_Default_Page_Evidence.png)
+
+This screenshot shows the default Nginx page loading from the lms.yasaboy.com host, confirming that Nginx was installed and reachable on the server at the time of evidence capture.
+
+Notes for the marker:
+
+- HTTPS on the custom domain is not evidenced by Figure UM22, which shows an HTTP load of the default Nginx page. Maintenance and renewal of the TLS configuration, plus documentation of any reverse proxy or DNS provider in use, are listed in Chapter 21 as future improvements.
+- The local Visual Studio build remains the primary assessment route. The local build has been verified with `dotnet build --no-restore` returning zero warnings and zero errors.
+- The author has confirmed that no database password, SMTP password, Google client secret, SSH key, DNS or provider credential, or cloud service account key is included in the body of the report or in the hosted screenshots.
 
 ## Appendix F: User Manual Reference
 
