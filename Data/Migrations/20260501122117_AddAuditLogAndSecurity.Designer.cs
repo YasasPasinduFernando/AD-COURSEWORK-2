@@ -4,6 +4,7 @@ using AD_COURSEWORK_2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AD_COURSEWORK_2.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260501122117_AddAuditLogAndSecurity")]
+    partial class AddAuditLogAndSecurity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,55 +302,6 @@ namespace AD_COURSEWORK_2.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Enrollments");
-                });
-
-            modelBuilder.Entity("AD_COURSEWORK_2.Models.Meeting", b =>
-                {
-                    b.Property<int>("MeetingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MeetingId"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LecturerId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("MeetingUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<DateTime>("ScheduledAtUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.HasKey("MeetingId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("LecturerId");
-
-                    b.HasIndex("ScheduledAtUtc");
-
-                    b.ToTable("Meetings");
                 });
 
             modelBuilder.Entity("AD_COURSEWORK_2.Models.Message", b =>
@@ -652,25 +606,6 @@ namespace AD_COURSEWORK_2.Data.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("AD_COURSEWORK_2.Models.Meeting", b =>
-                {
-                    b.HasOne("AD_COURSEWORK_2.Models.Course", "Course")
-                        .WithMany("Meetings")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AD_COURSEWORK_2.Models.ApplicationUser", "Lecturer")
-                        .WithMany()
-                        .HasForeignKey("LecturerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Lecturer");
-                });
-
             modelBuilder.Entity("AD_COURSEWORK_2.Models.Message", b =>
                 {
                     b.HasOne("AD_COURSEWORK_2.Models.ApplicationUser", "Receiver")
@@ -796,8 +731,6 @@ namespace AD_COURSEWORK_2.Data.Migrations
                     b.Navigation("Enrollments");
 
                     b.Navigation("Materials");
-
-                    b.Navigation("Meetings");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,42 +2,127 @@
     ViewData["Title"] = "Reports";
 }
 
-<h1 class="h3 mb-3">Reports</h1>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0"><i class="bi bi-clipboard2-data text-primary me-2"></i>Reports &amp; analytics</h1>
+        <p class="text-muted small mb-0">Insights across courses, students, lecturers, and academic outcomes. Every report exports to <strong>CSV</strong> &amp; <strong>PDF</strong>.</p>
+    </div>
+</div>
 
 <div class="row g-3">
     <div class="col-md-6 col-lg-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h2 class="h6">Course popularity</h2>
-                <p class="text-muted small">Enrollment counts and fill rates by course.</p>
-                <a class="btn btn-primary btn-sm" asp-action="CoursePopularity">Open</a>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-primary-subtle text-primary-emphasis"><i class="bi bi-bar-chart"></i></span>
+                    <h2 class="h6 mb-0">Course popularity</h2>
+                </div>
+                <p class="text-muted small">Enrollment counts and fill rates by course, with chart.</p>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-primary btn-sm" asp-action="CoursePopularity">Open</a>
+                    <a class="btn btn-outline-success btn-sm" asp-action="CoursePopularityCsv"><i class="bi bi-filetype-csv"></i> CSV</a>
+                    <a class="btn btn-danger btn-sm" asp-action="CoursePopularityPdf"><i class="bi bi-filetype-pdf"></i> PDF</a>
+                </div>
             </div>
         </div>
     </div>
+
     <div class="col-md-6 col-lg-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h2 class="h6">Student performance</h2>
-                <p class="text-muted small">Average outcomes for graded submissions.</p>
-                <a class="btn btn-primary btn-sm" asp-action="StudentPerformance">Open</a>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-success-subtle text-success-emphasis"><i class="bi bi-graph-up"></i></span>
+                    <h2 class="h6 mb-0">Student performance</h2>
+                </div>
+                <p class="text-muted small">Average outcomes for graded submissions, ranked by score.</p>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-primary btn-sm" asp-action="StudentPerformance">Open</a>
+                    <a class="btn btn-outline-success btn-sm" asp-action="StudentPerformanceCsv"><i class="bi bi-filetype-csv"></i> CSV</a>
+                    <a class="btn btn-danger btn-sm" asp-action="StudentPerformancePdf"><i class="bi bi-filetype-pdf"></i> PDF</a>
+                </div>
             </div>
         </div>
     </div>
+
     <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card border-0 shadow-sm h-100 position-relative">
+            <span class="position-absolute top-0 end-0 m-2 badge bg-warning-subtle text-warning-emphasis">NEW</span>
             <div class="card-body">
-                <h2 class="h6">Lecturer workload</h2>
-                <p class="text-muted small">Courses, assignments, and submissions per lecturer.</p>
-                <a class="btn btn-primary btn-sm" asp-action="LecturerWorkload">Open</a>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-success-subtle text-success-emphasis"><i class="bi bi-bar-chart-line"></i></span>
+                    <h2 class="h6 mb-0">Pass / fail analysis</h2>
+                </div>
+                <p class="text-muted small">Pass and fail counts per course based on a configurable pass mark.</p>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-primary btn-sm" asp-action="PassFail">Open</a>
+                    <a class="btn btn-outline-success btn-sm" asp-action="PassFailCsv"><i class="bi bi-filetype-csv"></i> CSV</a>
+                    <a class="btn btn-danger btn-sm" asp-action="PassFailPdf"><i class="bi bi-filetype-pdf"></i> PDF</a>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 position-relative">
+            <span class="position-absolute top-0 end-0 m-2 badge bg-warning-subtle text-warning-emphasis">NEW</span>
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-info-subtle text-info-emphasis"><i class="bi bi-clipboard2-check"></i></span>
+                    <h2 class="h6 mb-0">Assignment attendance</h2>
+                </div>
+                <p class="text-muted small">Turn-in rate per assignment — submitted vs. enrolled students.</p>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-primary btn-sm" asp-action="AssignmentAttendance">Open</a>
+                    <a class="btn btn-outline-success btn-sm" asp-action="AssignmentAttendanceCsv"><i class="bi bi-filetype-csv"></i> CSV</a>
+                    <a class="btn btn-danger btn-sm" asp-action="AssignmentAttendancePdf"><i class="bi bi-filetype-pdf"></i> PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-6 col-lg-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h2 class="h6">Enrollment log</h2>
-                <p class="text-muted small">Recent enrollment activity.</p>
-                <a class="btn btn-primary btn-sm" asp-action="Enrollments">Open</a>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-warning-subtle text-warning-emphasis"><i class="bi bi-person-workspace"></i></span>
+                    <h2 class="h6 mb-0">Lecturer workload</h2>
+                </div>
+                <p class="text-muted small">Courses, assignments and submissions per lecturer.</p>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-primary btn-sm" asp-action="LecturerWorkload">Open</a>
+                    <a class="btn btn-outline-success btn-sm" asp-action="LecturerWorkloadCsv"><i class="bi bi-filetype-csv"></i> CSV</a>
+                    <a class="btn btn-danger btn-sm" asp-action="LecturerWorkloadPdf"><i class="bi bi-filetype-pdf"></i> PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-info-subtle text-info-emphasis"><i class="bi bi-list-check"></i></span>
+                    <h2 class="h6 mb-0">Enrollment log</h2>
+                </div>
+                <p class="text-muted small">Recent enrollment activity over time.</p>
+                <div class="d-flex flex-wrap gap-1">
+                    <a class="btn btn-primary btn-sm" asp-action="Enrollments">Open</a>
+                    <a class="btn btn-outline-success btn-sm" asp-action="EnrollmentsCsv"><i class="bi bi-filetype-csv"></i> CSV</a>
+                    <a class="btn btn-danger btn-sm" asp-action="EnrollmentsPdf"><i class="bi bi-filetype-pdf"></i> PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-danger-subtle text-danger-emphasis"><i class="bi bi-shield-lock"></i></span>
+                    <h2 class="h6 mb-0">Audit log</h2>
+                </div>
+                <p class="text-muted small">Security and activity trail across the platform.</p>
+                <a class="btn btn-primary btn-sm" asp-controller="AuditLogs" asp-action="Index">Open</a>
             </div>
         </div>
     </div>

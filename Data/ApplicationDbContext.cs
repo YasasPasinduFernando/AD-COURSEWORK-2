@@ -17,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Submission> Submissions => Set<Submission>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<CourseMaterial> CourseMaterials => Set<CourseMaterial>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<Meeting> Meetings => Set<Meeting>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -101,6 +103,29 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             e.HasOne(x => x.UploadedBy)
                 .WithMany(x => x.UploadedMaterials)
                 .HasForeignKey(x => x.UploadedById)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<AuditLog>(e =>
+        {
+            e.Property(x => x.Detail).HasColumnType("longtext");
+            e.HasIndex(x => x.CreatedAtUtc);
+            e.HasIndex(x => new { x.Category, x.Action });
+            e.HasIndex(x => x.UserId);
+        });
+
+        builder.Entity<Meeting>(e =>
+        {
+            e.Property(x => x.Description).HasColumnType("longtext");
+            e.HasIndex(x => x.ScheduledAtUtc);
+            e.HasIndex(x => x.CourseId);
+            e.HasOne(x => x.Course)
+                .WithMany(x => x.Meetings)
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Lecturer)
+                .WithMany()
+                .HasForeignKey(x => x.LecturerId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

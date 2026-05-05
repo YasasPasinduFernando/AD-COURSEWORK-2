@@ -1,0 +1,145 @@
+@model ReportPassFailViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Pass / fail analysis";
+    var topN = Model.Rows.Take(15).ToList();
+    var labels = topN.Select(r => r.CourseCode).ToList();
+    var passData = topN.Select(r => r.PassCount).ToList();
+    var failData = topN.Select(r => r.FailCount).ToList();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0"><i class="bi bi-bar-chart-line text-primary me-2"></i>Pass / fail analysis</h1>
+        <p class="text-muted small mb-0">@Model.Rows.Count course@(Model.Rows.Count == 1 ? "" : "s") with graded submissions · pass mark: <strong>@Model.PassMark%</strong></p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <form method="get" class="d-flex gap-1 align-items-center">
+            <label class="small text-muted me-1">Pass mark</label>
+            <input type="number" name="passMark" value="@Model.PassMark" min="1" max="99" class="form-control form-control-sm" style="width:80px;" />
+            <span class="small text-muted">%</span>
+            <button class="btn btn-outline-primary btn-sm">Apply</button>
+        </form>
+        <a class="btn btn-outline-success btn-sm" asp-action="PassFailCsv" asp-route-passMark="@Model.PassMark"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+        <a class="btn btn-danger btn-sm" asp-action="PassFailPdf" asp-route-passMark="@Model.PassMark"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
+        <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Graded</div>
+            <div class="display-6 fw-bold mb-0 text-primary">@Model.TotalGraded</div>
+        </div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Passes</div>
+            <div class="display-6 fw-bold mb-0 text-success">@Model.TotalPass</div>
+        </div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Fails</div>
+            <div class="display-6 fw-bold mb-0 text-danger">@Model.TotalFail</div>
+        </div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Overall pass rate</div>
+            <div class="display-6 fw-bold mb-0 @(Model.OverallPassRate >= 75 ? "text-success" : Model.OverallPassRate >= 50 ? "text-primary" : "text-warning")">
+                @Model.OverallPassRate.ToString("0.#")%
+            </div>
+        </div></div>
+    </div>
+</div>
+
+@if (Model.Rows.Any())
+{
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h2 class="h6 fw-bold mb-3 text-muted"><i class="bi bi-bar-chart me-1"></i>Pass vs fail by course (top @topN.Count)</h2>
+            <canvas id="passFailChart" height="120"></canvas>
+        </div>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Course</th>
+                    <th class="text-end">Graded</th>
+                    <th class="text-end text-success">Pass</th>
+                    <th class="text-end text-danger">Fail</th>
+                    <th>Pass rate</th>
+                    <th class="text-end">Average</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Rows.Any())
+                {
+                    <tr><td colspan="7" class="text-muted p-4 text-center">No graded submissions yet.</td></tr>
+                }
+                @foreach (var r in Model.Rows)
+                {
+                    var pct = (int)Math.Round(r.PassRate);
+                    <tr>
+                        <td><span class="badge bg-primary-subtle text-primary-emphasis">@r.CourseCode</span></td>
+                        <td class="fw-medium">@r.CourseName</td>
+                        <td class="text-end">@r.GradedCount</td>
+                        <td class="text-end fw-bold text-success">@r.PassCount</td>
+                        <td class="text-end fw-bold text-danger">@r.FailCount</td>
+                        <td style="min-width:200px;">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height:8px;">
+                                    <div class="progress-bar @(pct >= 75 ? "bg-success" : pct >= 50 ? "bg-primary" : pct >= 25 ? "bg-warning" : "bg-danger")"
+                                         style="width:@(Math.Min(100, pct))%;"></div>
+                                </div>
+                                <span class="small fw-semibold">@pct%</span>
+                            </div>
+                        </td>
+                        <td class="text-end">@r.AveragePercent.ToString("0.#")%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.Rows.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script>
+            (function () {
+                const labels = @Html.Raw(JsonSerializer.Serialize(labels));
+                const passData = @Html.Raw(JsonSerializer.Serialize(passData));
+                const failData = @Html.Raw(JsonSerializer.Serialize(failData));
+                const ctx = document.getElementById('passFailChart');
+                if (!ctx) return;
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Pass', data: passData, backgroundColor: '#10b981', stack: 'a' },
+                            { label: 'Fail', data: failData, backgroundColor: '#f43f5e', stack: 'a' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { position: 'top' } },
+                        scales: {
+                            x: { stacked: true },
+                            y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
+                        }
+                    }
+                });
+            })();
+        </script>
+    }
+}

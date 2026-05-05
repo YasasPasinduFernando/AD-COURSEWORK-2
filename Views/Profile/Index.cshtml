@@ -1,0 +1,66 @@
+@model AD_COURSEWORK_2.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+}
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">My profile</h1>
+                <p class="text-muted small">Update your personal details. Email and role can only be changed by an administrator.</p>
+
+                <form method="post" novalidate>
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label fw-semibold"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label fw-semibold"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control" disabled />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Role" class="form-label fw-semibold"></label>
+                            <input asp-for="Role" class="form-control" disabled />
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <a class="btn btn-outline-secondary" asp-action="ChangePassword">Change password</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h6 text-uppercase text-muted">Security</h2>
+                <ul class="list-unstyled small mb-0">
+                    <li class="mb-2"><i class="bi bi-shield-check text-success me-2"></i>Account lockout after 5 failed attempts</li>
+                    <li class="mb-2"><i class="bi bi-envelope-check text-success me-2"></i>Email alerts on new sign-in</li>
+                    <li class="mb-2"><i class="bi bi-key text-success me-2"></i>Strong password policy (8+ chars, digit, uppercase)</li>
+                    <li class="mb-2"><i class="bi bi-incognito text-success me-2"></i>Anti-forgery tokens on every form</li>
+                    <li><i class="bi bi-clipboard-data text-success me-2"></i>Activity recorded in audit log</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

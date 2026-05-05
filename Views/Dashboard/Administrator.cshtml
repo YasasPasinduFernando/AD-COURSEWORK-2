@@ -1,10 +1,24 @@
 @model AdminDashboardViewModel
+@using System.Text.Json
 @{
     ViewData["Title"] = "Admin dashboard";
     var firstName = (User.Identity?.Name ?? "Admin").Split(' ', '@')[0];
     var greeting = DateTime.Now.Hour < 12 ? "Good morning" : DateTime.Now.Hour < 18 ? "Good afternoon" : "Good evening";
     var avgEnrollPerCourse = Model.CourseCount > 0 ? Math.Round((double)Model.EnrollmentCount / Model.CourseCount, 1) : 0;
     var maxEnroll = Model.PopularCourses.Any() ? Math.Max(1, Model.PopularCourses.Max(c => c.Enrollments)) : 1;
+
+    var trendLabels = Model.EnrollmentTrend.Select(t => t.Label).ToList();
+    var trendValues = Model.EnrollmentTrend.Select(t => (int)t.Value).ToList();
+
+    string TimeAgo(DateTime utc)
+    {
+        var span = DateTime.UtcNow - utc;
+        if (span.TotalMinutes < 1) return "just now";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}m ago";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours}h ago";
+        if (span.TotalDays < 7) return $"{(int)span.TotalDays}d ago";
+        return utc.ToLocalTime().ToString("MMM d");
+    }
 }
 
 <section class="um-welcome">
@@ -17,10 +31,12 @@
                 <span class="um-chip"><i class="bi bi-calendar-event"></i>@DateTime.Now.ToString("dddd, MMM d")</span>
                 <span class="um-chip"><i class="bi bi-people"></i>@Model.UserCount users</span>
                 <span class="um-chip"><i class="bi bi-shield-check"></i>System healthy</span>
+                <span class="um-chip"><i class="bi bi-clipboard-data"></i>@Model.SubmissionCount submissions</span>
             </div>
             <div class="um-welcome-cta">
                 <a class="btn btn-light" asp-controller="Courses" asp-action="Index"><i class="bi bi-collection me-1"></i> Manage courses</a>
                 <a class="btn btn-outline-light" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart me-1"></i> View reports</a>
+                <a class="btn btn-outline-light" asp-controller="AuditLogs" asp-action="Index"><i class="bi bi-shield-lock me-1"></i> Audit log</a>
             </div>
         </div>
         <div class="col-lg-4 d-none d-lg-flex justify-content-end">
@@ -77,6 +93,36 @@
 
 <div class="row g-4">
     <div class="col-xl-8">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="um-panel card border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="um-section-title mb-0"><i class="bi bi-graph-up me-1"></i>Enrollments — last 30 days</div>
+                                <p class="small text-muted mb-0">Daily new enrollments over the past month.</p>
+                            </div>
+                            <a class="btn btn-sm btn-outline-primary rounded-pill px-3" asp-controller="Reports" asp-action="Enrollments">Full report</a>
+                        </div>
+                        <div class="um-chart-wrap"><canvas id="adminEnrollChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="um-panel card border-0 h-100">
+                    <div class="card-body">
+                        <div class="um-section-title mb-2"><i class="bi bi-people me-1"></i>User roles</div>
+                        <div class="um-chart-wrap" style="height: 180px;"><canvas id="adminRoleChart"></canvas></div>
+                        <div class="d-flex flex-wrap gap-2 mt-3 small">
+                            <span class="um-pill pill-success">Students @Model.StudentCount</span>
+                            <span class="um-pill pill-info">Lecturers @Model.LecturerCount</span>
+                            <span class="um-pill pill-warn">Admins @Model.AdminCount</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="um-panel card border-0 mb-4">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -145,11 +191,11 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <a class="um-quick-action qa-amber" asp-controller="Reports" asp-action="LecturerWorkload">
-                            <span class="um-qa-icon"><i class="bi bi-briefcase"></i></span>
+                        <a class="um-quick-action qa-amber" asp-controller="AuditLogs" asp-action="Index">
+                            <span class="um-qa-icon"><i class="bi bi-shield-lock"></i></span>
                             <div>
-                                <div class="qa-title">Lecturer workload</div>
-                                <div class="qa-sub">Compare teaching and grading load</div>
+                                <div class="qa-title">Audit log</div>
+                                <div class="qa-sub">Browse security and activity events</div>
                             </div>
                         </a>
                     </div>
@@ -161,28 +207,37 @@
     <div class="col-xl-4">
         <div class="um-panel card border-0 mb-4">
             <div class="card-body">
-                <div class="um-section-title">System at a glance</div>
-                <ul class="um-timeline">
-                    <li class="is-success">
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Database connected</p>
-                        <div class="um-timeline-meta"><i class="bi bi-database me-1"></i>All EF migrations applied.</div>
-                    </li>
-                    <li>
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Authentication running</p>
-                        <div class="um-timeline-meta"><i class="bi bi-shield-lock me-1"></i>Identity + Google OAuth configured.</div>
-                    </li>
-                    <li class="is-warn">
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Email delivery</p>
-                        <div class="um-timeline-meta"><i class="bi bi-envelope-paper me-1"></i>Gmail SMTP active with TLS.</div>
-                    </li>
-                </ul>
+                <div class="um-section-title"><i class="bi bi-activity me-1"></i>Live activity</div>
+                @if (!Model.RecentActivity.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-clock-history"></i>
+                        <div class="um-empty-title">No recent events</div>
+                        <div class="small">User actions will stream into the audit log.</div>
+                    </div>
+                }
+                else
+                {
+                    <ul class="um-feed list-unstyled mb-0">
+                        @foreach (var a in Model.RecentActivity)
+                        {
+                            <li class="um-feed-item tone-@a.Tone">
+                                <span class="um-feed-ico"><i class="bi @a.Icon"></i></span>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="um-feed-title">@a.Title</div>
+                                    <div class="um-feed-meta"><i class="bi bi-clock me-1"></i>@TimeAgo(a.WhenUtc)@(string.IsNullOrEmpty(a.Detail) ? "" : " · ") @a.Detail</div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <div class="text-end mt-3">
+                        <a asp-controller="AuditLogs" asp-action="Index" class="small fw-semibold text-decoration-none">View all <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                }
             </div>
         </div>
 
-        <div class="um-panel card border-0">
+        <div class="um-panel card border-0 mb-4">
             <div class="card-body">
                 <div class="um-section-title">Institution metrics</div>
                 <div class="row g-3">
@@ -215,6 +270,15 @@
                     </div>
                     <div class="col-6">
                         <div class="um-kpi">
+                            <i class="bi bi-clipboard-check"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Submissions</span>
+                                <span class="kpi-value">@Model.SubmissionCount</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="um-kpi">
                             <i class="bi bi-journal-text"></i>
                             <div class="d-flex flex-column">
                                 <span class="kpi-label">Assignments</span>
@@ -222,8 +286,98 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="um-kpi">
+                            <i class="bi bi-chat-dots"></i>
+                            <div class="d-flex flex-column">
+                                <span class="kpi-label">Messages</span>
+                                <span class="kpi-value">@Model.MessageCount</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="um-panel card border-0">
+            <div class="card-body">
+                <div class="um-section-title">System status</div>
+                <ul class="um-timeline mb-0">
+                    <li class="is-success">
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Database connected</p>
+                        <div class="um-timeline-meta"><i class="bi bi-database me-1"></i>All EF migrations applied.</div>
+                    </li>
+                    <li class="is-success">
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Authentication running</p>
+                        <div class="um-timeline-meta"><i class="bi bi-shield-lock me-1"></i>Identity + lockout + audit log.</div>
+                    </li>
+                    <li>
+                        <span class="um-timeline-marker"></span>
+                        <p class="um-timeline-title">Email delivery</p>
+                        <div class="um-timeline-meta"><i class="bi bi-envelope-paper me-1"></i>SMTP active with TLS.</div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        (function () {
+            const trendLabels = @Html.Raw(JsonSerializer.Serialize(trendLabels));
+            const trendValues = @Html.Raw(JsonSerializer.Serialize(trendValues));
+            const eEl = document.getElementById('adminEnrollChart');
+            if (eEl) {
+                new Chart(eEl, {
+                    type: 'line',
+                    data: {
+                        labels: trendLabels,
+                        datasets: [{
+                            label: 'Enrollments',
+                            data: trendValues,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14,165,233,.18)',
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } },
+                            x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } }
+                        }
+                    }
+                });
+            }
+
+            const rEl = document.getElementById('adminRoleChart');
+            if (rEl) {
+                new Chart(rEl, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Students', 'Lecturers', 'Administrators'],
+                        datasets: [{
+                            data: [@Model.StudentCount, @Model.LecturerCount, @Model.AdminCount],
+                            backgroundColor: ['#10b981', '#0ea5e9', '#f59e0b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+                    }
+                });
+            }
+        })();
+    </script>
+}

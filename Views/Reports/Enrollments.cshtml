@@ -1,9 +1,36 @@
 @model List<ReportEnrollmentRow>
+@using System.Text.Json
 @{
     ViewData["Title"] = "Enrollment report";
+
+    var byDay = Model
+        .GroupBy(r => DateOnly.FromDateTime(r.DateUtc.ToLocalTime()))
+        .OrderBy(g => g.Key)
+        .ToList();
+    var labels = byDay.Select(g => g.Key.ToString("yyyy-MM-dd")).ToList();
+    var counts = byDay.Select(g => g.Count()).ToList();
 }
 
-<h1 class="h3 mb-3">Enrollment report</h1>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">Enrollment report</h1>
+        <p class="text-muted small mb-0">@Model.Count enrollment@(Model.Count == 1 ? "" : "s") total.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-success btn-sm" asp-action="EnrollmentsCsv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+        <a class="btn btn-danger btn-sm" asp-action="EnrollmentsPdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
+        <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
+    </div>
+</div>
+
+@if (byDay.Any())
+{
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <canvas id="enrollChart" height="100"></canvas>
+        </div>
+    </div>
+}
 
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
@@ -16,23 +43,53 @@
                 </tr>
             </thead>
             <tbody>
-            @if (!Model.Any())
-            {
-                <tr><td colspan="3" class="text-muted p-4 text-center">No enrollments.</td></tr>
-            }
-            @foreach (var r in Model)
-            {
-                <tr>
-                    <td>@r.DateUtc.ToString("u")</td>
-                    <td>@r.Student</td>
-                    <td>@r.CourseCode — @r.CourseName</td>
-                </tr>
-            }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="3" class="text-muted p-4 text-center">No enrollments.</td></tr>
+                }
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td><small>@r.DateUtc.ToString("u")</small></td>
+                        <td>@r.Student</td>
+                        <td><span class="badge bg-primary-subtle text-primary-emphasis">@r.CourseCode</span> @r.CourseName</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
 </div>
 
-<div class="mt-3">
-    <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
-</div>
+@section Scripts {
+    @if (byDay.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script>
+            (function () {
+                const labels = @Html.Raw(JsonSerializer.Serialize(labels));
+                const counts = @Html.Raw(JsonSerializer.Serialize(counts));
+                const ctx = document.getElementById('enrollChart');
+                if (!ctx) return;
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Enrollments',
+                            data: counts,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14,165,233,0.18)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    }
+                });
+            })();
+        </script>
+    }
+}

@@ -1,4 +1,5 @@
 using AD_COURSEWORK_2.Data;
+using AD_COURSEWORK_2.Infrastructure;
 using AD_COURSEWORK_2.Models;
 using AD_COURSEWORK_2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,50 +14,41 @@ public class MessagesController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IAuditLogger _audit;
 
-    public MessagesController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+    public MessagesController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuditLogger audit)
     {
         _db = db;
         _userManager = userManager;
+        _audit = audit;
     }
 
     public async Task<IActionResult> Inbox()
     {
         var me = _userManager.GetUserId(User)!;
-        var messages = await _db.Messages
-            .AsNoTracking()
-            .Where(m => m.SenderId == me || m.ReceiverId == me)
-            .OrderByDescending(m => m.SentAtUtc)
-            .ToListAsync();
-
-        var otherIds = messages
-            .Select(m => m.SenderId == me ? m.ReceiverId : m.SenderId)
-            .Distinct()
-            .ToList();
-
-        var users = await _db.Users
-            .Where(u => otherIds.Contains(u.Id))
-            .ToDictionaryAsync(u => u.Id, u => u.FullName);
-
-        var rows = messages
-            .GroupBy(m => m.SenderId == me ? m.ReceiverId : m.SenderId)
-            .Select(g =>
-            {
-                var latest = g.OrderByDescending(x => x.SentAtUtc).First();
-                return new MessageInboxRowViewModel
-                {
-                    OtherUserId = g.Key,
-                    OtherName = users.GetValueOrDefault(g.Key) ?? "User",
-                    LastSubject = latest.Subject,
-                    LastPreview = latest.Content.Length > 120 ? latest.Content[..120] + "..." : latest.Content,
-                    LastAtUtc = latest.SentAtUtc,
-                    Unread = g.Any(x => x.ReceiverId == me && !x.IsRead)
-                };
-            })
-            .OrderByDescending(r => r.LastAtUtc)
-            .ToList();
-
+        var rows = await BuildInboxAsync(me);
         return View(rows);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MarkAllRead()
+    {
+        var me = _userManager.GetUserId(User)!;
+        var unread = await _db.Messages
+            .Where(m => m.ReceiverId == me && !m.IsRead)
+            .ToListAsync();
+        foreach (var m in unread) m.IsRead = true;
+        if (unread.Count > 0)
+        {
+            await _db.SaveChangesAsync();
+            await _audit.LogAsync(AuditCategories.Profile, "Mark all messages read", $"{unread.Count} messages");
+        }
+
+        TempData["Success"] = unread.Count == 0
+            ? "Nothing to mark — your inbox is already up to date."
+            : $"Marked {unread.Count} message{(unread.Count == 1 ? "" : "s")} as read.";
+        return RedirectToAction(nameof(Inbox));
     }
 
     public async Task<IActionResult> Thread(string id)
@@ -82,10 +74,14 @@ public class MessagesController : Controller
         if (list.Any(m => m.ReceiverId == me))
             await _db.SaveChangesAsync();
 
+        var otherRoles = await _userManager.GetRolesAsync(other);
+
         var vm = new MessageThreadViewModel
         {
             OtherUserId = id,
             OtherUserName = other.FullName,
+            OtherUserEmail = other.Email,
+            OtherUserRole = otherRoles.FirstOrDefault(),
             Messages = list.Select(m => new MessageThreadViewModel.MessageLine
             {
                 IsMine = m.SenderId == me,
@@ -93,10 +89,49 @@ public class MessagesController : Controller
                 Content = m.Content,
                 SentAtUtc = m.SentAtUtc,
                 IsRead = m.IsRead
-            }).ToList()
+            }).ToList(),
+            Conversations = await BuildInboxAsync(me)
         };
 
         return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Reply(string id, string subject, string content)
+    {
+        var me = _userManager.GetUserId(User)!;
+        if (!await CanCommunicateAsync(me, id))
+            return Forbid();
+
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            TempData["Error"] = "Message content cannot be empty.";
+            return RedirectToAction(nameof(Thread), new { id });
+        }
+
+        if (content.Length > 16000)
+            content = content[..16000];
+
+        if (string.IsNullOrWhiteSpace(subject))
+            subject = "(no subject)";
+        if (subject.Length > 200)
+            subject = subject[..200];
+
+        _db.Messages.Add(new Message
+        {
+            SenderId = me,
+            ReceiverId = id,
+            Subject = subject.Trim(),
+            Content = content.Trim(),
+            SentAtUtc = DateTime.UtcNow,
+            IsRead = false
+        });
+        await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Profile, "Send message", $"to={id} chars={content.Length}");
+
+        TempData["Success"] = "Message sent.";
+        return RedirectToAction(nameof(Thread), new { id });
     }
 
     public async Task<IActionResult> Compose(string? recipientId = null)
@@ -130,8 +165,45 @@ public class MessagesController : Controller
             IsRead = false
         });
         await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Profile, "Send message", $"to={model.RecipientId} chars={model.Content.Length}");
         TempData["Success"] = "Message sent.";
         return RedirectToAction(nameof(Thread), new { id = model.RecipientId });
+    }
+
+    private async Task<List<MessageInboxRowViewModel>> BuildInboxAsync(string me)
+    {
+        var messages = await _db.Messages
+            .AsNoTracking()
+            .Where(m => m.SenderId == me || m.ReceiverId == me)
+            .OrderByDescending(m => m.SentAtUtc)
+            .ToListAsync();
+
+        var otherIds = messages
+            .Select(m => m.SenderId == me ? m.ReceiverId : m.SenderId)
+            .Distinct()
+            .ToList();
+
+        var users = await _db.Users
+            .Where(u => otherIds.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id, u => u.FullName);
+
+        return messages
+            .GroupBy(m => m.SenderId == me ? m.ReceiverId : m.SenderId)
+            .Select(g =>
+            {
+                var latest = g.OrderByDescending(x => x.SentAtUtc).First();
+                return new MessageInboxRowViewModel
+                {
+                    OtherUserId = g.Key,
+                    OtherName = users.GetValueOrDefault(g.Key) ?? "User",
+                    LastSubject = latest.Subject,
+                    LastPreview = latest.Content.Length > 120 ? latest.Content[..120] + "..." : latest.Content,
+                    LastAtUtc = latest.SentAtUtc,
+                    Unread = g.Any(x => x.ReceiverId == me && !x.IsRead)
+                };
+            })
+            .OrderByDescending(r => r.LastAtUtc)
+            .ToList();
     }
 
     private async Task<bool> CanCommunicateAsync(string me, string other)

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Net.Mime;
 using Microsoft.Extensions.Options;
 
 namespace AD_COURSEWORK_2.Infrastructure;
@@ -15,7 +16,14 @@ public class SmtpEmailService : IEmailService
         _logger = logger;
     }
 
-    public async Task SendAsync(string toEmail, string subject, string htmlBody)
+    public Task SendAsync(string toEmail, string subject, string htmlBody)
+        => SendAsync(toEmail, subject, htmlBody, Array.Empty<EmailAttachment>());
+
+    public async Task SendAsync(
+        string toEmail,
+        string subject,
+        string htmlBody,
+        IEnumerable<EmailAttachment> attachments)
     {
         if (string.IsNullOrWhiteSpace(_settings.Host) ||
             string.IsNullOrWhiteSpace(_settings.SenderEmail) ||
@@ -41,6 +49,30 @@ public class SmtpEmailService : IEmailService
         };
         message.To.Add(toEmail);
 
-        await client.SendMailAsync(message);
+        var streams = new List<MemoryStream>();
+        try
+        {
+            foreach (var att in attachments ?? Array.Empty<EmailAttachment>())
+            {
+                if (att.Content == null || att.Content.Length == 0)
+                    continue;
+
+                var ms = new MemoryStream(att.Content);
+                streams.Add(ms);
+                var attachment = new Attachment(ms, att.FileName, att.ContentType);
+                if (att.ContentType.StartsWith("text/calendar", StringComparison.OrdinalIgnoreCase))
+                {
+                    attachment.ContentDisposition!.Inline = false;
+                    attachment.ContentDisposition.DispositionType = DispositionTypeNames.Attachment;
+                }
+                message.Attachments.Add(attachment);
+            }
+
+            await client.SendMailAsync(message);
+        }
+        finally
+        {
+            foreach (var s in streams) s.Dispose();
+        }
     }
 }

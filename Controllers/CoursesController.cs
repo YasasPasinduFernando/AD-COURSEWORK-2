@@ -16,31 +16,62 @@ public class CoursesController : Controller
     private readonly IWebHostEnvironment _env;
     private readonly IEmailService _emailService;
     private readonly ILogger<CoursesController> _logger;
+    private readonly IAuditLogger _audit;
 
     public CoursesController(
         ApplicationDbContext db,
         UserManager<ApplicationUser> userManager,
         IWebHostEnvironment env,
         IEmailService emailService,
-        ILogger<CoursesController> logger)
+        ILogger<CoursesController> logger,
+        IAuditLogger audit)
     {
         _db = db;
         _userManager = userManager;
         _env = env;
         _emailService = emailService;
         _logger = logger;
+        _audit = audit;
     }
 
     [Authorize(Roles = AppRoles.Administrator)]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? q = null, int page = 1, int pageSize = 10)
     {
-        var list = await _db.Courses
+        if (page < 1) page = 1;
+        if (pageSize < 5) pageSize = 5;
+        if (pageSize > 100) pageSize = 100;
+
+        var query = _db.Courses
             .AsNoTracking()
             .Include(c => c.Lecturer)
             .Include(c => c.Prerequisite)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            var qq = q.Trim();
+            query = query.Where(c =>
+                c.Code.Contains(qq) ||
+                c.Name.Contains(qq) ||
+                (c.Lecturer != null && c.Lecturer.FullName.Contains(qq)));
+        }
+
+        var total = await query.CountAsync();
+        var totalPages = total == 0 ? 1 : (int)Math.Ceiling(total / (double)pageSize);
+        if (page > totalPages) page = totalPages;
+
+        var items = await query
             .OrderBy(c => c.Code)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
-        return View(list);
+
+        ViewBag.Query = q;
+        ViewBag.Page = page;
+        ViewBag.PageSize = pageSize;
+        ViewBag.Total = total;
+        ViewBag.TotalPages = totalPages;
+        return View(items);
     }
 
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -149,6 +180,8 @@ public class CoursesController : Controller
 
         _db.Courses.Add(entity);
         await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Course, "Create",
+            $"{entity.Code} - {entity.Name} (id={entity.CourseId})");
         TempData["Success"] = "Course created.";
         return RedirectToAction(nameof(Index));
     }
@@ -219,6 +252,8 @@ public class CoursesController : Controller
         course.PrerequisiteId = model.PrerequisiteId;
 
         await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Course, "Update",
+            $"{course.Code} - {course.Name} (id={course.CourseId})");
         TempData["Success"] = "Course updated.";
         return RedirectToAction(nameof(Index));
     }
@@ -246,6 +281,8 @@ public class CoursesController : Controller
 
         _db.Courses.Remove(course);
         await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Course, "Delete",
+            $"{course.Code} - {course.Name} (id={course.CourseId})");
         TempData["Success"] = "Course deleted.";
         return RedirectToAction(nameof(Index));
     }
@@ -253,6 +290,7 @@ public class CoursesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("upload")]
     public async Task<IActionResult> UploadMaterial(MaterialUploadViewModel model)
     {
         var userId = _userManager.GetUserId(User);
@@ -274,10 +312,13 @@ public class CoursesController : Controller
             return RedirectToAction(nameof(Details), new { id = model.CourseId });
         }
 
-            var saved = await UploadedFileStore.SaveAsync(_env, model.File!, "materials");
+        var saved = await UploadedFileStore.SaveAsync(_env, model.File!, "materials");
         if (saved == null)
         {
-            TempData["Error"] = "File could not be saved (size or type).";
+            await _audit.LogAsync(AuditCategories.Material, "Upload rejected",
+                $"course={course.Code} file={model.File?.FileName} size={model.File?.Length}",
+                success: false);
+            TempData["Error"] = "File could not be saved (file type or size not allowed).";
             return RedirectToAction(nameof(Details), new { id = model.CourseId });
         }
 
@@ -291,6 +332,8 @@ public class CoursesController : Controller
             UploadedById = userId!
         });
         await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Material, "Upload",
+            $"course={course.Code} title={model.Title} bytes={saved.Value.Size}");
 
         var students = await _db.Enrollments
             .Where(e => e.CourseId == model.CourseId)

@@ -1,4 +1,5 @@
 using AD_COURSEWORK_2.Data;
+using AD_COURSEWORK_2.Infrastructure;
 using AD_COURSEWORK_2.Models;
 using AD_COURSEWORK_2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,11 +14,13 @@ public class EnrollmentsController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IAuditLogger _audit;
 
-    public EnrollmentsController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+    public EnrollmentsController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuditLogger audit)
     {
         _db = db;
         _userManager = userManager;
+        _audit = audit;
     }
 
     public async Task<IActionResult> Browse()
@@ -131,6 +134,8 @@ public class EnrollmentsController : Controller
             EnrolledAtUtc = DateTime.UtcNow
         });
         await _db.SaveChangesAsync();
+        await _audit.LogAsync(AuditCategories.Enrollment, "Enroll",
+            $"course={course.Code}");
         TempData["Success"] = $"Enrolled in {course.Code}.";
         return RedirectToAction(nameof(Browse));
     }

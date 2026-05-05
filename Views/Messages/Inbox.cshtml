@@ -36,7 +36,14 @@
             <h1>Inbox</h1>
             <p class="um-hero-sub mb-0">Stay in touch with your lecturers and classmates. All your conversations in one place.</p>
         </div>
-        <div class="col-lg-4 d-flex justify-content-lg-end">
+        <div class="col-lg-4 d-flex flex-wrap gap-2 justify-content-lg-end">
+            @if (unread > 0)
+            {
+                <form asp-action="MarkAllRead" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-light"><i class="bi bi-check2-all me-1"></i>Mark all read</button>
+                </form>
+            }
             <a class="btn btn-light" asp-action="Compose"><i class="bi bi-pencil-square me-1"></i>New message</a>
         </div>
     </div>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace AD_COURSEWORK_2.Controllers;
@@ -18,19 +19,22 @@ public class AccountController : Controller
     private readonly IEmailService _emailService;
     private readonly ILogger<AccountController> _logger;
     private readonly IConfiguration _configuration;
+    private readonly IAuditLogger _audit;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IEmailService emailService,
         ILogger<AccountController> logger,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IAuditLogger audit)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _emailService = emailService;
         _logger = logger;
         _configuration = configuration;
+        _audit = audit;
     }
 
     [HttpGet]
@@ -43,6 +47,7 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!RegisterViewModel.AllowedRoles.Contains(model.Role))
@@ -65,6 +70,7 @@ public class AccountController : Controller
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
         {
+            await _audit.LogAsync(AuditCategories.Auth, "Register failed", model.Email, success: false);
             foreach (var e in result.Errors)
                 ModelState.AddModelError(string.Empty, e.Description);
             return View(model);
@@ -72,6 +78,9 @@ public class AccountController : Controller
 
         await _userManager.AddToRoleAsync(user, model.Role);
         await _signInManager.SignInAsync(user, isPersistent: false);
+        await _audit.LogAsync(AuditCategories.Auth, "Register success",
+            $"{user.Email} as {model.Role}", userId: user.Id, userName: user.Email);
+
         await TrySendEmailAsync(
             user.Email!,
             "Welcome to UniManage",
@@ -93,6 +102,7 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid)
@@ -101,16 +111,36 @@ public class AccountController : Controller
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
         {
+            await _audit.LogAsync(AuditCategories.Auth, "Login failed",
+                $"Unknown user: {model.Email}", success: false);
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+        var result = await _signInManager.PasswordSignInAsync(
+            user, model.Password, model.RememberMe, lockoutOnFailure: true);
+
+        if (result.IsLockedOut)
+        {
+            await _audit.LogAsync(AuditCategories.Auth, "Login locked out",
+                $"{user.Email} - too many attempts",
+                success: false, userId: user.Id, userName: user.Email);
+            ModelState.AddModelError(string.Empty,
+                "Account temporarily locked due to repeated failed attempts. Try again in 15 minutes.");
+            return View(model);
+        }
+
         if (!result.Succeeded)
         {
+            await _audit.LogAsync(AuditCategories.Auth, "Login failed",
+                $"Wrong password: {user.Email}",
+                success: false, userId: user.Id, userName: user.Email);
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
         }
+
+        await _audit.LogAsync(AuditCategories.Auth, "Login success",
+            user.Email, userId: user.Id, userName: user.Email);
 
         if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
         {
@@ -184,12 +214,16 @@ public class AccountController : Controller
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
+            await _audit.LogAsync(AuditCategories.Auth, "Google login rejected",
+                $"Unknown email: {email}", success: false);
             TempData["Error"] = "Registration required. Your Google account is not linked to an LMS user.";
             _logger.LogInformation("Google login rejected for unknown email {Email}", email);
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             return RedirectToAction(nameof(AccessDenied));
         }
 
+        await _audit.LogAsync(AuditCategories.Auth, "Google login success",
+            email, userId: user.Id, userName: email);
         _logger.LogInformation("Google login success for {Email}, Name: {Name}, GoogleId: {GoogleUserId}", email, name, googleUserId);
         await _signInManager.SignInAsync(user, isPersistent: false);
         await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -210,9 +244,12 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Logout()
     {
+        var name = User.Identity?.Name;
+        var uid = _userManager.GetUserId(User);
         await _signInManager.SignOutAsync();
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        await _audit.LogAsync(AuditCategories.Auth, "Logout", name, userId: uid, userName: name);
         TempData["Success"] = "You have been signed out.";
         return RedirectToAction("Index", "Home");
     }
@@ -235,6 +272,7 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
     {
         if (!ModelState.IsValid)
@@ -261,6 +299,14 @@ public class AccountController : Controller
                     "Reset your UniManage password",
                     EmailTemplates.BuildPasswordResetEmail(user.FullName, callbackUrl));
             }
+
+            await _audit.LogAsync(AuditCategories.Auth, "Password reset requested",
+                user.Email, userId: user.Id, userName: user.Email);
+        }
+        else
+        {
+            await _audit.LogAsync(AuditCategories.Auth, "Password reset for unknown email",
+                model.Email, success: false);
         }
 
         TempData["Success"] = "If an account exists for that email, a password reset link was sent.";
@@ -284,6 +330,7 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
     {
         if (!ModelState.IsValid)
@@ -299,10 +346,16 @@ public class AccountController : Controller
         var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
         if (!result.Succeeded)
         {
+            await _audit.LogAsync(AuditCategories.Auth, "Password reset failed",
+                user.Email, success: false, userId: user.Id, userName: user.Email);
             foreach (var e in result.Errors)
                 ModelState.AddModelError(string.Empty, e.Description);
             return View(model);
         }
+
+        await _userManager.ResetAccessFailedCountAsync(user);
+        await _audit.LogAsync(AuditCategories.Auth, "Password reset success",
+            user.Email, userId: user.Id, userName: user.Email);
 
         TempData["Success"] = "Password has been reset successfully.";
         return RedirectToAction(nameof(Login));

@@ -4,7 +4,10 @@ public class MessageThreadViewModel
 {
     public string OtherUserId { get; set; } = string.Empty;
     public string OtherUserName { get; set; } = string.Empty;
+    public string? OtherUserEmail { get; set; }
+    public string? OtherUserRole { get; set; }
     public List<MessageLine> Messages { get; set; } = new();
+    public List<MessageInboxRowViewModel> Conversations { get; set; } = new();
 
     public class MessageLine
     {

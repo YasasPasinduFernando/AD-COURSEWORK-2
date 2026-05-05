@@ -1,0 +1,136 @@
+@model ReportAttendanceViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Assignment attendance";
+    var topN = Model.Rows.Take(15).ToList();
+    var labels = topN.Select(r => $"{r.CourseCode} · {(r.AssignmentTitle.Length > 18 ? r.AssignmentTitle[..18] + "…" : r.AssignmentTitle)}").ToList();
+    var rates = topN.Select(r => Math.Round(r.AttendanceRate, 1)).ToList();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0"><i class="bi bi-clipboard2-check text-primary me-2"></i>Assignment attendance</h1>
+        <p class="text-muted small mb-0">Turn-in rate per assignment — submitted students vs. enrolled.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-outline-success btn-sm" asp-action="AssignmentAttendanceCsv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+        <a class="btn btn-danger btn-sm" asp-action="AssignmentAttendancePdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
+        <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Assignments</div>
+            <div class="display-6 fw-bold mb-0 text-primary">@Model.Rows.Count</div>
+        </div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Submitted</div>
+            <div class="display-6 fw-bold mb-0 text-success">@Model.TotalSubmittedAcross</div>
+        </div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Missing</div>
+            <div class="display-6 fw-bold mb-0 text-warning">@Model.TotalMissingAcross</div>
+        </div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100"><div class="card-body">
+            <div class="text-uppercase small text-muted fw-bold" style="letter-spacing:.08em;">Avg attendance</div>
+            <div class="display-6 fw-bold mb-0 @(Model.OverallAttendance >= 75 ? "text-success" : Model.OverallAttendance >= 50 ? "text-primary" : "text-warning")">
+                @Model.OverallAttendance.ToString("0.#")%
+            </div>
+        </div></div>
+    </div>
+</div>
+
+@if (Model.Rows.Any())
+{
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h2 class="h6 fw-bold mb-3 text-muted"><i class="bi bi-graph-up me-1"></i>Attendance rate (top @topN.Count most recent)</h2>
+            <canvas id="attendanceChart" height="120"></canvas>
+        </div>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Assignment</th>
+                    <th>Due</th>
+                    <th class="text-end">Enrolled</th>
+                    <th class="text-end text-success">Submitted</th>
+                    <th class="text-end text-warning">Missing</th>
+                    <th>Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Rows.Any())
+                {
+                    <tr><td colspan="7" class="text-muted p-4 text-center">No assignments yet.</td></tr>
+                }
+                @foreach (var r in Model.Rows)
+                {
+                    var rate = (int)Math.Round(r.AttendanceRate);
+                    var due = r.DueDateUtc.ToLocalTime();
+                    <tr>
+                        <td><span class="badge bg-primary-subtle text-primary-emphasis">@r.CourseCode</span></td>
+                        <td class="fw-medium">@r.AssignmentTitle</td>
+                        <td><small class="text-muted">@due.ToString("MMM d, yyyy")</small></td>
+                        <td class="text-end">@r.Enrolled</td>
+                        <td class="text-end fw-bold text-success">@r.Submitted</td>
+                        <td class="text-end fw-bold text-warning">@r.Missing</td>
+                        <td style="min-width:200px;">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height:8px;">
+                                    <div class="progress-bar @(rate >= 75 ? "bg-success" : rate >= 50 ? "bg-primary" : rate >= 25 ? "bg-warning" : "bg-danger")"
+                                         style="width:@(Math.Min(100, rate))%;"></div>
+                                </div>
+                                <span class="small fw-semibold">@rate%</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.Rows.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script>
+            (function () {
+                const labels = @Html.Raw(JsonSerializer.Serialize(labels));
+                const rates = @Html.Raw(JsonSerializer.Serialize(rates));
+                const ctx = document.getElementById('attendanceChart');
+                if (!ctx) return;
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Attendance %',
+                            data: rates,
+                            backgroundColor: rates.map(v => v >= 75 ? '#10b981' : v >= 50 ? '#3b82f6' : v >= 25 ? '#f59e0b' : '#f43f5e')
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+                    }
+                });
+            })();
+        </script>
+    }
+}

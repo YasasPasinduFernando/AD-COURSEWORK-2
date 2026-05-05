@@ -1,0 +1,220 @@
+@using AD_COURSEWORK_2.Models
+@using AD_COURSEWORK_2.Infrastructure
+@model IEnumerable<AD_COURSEWORK_2.ViewModels.MeetingRowViewModel>
+@{
+    ViewData["Title"] = "Meetings";
+    var nowUtc = DateTime.UtcNow;
+    var upcoming = Model.Where(m => m.ScheduledAtUtc.AddMinutes(m.DurationMinutes) >= nowUtc).ToList();
+    var past = Model.Where(m => m.ScheduledAtUtc.AddMinutes(m.DurationMinutes) < nowUtc).ToList();
+    var canCreate = User.IsInRole(AppRoles.Lecturer);
+
+    string GoogleCalUrl(AD_COURSEWORK_2.ViewModels.MeetingRowViewModel m) =>
+        CalendarLink.GoogleCalendarUrl(new CalendarLink.CalendarEvent(
+            $"meeting-{m.MeetingId}@unimanage",
+            $"{m.CourseCode} — {m.Title}",
+            m.Description,
+            m.MeetingUrl,
+            DateTime.SpecifyKind(m.ScheduledAtUtc, DateTimeKind.Utc),
+            DateTime.SpecifyKind(m.ScheduledAtUtc, DateTimeKind.Utc).AddMinutes(m.DurationMinutes),
+            m.LecturerName, null, m.MeetingUrl));
+
+    string OutlookCalUrl(AD_COURSEWORK_2.ViewModels.MeetingRowViewModel m) =>
+        CalendarLink.OutlookCalendarUrl(new CalendarLink.CalendarEvent(
+            $"meeting-{m.MeetingId}@unimanage",
+            $"{m.CourseCode} — {m.Title}",
+            m.Description,
+            m.MeetingUrl,
+            DateTime.SpecifyKind(m.ScheduledAtUtc, DateTimeKind.Utc),
+            DateTime.SpecifyKind(m.ScheduledAtUtc, DateTimeKind.Utc).AddMinutes(m.DurationMinutes),
+            m.LecturerName, null, m.MeetingUrl));
+}
+
+<div class="um-page-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+        <h1 class="mb-0"><i class="bi bi-camera-video me-2 text-primary"></i>Live meetings</h1>
+        <p class="um-lead mb-0">Schedule, join, and track Google Meet sessions for your courses.</p>
+    </div>
+    @if (canCreate)
+    {
+        <a class="btn btn-primary" asp-action="Create">
+            <i class="bi bi-plus-lg me-1"></i>Schedule meeting
+        </a>
+    }
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-4">
+        <div class="um-stat-card h-100">
+            <div class="um-stat-ico bg-primary-subtle text-primary"><i class="bi bi-broadcast"></i></div>
+            <div>
+                <div class="um-stat-num">@upcoming.Count</div>
+                <div class="um-stat-label">Upcoming sessions</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="um-stat-card h-100">
+            <div class="um-stat-ico bg-success-subtle text-success"><i class="bi bi-check2-circle"></i></div>
+            <div>
+                <div class="um-stat-num">@past.Count</div>
+                <div class="um-stat-label">Past sessions</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="um-stat-card h-100">
+            <div class="um-stat-ico bg-info-subtle text-info"><i class="bi bi-people"></i></div>
+            <div>
+                <div class="um-stat-num">@upcoming.Sum(m => m.EnrolledCount)</div>
+                <div class="um-stat-label">Invited students (upcoming)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="um-panel card border-0 mb-3">
+    <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between">
+        <h2 class="h6 mb-0 fw-bold"><i class="bi bi-calendar-event me-1"></i>Upcoming</h2>
+        <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">@upcoming.Count</span>
+    </div>
+    <div class="card-body p-0">
+        @if (!upcoming.Any())
+        {
+            <div class="um-empty p-4">
+                <i class="bi bi-camera-video-off"></i>
+                <div class="um-empty-title">No upcoming meetings</div>
+                <div class="small">@(canCreate ? "Schedule a session to invite your students." : "When your lecturers schedule sessions, they'll appear here.")</div>
+            </div>
+        }
+        else
+        {
+            <div class="list-group list-group-flush">
+                @foreach (var m in upcoming)
+                {
+                    var local = m.ScheduledAtUtc.ToLocalTime();
+                    var endLocal = local.AddMinutes(m.DurationMinutes);
+                    var minsUntil = (int)Math.Round((local - DateTime.Now).TotalMinutes);
+                    var canJoinNow = DateTime.Now >= local.AddMinutes(-15) && DateTime.Now <= endLocal;
+                    <div class="list-group-item py-3">
+                        <div class="d-flex flex-wrap gap-3 align-items-start">
+                            <div class="um-meet-time text-center">
+                                <div class="um-meet-dow">@local.ToString("ddd")</div>
+                                <div class="um-meet-day">@local.Day</div>
+                                <div class="um-meet-mon">@local.ToString("MMM")</div>
+                            </div>
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                    <h3 class="h6 fw-bold mb-0 text-dark">@m.Title</h3>
+                                    <span class="badge text-bg-light border">@m.CourseCode</span>
+                                    @if (canJoinNow)
+                                    {
+                                        <span class="badge bg-success-subtle text-success-emphasis"><span class="um-pulse-dot"></span> Live now</span>
+                                    }
+                                    else if (minsUntil > 0 && minsUntil <= 60)
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning-emphasis">Starts in @minsUntil min</span>
+                                    }
+                                </div>
+                                <div class="small text-muted mb-1">
+                                    <i class="bi bi-clock me-1"></i>@local.ToString("dddd, MMM d · h:mm tt") – @endLocal.ToString("h:mm tt")
+                                    · <i class="bi bi-person-video3 ms-1 me-1"></i>@m.LecturerName
+                                    · <i class="bi bi-people ms-1 me-1"></i>@m.EnrolledCount invited
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(m.Description))
+                                {
+                                    <p class="small text-muted mb-1 text-break">@m.Description</p>
+                                }
+                                <div class="small text-muted text-truncate">
+                                    <i class="bi bi-link-45deg"></i>
+                                    <a href="@m.MeetingUrl" target="_blank" rel="noopener" class="text-decoration-none">@m.MeetingUrl</a>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column gap-2 align-items-stretch" style="min-width:170px;">
+                                <a class="btn @(canJoinNow ? "btn-success" : "btn-primary") btn-sm" asp-action="Join" asp-route-id="@m.MeetingId" target="_blank" rel="noopener">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i>Join
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary btn-sm dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-calendar-plus me-1"></i>Add to calendar
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                        <li>
+                                            <a class="dropdown-item" href="@GoogleCalUrl(m)" target="_blank" rel="noopener">
+                                                <i class="bi bi-google text-danger me-2"></i>Google Calendar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="@OutlookCalUrl(m)" target="_blank" rel="noopener">
+                                                <i class="bi bi-microsoft text-primary me-2"></i>Outlook
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Ics" asp-route-id="@m.MeetingId">
+                                                <i class="bi bi-download me-2"></i>Download .ics
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                @if (m.IsMine)
+                                {
+                                    <a class="btn btn-outline-secondary btn-sm" asp-action="Edit" asp-route-id="@m.MeetingId">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@m.MeetingId" method="post" onsubmit="return confirm('Delete this meeting?')">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-outline-danger btn-sm w-100" type="submit"><i class="bi bi-trash me-1"></i>Delete</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@if (past.Any())
+{
+    <div class="um-panel card border-0">
+        <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between">
+            <h2 class="h6 mb-0 fw-bold text-muted"><i class="bi bi-clock-history me-1"></i>Past meetings</h2>
+            <span class="badge text-bg-light">@past.Count</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-um mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Course</th>
+                        <th>Topic</th>
+                        <th>Lecturer</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in past.Take(20))
+                    {
+                        var local = m.ScheduledAtUtc.ToLocalTime();
+                        <tr>
+                            <td class="small text-muted">@local.ToString("MMM d, yyyy · h:mm tt")</td>
+                            <td><span class="badge text-bg-light border">@m.CourseCode</span></td>
+                            <td>@m.Title</td>
+                            <td class="small">@m.LecturerName</td>
+                            <td class="text-end">
+                                @if (m.IsMine)
+                                {
+                                    <form asp-action="Delete" asp-route-id="@m.MeetingId" method="post" class="d-inline" onsubmit="return confirm('Delete?')">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-link btn-sm text-danger p-0" type="submit">Delete</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

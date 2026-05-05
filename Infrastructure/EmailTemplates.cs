@@ -107,6 +107,195 @@ public static class EmailTemplates
             footerExtras: "For your security, we never email your existing password. This link expires automatically.");
     }
 
+    public static string BuildMeetingInviteEmail(
+        string fullName,
+        string courseCode,
+        string courseName,
+        string meetingTitle,
+        string? meetingDescription,
+        DateTime scheduledLocal,
+        int durationMinutes,
+        string meetingUrl,
+        string? lecturerName,
+        string? googleCalendarUrl = null,
+        string? outlookCalendarUrl = null,
+        string? icsDownloadUrl = null)
+    {
+        var name = SafeName(fullName);
+        var codeSafe = HtmlEncoder.Default.Encode(courseCode ?? string.Empty);
+        var courseSafe = HtmlEncoder.Default.Encode(courseName ?? string.Empty);
+        var titleSafe = HtmlEncoder.Default.Encode(meetingTitle ?? string.Empty);
+        var lecturerSafe = HtmlEncoder.Default.Encode(string.IsNullOrWhiteSpace(lecturerName) ? "Your lecturer" : lecturerName);
+        var urlSafe = HtmlEncoder.Default.Encode(meetingUrl ?? string.Empty);
+        var descSafe = string.IsNullOrWhiteSpace(meetingDescription)
+            ? null
+            : HtmlEncoder.Default.Encode(meetingDescription);
+
+        var body = new StringBuilder()
+            .Append(P($"Hi <strong>{name}</strong>,"))
+            .Append(P($"<strong>{lecturerSafe}</strong> has scheduled a live session for <strong>{codeSafe} — {courseSafe}</strong>. Save the time and join from the link below."))
+            .Append(KeyValueBlock(new (string, string)[]
+            {
+                ("Topic", titleSafe),
+                ("Course", $"{codeSafe} — {courseSafe}"),
+                ("When", HtmlEncoder.Default.Encode(scheduledLocal.ToString("dddd, MMM d, yyyy · h:mm tt"))),
+                ("Duration", $"{durationMinutes} minutes"),
+                ("Hosted by", lecturerSafe),
+                ("Meet link", $"<a href=\"{urlSafe}\" style=\"color:{ColorPrimaryBright};text-decoration:none;font-weight:600;\">{urlSafe}</a>")
+            }))
+            .Append(descSafe != null ? Callout(descSafe, ColorPrimaryBright, "#eef4ff", "#cfddf6") : "")
+            .Append(BuildAddToCalendarBlock(googleCalendarUrl, outlookCalendarUrl, icsDownloadUrl))
+            .Append(P("The .ics calendar file is attached — most email apps will offer to add it to your calendar in one tap."))
+            .ToString();
+
+        return BuildShell(
+            preheader: $"Live session: {titleSafe} — {scheduledLocal:MMM d, h:mm tt}",
+            accent: GradientPrimary,
+            icon: "\u25B6",
+            eyebrow: "Live session",
+            heading: $"You're invited: {titleSafe}",
+            subheading: $"{codeSafe} · {scheduledLocal:dddd, MMM d, h:mm tt}",
+            bodyHtml: body,
+            cta: new CtaButton("Join meeting", urlSafe),
+            footerExtras: "You're receiving this email because you're enrolled in this course on UniManage.");
+    }
+
+    private static string BuildAddToCalendarBlock(string? googleUrl, string? outlookUrl, string? icsUrl)
+    {
+        if (string.IsNullOrWhiteSpace(googleUrl) && string.IsNullOrWhiteSpace(outlookUrl) && string.IsNullOrWhiteSpace(icsUrl))
+            return string.Empty;
+
+        var sb = new StringBuilder();
+        sb.Append($@"<div style=""margin:6px 0 16px;padding:14px 16px;background:#f6f8fc;border:1px solid {ColorBorder};border-radius:12px;"">
+  <div style=""font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:{ColorMuted};margin-bottom:10px;"">Add to your calendar</div>
+  <table role=""presentation"" cellspacing=""0"" cellpadding=""0"" border=""0"">
+    <tr>");
+
+        if (!string.IsNullOrWhiteSpace(googleUrl))
+        {
+            sb.Append($@"<td style=""padding-right:8px;""><a href=""{HtmlEncoder.Default.Encode(googleUrl)}"" target=""_blank"" rel=""noopener"" style=""display:inline-block;padding:9px 14px;border-radius:8px;background:#ffffff;border:1px solid {ColorBorder};color:{ColorText};text-decoration:none;font-size:13px;font-weight:700;"">📅 Google Calendar</a></td>");
+        }
+
+        if (!string.IsNullOrWhiteSpace(outlookUrl))
+        {
+            sb.Append($@"<td style=""padding-right:8px;""><a href=""{HtmlEncoder.Default.Encode(outlookUrl)}"" target=""_blank"" rel=""noopener"" style=""display:inline-block;padding:9px 14px;border-radius:8px;background:#ffffff;border:1px solid {ColorBorder};color:{ColorText};text-decoration:none;font-size:13px;font-weight:700;"">📆 Outlook</a></td>");
+        }
+
+        if (!string.IsNullOrWhiteSpace(icsUrl))
+        {
+            sb.Append($@"<td><a href=""{HtmlEncoder.Default.Encode(icsUrl)}"" target=""_blank"" rel=""noopener"" style=""display:inline-block;padding:9px 14px;border-radius:8px;background:#ffffff;border:1px solid {ColorBorder};color:{ColorText};text-decoration:none;font-size:13px;font-weight:700;"">⬇ Download .ics</a></td>");
+        }
+
+        sb.Append("</tr></table></div>");
+        return sb.ToString();
+    }
+
+    public static string BuildSubmissionReceivedEmail(
+        string lecturerFullName,
+        string studentName,
+        string courseCode,
+        string courseName,
+        string assignmentTitle,
+        DateTime submittedLocal,
+        bool isLate,
+        string? gradeUrl)
+    {
+        var name = SafeName(lecturerFullName);
+        var studentSafe = HtmlEncoder.Default.Encode(studentName ?? string.Empty);
+        var codeSafe = HtmlEncoder.Default.Encode(courseCode ?? string.Empty);
+        var courseSafe = HtmlEncoder.Default.Encode(courseName ?? string.Empty);
+        var titleSafe = HtmlEncoder.Default.Encode(assignmentTitle ?? string.Empty);
+
+        var body = new StringBuilder()
+            .Append(P($"Hi <strong>{name}</strong>,"))
+            .Append(P($"A new submission has arrived for <strong>{titleSafe}</strong> in <strong>{codeSafe} — {courseSafe}</strong>."))
+            .Append(KeyValueBlock(new (string, string)[]
+            {
+                ("Student", studentSafe),
+                ("Assignment", titleSafe),
+                ("Course", $"{codeSafe} — {courseSafe}"),
+                ("Submitted", HtmlEncoder.Default.Encode(submittedLocal.ToString("dddd, MMM d, h:mm tt"))),
+                ("Status", isLate ? "<span style=\"color:" + ColorWarn + ";font-weight:700;\">Late submission</span>" : "<span style=\"color:" + ColorSuccess + ";font-weight:700;\">On time</span>")
+            }))
+            .Append(P("Review the submission and provide grade and feedback when convenient."))
+            .ToString();
+
+        CtaButton? cta = null;
+        if (!string.IsNullOrWhiteSpace(gradeUrl))
+            cta = new CtaButton("Open and grade", HtmlEncoder.Default.Encode(gradeUrl));
+
+        return BuildShell(
+            preheader: $"New submission from {studentSafe} — {titleSafe}",
+            accent: GradientViolet,
+            icon: "\u25B2",
+            eyebrow: "New submission",
+            heading: $"New submission from {studentSafe}",
+            subheading: $"{codeSafe} · {titleSafe}",
+            bodyHtml: body,
+            cta: cta,
+            footerExtras: "You're receiving this because you teach this course on UniManage.");
+    }
+
+    public static string BuildGradeReleasedEmail(
+        string studentFullName,
+        string courseCode,
+        string courseName,
+        string assignmentTitle,
+        decimal grade,
+        decimal maxPoints,
+        string? feedback,
+        string? lecturerName,
+        string? viewUrl)
+    {
+        var name = SafeName(studentFullName);
+        var codeSafe = HtmlEncoder.Default.Encode(courseCode ?? string.Empty);
+        var courseSafe = HtmlEncoder.Default.Encode(courseName ?? string.Empty);
+        var titleSafe = HtmlEncoder.Default.Encode(assignmentTitle ?? string.Empty);
+        var lecturerSafe = HtmlEncoder.Default.Encode(string.IsNullOrWhiteSpace(lecturerName) ? "Your lecturer" : lecturerName);
+
+        var pct = maxPoints > 0 ? (int)Math.Round((double)(grade / maxPoints) * 100) : 0;
+        var pctColor = pct >= 75 ? ColorSuccess : pct >= 50 ? ColorPrimaryBright : pct >= 40 ? ColorWarn : ColorDanger;
+        var pctLabel = pct >= 75 ? "Excellent" : pct >= 50 ? "Good" : pct >= 40 ? "Pass" : "Needs improvement";
+
+        var body = new StringBuilder()
+            .Append(P($"Hi <strong>{name}</strong>,"))
+            .Append(P($"<strong>{lecturerSafe}</strong> has graded your submission for <strong>{titleSafe}</strong> in <strong>{codeSafe} — {courseSafe}</strong>."))
+            .Append($@"<div style=""text-align:center;padding:20px 16px;background:{ColorSurface};border:1px solid {ColorBorder};border-radius:12px;margin:6px 0 16px;"">
+  <div style=""font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:{ColorMuted};"">Your score</div>
+  <div style=""font-size:38px;font-weight:800;color:{pctColor};letter-spacing:-0.02em;line-height:1.05;margin-top:4px;"">{HtmlEncoder.Default.Encode(grade.ToString("0.##"))} / {HtmlEncoder.Default.Encode(maxPoints.ToString("0.##"))}</div>
+  <div style=""font-size:14px;font-weight:700;color:{pctColor};margin-top:4px;"">{pct}% · {pctLabel}</div>
+</div>")
+            .Append(KeyValueBlock(new (string, string)[]
+            {
+                ("Assignment", titleSafe),
+                ("Course", $"{codeSafe} — {courseSafe}"),
+                ("Graded by", lecturerSafe),
+                ("When", HtmlEncoder.Default.Encode(DateTime.Now.ToString("f")))
+            }))
+            .Append(string.IsNullOrWhiteSpace(feedback)
+                ? Callout("No feedback comments were left for this submission.", ColorMuted, "#f8fafc", ColorBorder)
+                : $@"<div style=""margin:6px 0 16px;padding:14px 16px;background:#fffbeb;border:1px solid #fde68a;border-left:4px solid {ColorWarn};border-radius:10px;color:{ColorText};font-size:14px;line-height:1.55;"">
+  <div style=""font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:{ColorWarn};margin-bottom:6px;"">Lecturer feedback</div>
+  <div style=""white-space:pre-wrap;"">{HtmlEncoder.Default.Encode(feedback)}</div>
+</div>")
+            .ToString();
+
+        CtaButton? cta = null;
+        if (!string.IsNullOrWhiteSpace(viewUrl))
+            cta = new CtaButton("View submission", HtmlEncoder.Default.Encode(viewUrl));
+
+        return BuildShell(
+            preheader: $"Your grade for {titleSafe}: {grade}/{maxPoints} ({pct}%)",
+            accent: pct >= 50 ? GradientEmerald : GradientViolet,
+            icon: pct >= 50 ? "\u2713" : "\u270E",
+            eyebrow: "Grade released",
+            heading: $"Your grade for {titleSafe}",
+            subheading: $"{codeSafe} · {grade}/{maxPoints} · {pct}%",
+            bodyHtml: body,
+            cta: cta,
+            footerExtras: "You're receiving this email because you submitted to this assignment on UniManage.");
+    }
+
     public static string BuildMaterialUploadEmail(
         string fullName,
         string courseCode,

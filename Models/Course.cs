@@ -39,4 +39,5 @@ public class Course
     public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     public ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
     public ICollection<CourseMaterial> Materials { get; set; } = new List<CourseMaterial>();
+    public ICollection<Meeting> Meetings { get; set; } = new List<Meeting>();
 }

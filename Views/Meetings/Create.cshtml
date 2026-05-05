@@ -1,0 +1,138 @@
+@model AD_COURSEWORK_2.ViewModels.MeetingInputViewModel
+@{
+    ViewData["Title"] = "Schedule meeting";
+    var courses = ViewBag.Courses as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new();
+}
+
+<div class="um-page-header">
+    <h1 class="mb-0"><i class="bi bi-camera-video-fill text-primary me-2"></i>Schedule a meeting</h1>
+    <p class="um-lead mb-0">Generate a Google Meet link or paste your own. Enrolled students will be emailed automatically.</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="um-panel card border-0">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="CourseId" class="form-label fw-semibold"></label>
+                            <select asp-for="CourseId" asp-items="courses" class="form-select">
+                                <option value="">— Choose a course —</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DurationMinutes" class="form-label fw-semibold"></label>
+                            <select asp-for="DurationMinutes" class="form-select">
+                                @foreach (var n in new[] { 15, 30, 45, 60, 90, 120, 180 })
+                                {
+                                    <option value="@n">@n minutes</option>
+                                }
+                            </select>
+                            <span asp-validation-for="DurationMinutes" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label fw-semibold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="e.g. Week 6 — Recursion deep dive" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ScheduledLocal" class="form-label fw-semibold"></label>
+                            <input asp-for="ScheduledLocal" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="ScheduledLocal" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Meeting link</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                                <input asp-for="MeetingUrl" id="meetingUrl" class="form-control" placeholder="https://meet.google.com/..." />
+                                <button type="button" class="btn btn-outline-secondary" id="genBtn" title="Generate Google Meet link">
+                                    <i class="bi bi-magic"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">
+                                <input asp-for="AutoGenerate" id="autoGen" class="form-check-input me-1" />
+                                <label asp-for="AutoGenerate" class="form-check-label small"></label>
+                            </div>
+                            <span asp-validation-for="MeetingUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label fw-semibold">Agenda / notes (optional)</label>
+                            <textarea asp-for="Description" rows="4" class="form-control" placeholder="What will you cover? Links to slides? Pre-reading?"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input asp-for="NotifyStudents" class="form-check-input" />
+                                <label asp-for="NotifyStudents" class="form-check-label">
+                                    Email enrolled students with the meeting invite
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i>Schedule &amp; notify</button>
+                        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="um-panel card border-0 h-100">
+            <div class="card-body">
+                <h3 class="h6 fw-bold mb-2"><i class="bi bi-info-circle text-primary me-1"></i>How meetings work</h3>
+                <ul class="small text-muted mb-3 ps-3">
+                    <li>Auto-generate a Google Meet link with one click.</li>
+                    <li>Or paste your own Google Meet, Zoom, Teams or Webex URL.</li>
+                    <li>All enrolled students receive a beautifully designed email invite.</li>
+                    <li>Sessions show up on the dashboard calendar and meetings page.</li>
+                    <li>Students can <strong>Join</strong> with a single click 15 minutes before start time.</li>
+                </ul>
+                <div class="alert alert-info small mb-0 d-flex gap-2">
+                    <i class="bi bi-shield-check fs-5"></i>
+                    <div>Meeting access is restricted to students enrolled in your course and the lecturer themself.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+      (function () {
+        var auto = document.getElementById('autoGen');
+        var url = document.getElementById('meetingUrl');
+        var btn = document.getElementById('genBtn');
+        function generate() {
+          var pick = function (n) {
+            var s = 'abcdefghijkmnopqrstuvwxyz';
+            var out = '';
+            for (var i = 0; i < n; i++) out += s.charAt(Math.floor(Math.random() * s.length));
+            return out;
+          };
+          url.value = 'https://meet.google.com/' + pick(3) + '-' + pick(4) + '-' + pick(3);
+        }
+        btn.addEventListener('click', generate);
+        if (auto) {
+          auto.addEventListener('change', function () {
+            url.disabled = auto.checked;
+            if (auto.checked) generate();
+          });
+          url.disabled = auto.checked;
+        }
+      })();
+    </script>
+}

@@ -1,4 +1,5 @@
 @model LecturerDashboardViewModel
+@using System.Text.Json
 @{
     ViewData["Title"] = "Lecturer dashboard";
     var firstName = (User.Identity?.Name ?? "Lecturer").Split(' ', '@')[0];
@@ -11,6 +12,20 @@
     var totalAssignments = Model.Courses.Sum(c => c.AssignmentCount);
     var maxEnroll = Model.Courses.Any() ? Math.Max(1, Model.Courses.Max(c => c.EnrollmentCount)) : 1;
     var accents = new[] { "", "accent-violet", "accent-emerald", "accent-amber", "accent-rose" };
+
+    var subLabels = Model.SubmissionsPerCourse.Select(t => t.Label).ToList();
+    var subTotal = Model.SubmissionsPerCourse.Select(t => (int)t.Value).ToList();
+    var subGraded = Model.GradedPerCourse.Select(t => (int)t.Value).ToList();
+
+    string TimeAgo(DateTime utc)
+    {
+        var span = DateTime.UtcNow - utc;
+        if (span.TotalMinutes < 1) return "just now";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}m ago";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours}h ago";
+        if (span.TotalDays < 7) return $"{(int)span.TotalDays}d ago";
+        return utc.ToLocalTime().ToString("MMM d");
+    }
 }
 
 <section class="um-welcome">
@@ -23,10 +38,13 @@
                 <span class="um-chip"><i class="bi bi-calendar-event"></i>@DateTime.Now.ToString("dddd, MMM d")</span>
                 <span class="um-chip"><i class="bi bi-people"></i>@totalStudents students</span>
                 <span class="um-chip"><i class="bi bi-clipboard-check"></i>@Model.PendingSubmissions to grade</span>
+                <span class="um-chip"><i class="bi bi-chat-dots"></i>@Model.UnreadMessages unread</span>
             </div>
             <div class="um-welcome-cta">
-                <a class="btn btn-light" asp-controller="Courses" asp-action="MyCourses"><i class="bi bi-collection me-1"></i> My courses</a>
-                <a class="btn btn-outline-light" asp-controller="Reports" asp-action="LecturerWorkload"><i class="bi bi-bar-chart me-1"></i> Workload report</a>
+                <a class="btn btn-light" asp-controller="Meetings" asp-action="Create"><i class="bi bi-camera-video me-1"></i> Schedule meeting</a>
+                <a class="btn btn-outline-light" asp-controller="Courses" asp-action="MyCourses"><i class="bi bi-collection me-1"></i> My courses</a>
+                <a class="btn btn-outline-light" asp-controller="Reports" asp-action="LecturerWorkload"><i class="bi bi-bar-chart me-1"></i> Workload</a>
+                <a class="btn btn-outline-light" asp-controller="Messages" asp-action="Inbox"><i class="bi bi-chat-dots me-1"></i> Messages</a>
             </div>
         </div>
         <div class="col-lg-4 d-none d-lg-flex justify-content-end">
@@ -83,6 +101,45 @@
 
 <div class="row g-4">
     <div class="col-xl-8">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="um-panel card border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="um-section-title mb-0"><i class="bi bi-bar-chart me-1"></i>Submissions per course</div>
+                                <p class="small text-muted mb-0">Total received vs. graded.</p>
+                            </div>
+                        </div>
+                        @if (Model.SubmissionsPerCourse.Any())
+                        {
+                            <div class="um-chart-wrap"><canvas id="lecSubChart"></canvas></div>
+                        }
+                        else
+                        {
+                            <div class="um-empty mt-3">
+                                <i class="bi bi-bar-chart"></i>
+                                <div class="um-empty-title">No submissions yet</div>
+                                <div class="small">Submissions will appear here as students hand in work.</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="um-panel card border-0 h-100">
+                    <div class="card-body">
+                        <div class="um-section-title mb-2"><i class="bi bi-pie-chart me-1"></i>Grading status</div>
+                        <div class="um-chart-wrap" style="height: 180px;"><canvas id="lecGradeChart"></canvas></div>
+                        <div class="d-flex flex-wrap gap-2 mt-3 small">
+                            <span class="um-pill pill-warn">Pending @Model.PendingSubmissions</span>
+                            <span class="um-pill pill-success">Graded @Model.GradedSubmissions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="um-panel card border-0 mb-4">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -121,6 +178,104 @@
                                 </a>
                             </div>
                         }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0"><i class="bi bi-camera-video text-primary me-1"></i>Upcoming meetings</div>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-sm btn-primary" asp-controller="Meetings" asp-action="Create"><i class="bi bi-plus-lg me-1"></i>Schedule</a>
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Meetings" asp-action="Index">All</a>
+                    </div>
+                </div>
+                @if (!Model.UpcomingMeetings.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-camera-video-off"></i>
+                        <div class="um-empty-title">No meetings scheduled</div>
+                        <div class="small">Schedule a Google Meet for your students with one click.</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var mt in Model.UpcomingMeetings)
+                        {
+                            var local = mt.ScheduledAtUtc.ToLocalTime();
+                            var endLocal = local.AddMinutes(mt.DurationMinutes);
+                            var canJoinNow = DateTime.Now >= local.AddMinutes(-15) && DateTime.Now <= endLocal;
+                            <div class="col-md-6">
+                                <div class="um-meet-card @(canJoinNow ? "is-live" : "")">
+                                    <div class="um-meet-time text-center">
+                                        <div class="um-meet-dow">@local.ToString("ddd")</div>
+                                        <div class="um-meet-day">@local.Day</div>
+                                        <div class="um-meet-mon">@local.ToString("h:mm tt")</div>
+                                    </div>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div class="d-flex gap-2 align-items-center mb-1 flex-wrap">
+                                            <span class="badge text-bg-light border">@mt.CourseCode</span>
+                                            @if (canJoinNow)
+                                            {
+                                                <span class="badge bg-success-subtle text-success-emphasis"><span class="um-pulse-dot"></span> Live now</span>
+                                            }
+                                        </div>
+                                        <div class="fw-bold text-dark text-truncate">@mt.Title</div>
+                                        <div class="small text-muted text-truncate"><i class="bi bi-clock me-1"></i>@local.ToString("MMM d, h:mm tt") · @mt.DurationMinutes min</div>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <a class="btn btn-sm @(canJoinNow ? "btn-success" : "btn-outline-primary")" asp-controller="Meetings" asp-action="Join" asp-route-id="@mt.MeetingId" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right me-1"></i>Join</a>
+                                            <a class="btn btn-sm btn-outline-secondary" asp-controller="Meetings" asp-action="Edit" asp-route-id="@mt.MeetingId"><i class="bi bi-pencil"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="um-panel card border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="um-section-title mb-0"><i class="bi bi-inbox me-1"></i>Recent submissions</div>
+                    <span class="text-muted small">Latest @Model.RecentSubmissions.Count</span>
+                </div>
+                @if (!Model.RecentSubmissions.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-inbox"></i>
+                        <div class="um-empty-title">No submissions yet</div>
+                        <div class="small">Student submissions will appear here in real time.</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-um align-middle mb-0">
+                            <thead><tr><th>Student</th><th>Assignment</th><th>Course</th><th>Status</th><th>When</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var r in Model.RecentSubmissions)
+                                {
+                                    var pillClass = r.Status == "Graded" ? "pill-success" : "pill-warn";
+                                    <tr>
+                                        <td class="fw-medium">@r.StudentName</td>
+                                        <td>@r.AssignmentTitle</td>
+                                        <td><span class="um-pill pill-info">@r.CourseCode</span></td>
+                                        <td><span class="um-pill @pillClass">@r.Status</span></td>
+                                        <td><small class="text-muted">@(r.SubmittedAtUtc.HasValue ? TimeAgo(r.SubmittedAtUtc.Value) : "—")</small></td>
+                                        <td class="text-end">
+                                            <a class="btn btn-sm btn-outline-primary" asp-controller="Submissions" asp-action="Grade" asp-route-id="@r.SubmissionId">
+                                                @(r.Status == "Graded" ? "Review" : "Grade")
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 }
             </div>
@@ -175,29 +330,88 @@
             </div>
         </div>
 
-        <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
-
-        <div class="um-panel card border-0 mt-4">
+        <div class="um-panel card border-0 mb-4">
             <div class="card-body">
-                <div class="um-section-title">Tips &amp; reminders</div>
-                <ul class="um-timeline">
-                    <li>
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Prioritise nearest deadlines</p>
-                        <div class="um-timeline-meta"><i class="bi bi-lightning me-1"></i>Start with pending work due this week.</div>
-                    </li>
-                    <li class="is-success">
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Post weekly updates</p>
-                        <div class="um-timeline-meta"><i class="bi bi-megaphone me-1"></i>Share lesson notes to keep students aligned.</div>
-                    </li>
-                    <li class="is-warn">
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Use workload reports</p>
-                        <div class="um-timeline-meta"><i class="bi bi-activity me-1"></i>Track grading and course trends over time.</div>
-                    </li>
-                </ul>
+                <div class="um-section-title"><i class="bi bi-activity me-1"></i>Activity feed</div>
+                @if (!Model.Activity.Any())
+                {
+                    <div class="um-empty">
+                        <i class="bi bi-inboxes"></i>
+                        <div class="um-empty-title">Nothing recent</div>
+                        <div class="small">Submissions and uploads will appear here.</div>
+                    </div>
+                }
+                else
+                {
+                    <ul class="um-feed list-unstyled mb-0">
+                        @foreach (var a in Model.Activity)
+                        {
+                            <li class="um-feed-item tone-@a.Tone">
+                                <span class="um-feed-ico"><i class="bi @a.Icon"></i></span>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="um-feed-title">@a.Title</div>
+                                    <div class="um-feed-meta"><i class="bi bi-clock me-1"></i>@TimeAgo(a.WhenUtc)@(string.IsNullOrEmpty(a.Detail) ? "" : " · ") @a.Detail</div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
             </div>
+        </div>
+
+        <div class="mb-4">
+            <partial name="_DashboardCalendar" model="Model.AssignmentCalendar" />
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        (function () {
+            const subLabels = @Html.Raw(JsonSerializer.Serialize(subLabels));
+            const subTotal = @Html.Raw(JsonSerializer.Serialize(subTotal));
+            const subGraded = @Html.Raw(JsonSerializer.Serialize(subGraded));
+            const sEl = document.getElementById('lecSubChart');
+            if (sEl && subLabels.length > 0) {
+                new Chart(sEl, {
+                    type: 'bar',
+                    data: {
+                        labels: subLabels,
+                        datasets: [
+                            { label: 'Total', data: subTotal, backgroundColor: '#6366f1' },
+                            { label: 'Graded', data: subGraded, backgroundColor: '#10b981' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    }
+                });
+            }
+
+            const gEl = document.getElementById('lecGradeChart');
+            if (gEl) {
+                new Chart(gEl, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Pending', 'Graded'],
+                        datasets: [{
+                            data: [@Model.PendingSubmissions, @Model.GradedSubmissions],
+                            backgroundColor: ['#f59e0b', '#10b981'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+                    }
+                });
+            }
+        })();
+    </script>
+}

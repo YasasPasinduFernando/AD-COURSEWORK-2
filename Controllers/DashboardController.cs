@@ -88,7 +88,7 @@ public class DashboardController : Controller
             join c in _db.Courses on a.CourseId equals c.CourseId
             where s.StudentId == userId && s.Status == SubmissionStatus.Graded && s.Grade != null
             orderby s.GradedAtUtc descending
-            select new { c.Code, a.Title, s.Grade, a.MaxPoints, s.Feedback }).Take(10).ToListAsync();
+            select new { c.Code, a.Title, s.Grade, a.MaxPoints, s.Feedback, s.GradedAtUtc }).Take(10).ToListAsync();
 
         var grades = gradesRaw.Select(x => new StudentDashboardViewModel.GradeRow
         {
@@ -98,7 +98,8 @@ public class DashboardController : Controller
             MaxPoints = x.MaxPoints,
             FeedbackShort = x.Feedback == null
                 ? null
-                : (x.Feedback.Length > 80 ? x.Feedback.Substring(0, 80) + "..." : x.Feedback)
+                : (x.Feedback.Length > 80 ? x.Feedback.Substring(0, 80) + "..." : x.Feedback),
+            GradedAtUtc = x.GradedAtUtc
         }).ToList();
 
         var unread = await _db.Messages.CountAsync(m => m.ReceiverId == userId && !m.IsRead);
@@ -131,12 +132,95 @@ public class DashboardController : Controller
             orderby s.SubmittedAtUtc
             select new { Date = s.SubmittedAtUtc!.Value, a.Title, c.Code }).ToListAsync();
 
+        var meetingsInMonth = await _db.Meetings
+            .AsNoTracking()
+            .Include(m => m.Course)
+            .Include(m => m.Lecturer)
+            .Where(m => courseIds.Contains(m.CourseId)
+                        && m.ScheduledAtUtc >= rangeStart && m.ScheduledAtUtc < rangeEnd)
+            .OrderBy(m => m.ScheduledAtUtc)
+            .ToListAsync();
+
+        var nowUtcEarly = DateTime.UtcNow;
+        var upcomingMeetings = await _db.Meetings
+            .AsNoTracking()
+            .Include(m => m.Course)
+            .Include(m => m.Lecturer)
+            .Where(m => courseIds.Contains(m.CourseId) && m.ScheduledAtUtc >= nowUtcEarly.AddHours(-1))
+            .OrderBy(m => m.ScheduledAtUtc)
+            .Take(5)
+            .Select(m => new UpcomingMeetingRow
+            {
+                MeetingId = m.MeetingId,
+                Title = m.Title,
+                CourseCode = m.Course.Code,
+                LecturerName = m.Lecturer.FullName,
+                ScheduledAtUtc = m.ScheduledAtUtc,
+                DurationMinutes = m.DurationMinutes,
+                MeetingUrl = m.MeetingUrl,
+                IsMine = false
+            })
+            .ToListAsync();
+
         var calItems = new List<CalendarItem>();
         calItems.AddRange(assnInMonth.Select(a => new CalendarItem(a.DueDateUtc, $"Due: {a.Title}", a.Course.Code, DashboardCalendarEventKind.Deadline)));
         calItems.AddRange(matsInMonth.Select(m => new CalendarItem(m.UploadedAtUtc, $"New material: {m.Title}", m.Course.Code, DashboardCalendarEventKind.Material)));
         calItems.AddRange(subsInMonth.Select(s => new CalendarItem(s.Date, $"Submitted: {s.Title}", s.Code, DashboardCalendarEventKind.Submission)));
+        calItems.AddRange(meetingsInMonth.Select(m => new CalendarItem(m.ScheduledAtUtc, $"Meeting: {m.Title}", m.Course.Code, DashboardCalendarEventKind.Meeting)));
 
         var calendar = BuildCalendar(calNow.Year, calNow.Month, calItems);
+
+        var nowUtc = DateTime.UtcNow;
+        var countNotStarted = deadlineRows.Count(d => d.Status == "Not started" || d.Status == "NotSubmitted");
+        var countSubmitted = deadlineRows.Count(d => d.Status == "Submitted");
+        var countGraded = deadlineRows.Count(d => d.Status == "Graded");
+        var countOverdue = deadlineRows.Count(d => (d.Status == "Not started" || d.Status == "NotSubmitted") && d.DueDateUtc < nowUtc);
+
+        var gradeTrend = grades
+            .Where(g => g.Grade.HasValue && g.MaxPoints > 0 && g.GradedAtUtc.HasValue)
+            .OrderBy(g => g.GradedAtUtc)
+            .Take(10)
+            .Select(g => new TrendPoint
+            {
+                Label = g.Assignment.Length > 20 ? g.Assignment[..20] + "…" : g.Assignment,
+                Value = (double)(g.Grade!.Value / g.MaxPoints) * 100
+            }).ToList();
+
+        var activity = new List<ActivityFeedItem>();
+        foreach (var g in grades.Take(3))
+        {
+            activity.Add(new ActivityFeedItem
+            {
+                Icon = "bi-award",
+                Tone = "success",
+                Title = $"Graded: {g.Assignment}",
+                Detail = $"{g.CourseCode} · {g.Grade}/{g.MaxPoints}",
+                WhenUtc = g.GradedAtUtc ?? DateTime.UtcNow
+            });
+        }
+        foreach (var s in subsInMonth.OrderByDescending(s => s.Date).Take(3))
+        {
+            activity.Add(new ActivityFeedItem
+            {
+                Icon = "bi-file-earmark-arrow-up",
+                Tone = "info",
+                Title = $"Submitted: {s.Title}",
+                Detail = s.Code,
+                WhenUtc = s.Date
+            });
+        }
+        foreach (var m in matsInMonth.OrderByDescending(m => m.UploadedAtUtc).Take(3))
+        {
+            activity.Add(new ActivityFeedItem
+            {
+                Icon = "bi-upload",
+                Tone = "warn",
+                Title = $"New material: {m.Title}",
+                Detail = m.Course.Code,
+                WhenUtc = m.UploadedAtUtc
+            });
+        }
+        activity = activity.OrderByDescending(a => a.WhenUtc).Take(8).ToList();
 
         var vm = new StudentDashboardViewModel
         {
@@ -144,7 +228,14 @@ public class DashboardController : Controller
             UpcomingDeadlines = deadlineRows,
             RecentGrades = grades,
             UnreadMessages = unread,
-            AssignmentCalendar = calendar
+            AssignmentCalendar = calendar,
+            GradeTrend = gradeTrend,
+            CountNotStarted = countNotStarted,
+            CountSubmitted = countSubmitted,
+            CountGraded = countGraded,
+            CountOverdue = countOverdue,
+            Activity = activity,
+            UpcomingMeetings = upcomingMeetings
         };
 
         return View(vm);
@@ -174,17 +265,50 @@ public class DashboardController : Controller
 
         var courseIds = courses.Select(c => c.CourseId).ToList();
 
-        var assignmentIds = await _db.Assignments
+        var assignmentToCourse = await _db.Assignments
             .Where(a => courseIds.Contains(a.CourseId))
-            .Select(a => a.AssignmentId)
+            .Select(a => new { a.AssignmentId, a.CourseId })
             .ToListAsync();
+        var assignmentIds = assignmentToCourse.Select(a => a.AssignmentId).ToList();
 
         var subs = await _db.Submissions
             .Where(s => assignmentIds.Contains(s.AssignmentId))
+            .Select(s => new { s.SubmissionId, s.AssignmentId, s.Status })
             .ToListAsync();
 
         var pending = subs.Count(s => s.Status == SubmissionStatus.Submitted);
         var graded = subs.Count(s => s.Status == SubmissionStatus.Graded);
+
+        var assnCourseLookup = assignmentToCourse.ToDictionary(x => x.AssignmentId, x => x.CourseId);
+        var courseCodeLookup = courses.ToDictionary(c => c.CourseId, c => c.Code);
+
+        var subsByCourse = subs
+            .Where(s => assnCourseLookup.ContainsKey(s.AssignmentId))
+            .GroupBy(s => assnCourseLookup[s.AssignmentId])
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var submissionsPerCourse = courses.Select(c =>
+            new TrendPoint { Label = c.Code, Value = subsByCourse.TryGetValue(c.CourseId, out var l) ? l.Count : 0 }).ToList();
+        var gradedPerCourse = courses.Select(c =>
+            new TrendPoint { Label = c.Code, Value = subsByCourse.TryGetValue(c.CourseId, out var l) ? l.Count(s => s.Status == SubmissionStatus.Graded) : 0 }).ToList();
+
+        var recentSubs = await (
+            from s in _db.Submissions.AsNoTracking()
+            join a in _db.Assignments on s.AssignmentId equals a.AssignmentId
+            join c in _db.Courses on a.CourseId equals c.CourseId
+            join u in _db.Users on s.StudentId equals u.Id
+            where courseIds.Contains(a.CourseId) && s.SubmittedAtUtc != null
+            orderby s.SubmittedAtUtc descending
+            select new LecturerDashboardViewModel.RecentSubmissionRow
+            {
+                SubmissionId = s.SubmissionId,
+                AssignmentId = a.AssignmentId,
+                AssignmentTitle = a.Title,
+                CourseCode = c.Code,
+                StudentName = u.FullName,
+                Status = s.Status.ToString(),
+                SubmittedAtUtc = s.SubmittedAtUtc
+            }).Take(8).ToListAsync();
 
         var unread = await _db.Messages.CountAsync(m => m.ReceiverId == userId && !m.IsRead);
 
@@ -219,12 +343,66 @@ public class DashboardController : Controller
             orderby s.SubmittedAtUtc
             select new { Date = s.SubmittedAtUtc!.Value, a.Title, c.Code, Student = u.FullName }).ToListAsync();
 
+        var meetingsInMonth = await _db.Meetings
+            .AsNoTracking()
+            .Include(m => m.Course)
+            .Where(m => m.LecturerId == userId
+                        && m.ScheduledAtUtc >= rangeStart && m.ScheduledAtUtc < rangeEnd)
+            .OrderBy(m => m.ScheduledAtUtc)
+            .ToListAsync();
+
+        var nowUtcLec = DateTime.UtcNow;
+        var upcomingMeetings = await _db.Meetings
+            .AsNoTracking()
+            .Include(m => m.Course)
+            .Where(m => m.LecturerId == userId && m.ScheduledAtUtc >= nowUtcLec.AddHours(-1))
+            .OrderBy(m => m.ScheduledAtUtc)
+            .Take(5)
+            .Select(m => new UpcomingMeetingRow
+            {
+                MeetingId = m.MeetingId,
+                Title = m.Title,
+                CourseCode = m.Course.Code,
+                LecturerName = m.Lecturer.FullName,
+                ScheduledAtUtc = m.ScheduledAtUtc,
+                DurationMinutes = m.DurationMinutes,
+                MeetingUrl = m.MeetingUrl,
+                IsMine = true
+            })
+            .ToListAsync();
+
         var calItems = new List<CalendarItem>();
         calItems.AddRange(assnInMonth.Select(a => new CalendarItem(a.DueDateUtc, $"Due: {a.Title}", a.Course.Code, DashboardCalendarEventKind.Deadline)));
         calItems.AddRange(matsInMonth.Select(m => new CalendarItem(m.UploadedAtUtc, $"Uploaded: {m.Title}", m.Course.Code, DashboardCalendarEventKind.Material)));
         calItems.AddRange(subsInMonth.Select(s => new CalendarItem(s.Date, $"{s.Student} submitted: {s.Title}", s.Code, DashboardCalendarEventKind.Submission)));
+        calItems.AddRange(meetingsInMonth.Select(m => new CalendarItem(m.ScheduledAtUtc, $"Meeting: {m.Title}", m.Course.Code, DashboardCalendarEventKind.Meeting)));
 
         var calendar = BuildCalendar(calNow.Year, calNow.Month, calItems);
+
+        var activity = new List<ActivityFeedItem>();
+        foreach (var s in recentSubs.Take(5))
+        {
+            activity.Add(new ActivityFeedItem
+            {
+                Icon = s.Status == "Graded" ? "bi-patch-check-fill" : "bi-file-earmark-arrow-up",
+                Tone = s.Status == "Graded" ? "success" : "info",
+                Title = $"{s.StudentName} — {s.AssignmentTitle}",
+                Detail = $"{s.CourseCode} · {s.Status}",
+                WhenUtc = s.SubmittedAtUtc ?? DateTime.UtcNow
+            });
+        }
+        foreach (var m in matsInMonth.OrderByDescending(m => m.UploadedAtUtc).Take(3))
+        {
+            activity.Add(new ActivityFeedItem
+            {
+                Icon = "bi-upload",
+                Tone = "warn",
+                Title = $"You uploaded: {m.Title}",
+                Detail = m.Course.Code,
+                WhenUtc = m.UploadedAtUtc
+            });
+        }
+        activity = activity.OrderByDescending(a => a.WhenUtc).Take(8).ToList();
 
         var vm = new LecturerDashboardViewModel
         {
@@ -232,7 +410,12 @@ public class DashboardController : Controller
             PendingSubmissions = pending,
             GradedSubmissions = graded,
             UnreadMessages = unread,
-            AssignmentCalendar = calendar
+            AssignmentCalendar = calendar,
+            SubmissionsPerCourse = submissionsPerCourse,
+            GradedPerCourse = gradedPerCourse,
+            RecentSubmissions = recentSubs,
+            Activity = activity,
+            UpcomingMeetings = upcomingMeetings
         };
         return View(vm);
     }
@@ -244,6 +427,12 @@ public class DashboardController : Controller
         var courseCount = await _db.Courses.CountAsync();
         var enrollmentCount = await _db.Enrollments.CountAsync();
         var assignmentCount = await _db.Assignments.CountAsync();
+        var submissionCount = await _db.Submissions.CountAsync();
+        var messageCount = await _db.Messages.CountAsync();
+
+        var students = await _userManager.GetUsersInRoleAsync(AppRoles.Student);
+        var lecturers = await _userManager.GetUsersInRoleAsync(AppRoles.Lecturer);
+        var admins = await _userManager.GetUsersInRoleAsync(AppRoles.Administrator);
 
         var popular = await _db.Courses
             .AsNoTracking()
@@ -257,13 +446,66 @@ public class DashboardController : Controller
             .Take(6)
             .ToListAsync();
 
+        var sinceUtc = DateTime.UtcNow.AddDays(-29);
+        var enrollDates = await _db.Enrollments
+            .Where(e => e.EnrolledAtUtc >= sinceUtc)
+            .Select(e => e.EnrolledAtUtc)
+            .ToListAsync();
+
+        var byDay = enrollDates
+            .GroupBy(d => DateOnly.FromDateTime(d.ToLocalTime()))
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        var trend = new List<TrendPoint>();
+        var startDay = DateOnly.FromDateTime(DateTime.Now.AddDays(-29));
+        for (var d = 0; d < 30; d++)
+        {
+            var day = startDay.AddDays(d);
+            trend.Add(new TrendPoint
+            {
+                Label = day.ToString("MMM d"),
+                Value = byDay.TryGetValue(day, out var cnt) ? cnt : 0
+            });
+        }
+
+        var recentAudit = await _db.AuditLogs
+            .AsNoTracking()
+            .OrderByDescending(a => a.CreatedAtUtc)
+            .Take(8)
+            .ToListAsync();
+
+        var activity = recentAudit.Select(a => new ActivityFeedItem
+        {
+            Icon = a.Category switch
+            {
+                "Auth" => "bi-shield-lock",
+                "Course" => "bi-collection",
+                "Material" => "bi-upload",
+                "Submission" => "bi-file-earmark-text",
+                "Enrollment" => "bi-person-plus",
+                "Profile" => "bi-person-gear",
+                _ => "bi-clock-history"
+            },
+            Tone = a.Success ? "info" : "danger",
+            Title = $"{a.Action}",
+            Detail = $"{a.UserName ?? "system"} · {a.Detail}",
+            WhenUtc = a.CreatedAtUtc
+        }).ToList();
+
         var vm = new AdminDashboardViewModel
         {
             UserCount = userCount,
             CourseCount = courseCount,
             EnrollmentCount = enrollmentCount,
             AssignmentCount = assignmentCount,
-            PopularCourses = popular
+            SubmissionCount = submissionCount,
+            MessageCount = messageCount,
+            StudentCount = students.Count,
+            LecturerCount = lecturers.Count,
+            AdminCount = admins.Count,
+            PopularCourses = popular,
+            EnrollmentTrend = trend,
+            RecentActivity = activity
         };
         return View(vm);
     }

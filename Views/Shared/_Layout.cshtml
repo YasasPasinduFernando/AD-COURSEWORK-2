@@ -1,6 +1,10 @@
+@using AD_COURSEWORK_2.Data
 @using AD_COURSEWORK_2.Models
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext DbContext
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
@@ -9,6 +13,23 @@
         var isActive = currentController.Equals(controller, StringComparison.OrdinalIgnoreCase)
             && (action == null || currentAction.Equals(action, StringComparison.OrdinalIgnoreCase));
         return isActive ? "nav-link active" : "nav-link";
+    }
+
+    int unreadCount = 0;
+    if (SignInManager.IsSignedIn(User) && (User.IsInRole(AppRoles.Student) || User.IsInRole(AppRoles.Lecturer)))
+    {
+        var uid = UserManager.GetUserId(User);
+        if (!string.IsNullOrEmpty(uid))
+        {
+            try
+            {
+                unreadCount = await DbContext.Messages.CountAsync(m => m.ReceiverId == uid && !m.IsRead);
+            }
+            catch
+            {
+                unreadCount = 0;
+            }
+        }
     }
 }
 <!DOCTYPE html>
@@ -44,18 +65,44 @@
                             {
                                 <li class="nav-item"><a class="@NavClass("Enrollments", "Browse")" asp-controller="Enrollments" asp-action="Browse">Catalog</a></li>
                                 <li class="nav-item"><a class="@NavClass("Assignments", "Mine")" asp-controller="Assignments" asp-action="Mine">Assignments</a></li>
-                                <li class="nav-item"><a class="@NavClass("Messages")" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
+                                <li class="nav-item"><a class="@NavClass("Meetings")" asp-controller="Meetings" asp-action="Index"><i class="bi bi-camera-video me-1"></i>Meetings</a></li>
+                                <li class="nav-item">
+                                    <a class="@NavClass("Messages") position-relative" asp-controller="Messages" asp-action="Inbox">
+                                        Messages
+                                        @if (unreadCount > 0)
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: .65rem;">
+                                                @(unreadCount > 99 ? "99+" : unreadCount.ToString())
+                                                <span class="visually-hidden">unread messages</span>
+                                            </span>
+                                        }
+                                    </a>
+                                </li>
                             }
                             @if (User.IsInRole(AppRoles.Lecturer))
                             {
                                 <li class="nav-item"><a class="@NavClass("Courses", "MyCourses")" asp-controller="Courses" asp-action="MyCourses">My Courses</a></li>
-                                <li class="nav-item"><a class="@NavClass("Messages")" asp-controller="Messages" asp-action="Inbox">Messages</a></li>
+                                <li class="nav-item"><a class="@NavClass("Meetings")" asp-controller="Meetings" asp-action="Index"><i class="bi bi-camera-video me-1"></i>Meetings</a></li>
+                                <li class="nav-item">
+                                    <a class="@NavClass("Messages") position-relative" asp-controller="Messages" asp-action="Inbox">
+                                        Messages
+                                        @if (unreadCount > 0)
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: .65rem;">
+                                                @(unreadCount > 99 ? "99+" : unreadCount.ToString())
+                                                <span class="visually-hidden">unread messages</span>
+                                            </span>
+                                        }
+                                    </a>
+                                </li>
                                 <li class="nav-item"><a class="@NavClass("Reports", "LecturerWorkload")" asp-controller="Reports" asp-action="LecturerWorkload">Workload</a></li>
                             }
                             @if (User.IsInRole(AppRoles.Administrator))
                             {
                                 <li class="nav-item"><a class="@NavClass("Courses", "Index")" asp-controller="Courses" asp-action="Index">Courses</a></li>
+                                <li class="nav-item"><a class="@NavClass("Meetings")" asp-controller="Meetings" asp-action="Index"><i class="bi bi-camera-video me-1"></i>Meetings</a></li>
                                 <li class="nav-item"><a class="@NavClass("Reports", "Index")" asp-controller="Reports" asp-action="Index">Reports</a></li>
+                                <li class="nav-item"><a class="@NavClass("AuditLogs", "Index")" asp-controller="AuditLogs" asp-action="Index">Audit</a></li>
                             }
                         }
                         else
@@ -69,20 +116,27 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             var roleLabel = User.IsInRole(AppRoles.Administrator) ? "Admin" : User.IsInRole(AppRoles.Lecturer) ? "Lecturer" : "Student";
-                            <li class="nav-item px-lg-2 mb-2 mb-lg-0">
-                                <span class="um-user-pill d-inline-flex align-items-center gap-2" title="@User.Identity?.Name">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-inline-flex align-items-center gap-2 py-1 px-lg-2"
+                                   href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                   title="@User.Identity?.Name">
                                     <span class="um-user-avatar">@((User.Identity?.Name ?? "U")[0].ToString().ToUpperInvariant())</span>
-                                    <span>
+                                    <span class="d-none d-lg-inline">
                                         <span class="d-block um-user-name">@User.Identity?.Name</span>
                                         <small class="um-user-role">@roleLabel</small>
                                     </span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-link nav-link btn-logout text-start text-lg-end">Sign out</button>
-                                </form>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenu">
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index"><i class="bi bi-person-circle me-2"></i>My profile</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="ChangePassword"><i class="bi bi-key me-2"></i>Change password</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Sign out</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else

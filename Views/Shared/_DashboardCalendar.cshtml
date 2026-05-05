@@ -12,6 +12,7 @@
         DashboardCalendarEventKind.Material => "kind-material",
         DashboardCalendarEventKind.Submission => "kind-submission",
         DashboardCalendarEventKind.Grade => "kind-grade",
+        DashboardCalendarEventKind.Meeting => "kind-meeting",
         _ => "kind-deadline"
     };
     string KindIcon(DashboardCalendarEventKind k) => k switch
@@ -19,6 +20,7 @@
         DashboardCalendarEventKind.Material => "bi-upload",
         DashboardCalendarEventKind.Submission => "bi-file-earmark-arrow-up",
         DashboardCalendarEventKind.Grade => "bi-award",
+        DashboardCalendarEventKind.Meeting => "bi-camera-video",
         _ => "bi-calendar2-event"
     };
     string KindLabel(DashboardCalendarEventKind k) => k switch
@@ -26,12 +28,13 @@
         DashboardCalendarEventKind.Material => "Material",
         DashboardCalendarEventKind.Submission => "Submission",
         DashboardCalendarEventKind.Grade => "Grade",
+        DashboardCalendarEventKind.Meeting => "Meeting",
         _ => "Deadline"
     };
 }
 
-<div class="um-panel card border-0 h-100 d-flex flex-column">
-    <div class="card-body d-flex flex-column flex-grow-1">
+<div class="um-panel card border-0">
+    <div class="card-body">
         <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
                 <h3 class="h6 mb-0 fw-bold text-dark"><i class="bi bi-calendar3 me-1"></i>@first.ToString("MMMM yyyy")</h3>
@@ -47,6 +50,7 @@
             <span class="um-cal-legend-item kind-deadline"><span class="um-cal-dot"></span>Deadline</span>
             <span class="um-cal-legend-item kind-material"><span class="um-cal-dot"></span>Material</span>
             <span class="um-cal-legend-item kind-submission"><span class="um-cal-dot"></span>Submission</span>
+            <span class="um-cal-legend-item kind-meeting"><span class="um-cal-dot"></span>Meeting</span>
         </div>
 
         <div class="um-cal-weekdays">
@@ -84,7 +88,7 @@
 
         @if (Model.EventsByDay.Count > 0)
         {
-            <div class="border-top pt-3 mt-auto">
+            <div class="border-top pt-3 mt-3">
                 <p class="small fw-semibold text-muted text-uppercase mb-2" style="letter-spacing: .04em;">Upcoming</p>
                 <ul class="list-unstyled small mb-0 um-cal-list">
                     @foreach (var kv in Model.EventsByDay.OrderBy(k => k.Key).Take(6))
@@ -108,7 +112,7 @@
         }
         else
         {
-            <div class="um-empty mt-2">
+            <div class="um-empty mt-3">
                 <i class="bi bi-calendar-check"></i>
                 <div class="um-empty-title">Nothing scheduled</div>
                 <div class="small">Deadlines, materials and submissions will show up here.</div>

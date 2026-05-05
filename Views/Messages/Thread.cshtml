@@ -1,11 +1,12 @@
 @model MessageThreadViewModel
 @{
-    ViewData["Title"] = $"Thread – {Model.OtherUserName}";
+    ViewData["Title"] = $"Chat – {Model.OtherUserName}";
     var avatarPalette = new[] { "", "avatar-violet", "avatar-emerald", "avatar-amber", "avatar-rose" };
     var avatarCls = avatarPalette[Math.Abs(Model.OtherUserName.GetHashCode()) % avatarPalette.Length];
     var ordered = Model.Messages.OrderBy(m => m.SentAtUtc).ToList();
-    var first = ordered.FirstOrDefault();
     var last = ordered.LastOrDefault();
+    var threadSubject = ordered.LastOrDefault(m => !string.IsNullOrWhiteSpace(m.Subject))?.Subject ?? "";
+    var unreadTotal = Model.Conversations.Count(c => c.Unread);
 
     static string Initials(string name)
     {
@@ -22,75 +23,229 @@
         if (t == DateTime.Today) return "Today";
         if (t == DateTime.Today.AddDays(-1)) return "Yesterday";
         if ((DateTime.Today - t).TotalDays < 7) return t.ToString("dddd");
-        return t.ToString("MMM d, yyyy");
+        return t.ToString("MMMM d, yyyy");
+    }
+
+    static string ShortTime(DateTime atUtc)
+    {
+        var local = atUtc.ToLocalTime();
+        var span = DateTime.Now.Date - local.Date;
+        if (span.TotalDays == 0) return local.ToString("h:mm tt");
+        if (span.TotalDays == 1) return "Yesterday";
+        if (span.TotalDays < 7) return local.ToString("dddd");
+        return local.ToString("MMM d");
     }
 }
 
-<section class="um-hero-compact" style="padding:1.1rem 1.35rem;">
-    <div class="row align-items-center g-3">
-        <div class="col-lg-8 d-flex align-items-center gap-3">
-            <div class="um-avatar avatar-lg @avatarCls">@Initials(Model.OtherUserName)</div>
-            <div>
-                <div class="um-hero-eyebrow mb-0">Conversation</div>
-                <h1 style="font-size:1.35rem; margin-bottom:0;">@Model.OtherUserName</h1>
-                <p class="um-hero-sub mb-0 small">@ordered.Count message@(ordered.Count == 1 ? "" : "s") · @(last != null ? last.SentAtUtc.ToLocalTime().ToString("MMM d, h:mm tt") : "—")</p>
+<div class="um-wa">
+    <aside class="um-wa-side">
+        <div class="um-wa-side-head">
+            <div class="d-flex align-items-center gap-2 min-w-0">
+                <div class="um-avatar avatar-sm avatar-emerald">@Initials(User.Identity?.Name ?? "Me")</div>
+                <div class="min-w-0">
+                    <div class="fw-bold text-truncate">Chats</div>
+                    <div class="small text-muted">@Model.Conversations.Count conversation@(Model.Conversations.Count == 1 ? "" : "s")@(unreadTotal > 0 ? $" · {unreadTotal} unread" : "")</div>
+                </div>
             </div>
+            <a class="um-wa-iconbtn" asp-action="Compose" title="New message">
+                <i class="bi bi-pencil-square"></i>
+            </a>
         </div>
-        <div class="col-lg-4 d-flex flex-wrap justify-content-lg-end gap-2">
-            <a class="btn btn-light" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId"><i class="bi bi-reply-fill me-1"></i>Reply</a>
-            <a class="btn btn-outline-light" asp-action="Inbox"><i class="bi bi-arrow-left me-1"></i>Inbox</a>
-        </div>
-    </div>
-</section>
 
-<div class="um-chat-shell">
-    @if (!ordered.Any())
-    {
-        <div class="um-empty-full">
-            <i class="bi bi-chat-left-text"></i>
-            <div class="um-empty-title">No messages yet</div>
-            <div class="small">Send your first message to start the conversation.</div>
-            <a class="btn btn-primary mt-3" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId"><i class="bi bi-pencil-square me-1"></i>Compose</a>
+        <div class="um-wa-search">
+            <i class="bi bi-search"></i>
+            <input type="search" id="convSearch" placeholder="Search or start new chat" />
         </div>
-    }
-    else
-    {
-        <div class="um-chat-list">
-            @{
-                DateTime? lastDay = null;
-            }
-            @foreach (var m in ordered)
+
+        <ul class="um-wa-conv-list" id="convList">
+            @if (!Model.Conversations.Any())
             {
-                var local = m.SentAtUtc.ToLocalTime();
-                if (lastDay == null || lastDay.Value.Date != local.Date)
-                {
-                    <div class="um-chat-daymark">@HumanDay(local)</div>
-                    lastDay = local;
-                }
-                var rowCls = m.IsMine ? "row-mine" : "";
-                var avatarBubble = m.IsMine ? "avatar-violet" : avatarCls;
-                <div class="um-chat-row @rowCls">
-                    <div class="um-avatar avatar-sm @avatarBubble">@(m.IsMine ? "Me" : Initials(Model.OtherUserName))</div>
-                    <div class="um-chat-bubble">
-                        @if (!string.IsNullOrWhiteSpace(m.Subject))
-                        {
-                            <div class="um-chat-subject">@m.Subject</div>
-                        }
-                        <div class="um-chat-content">@m.Content</div>
-                        <div class="um-chat-time">
-                            <i class="bi bi-clock me-1"></i>@local.ToString("h:mm tt")
-                            @if (m.IsMine)
-                            {
-                                <i class="bi bi-check2-all ms-1" title="Sent"></i>
-                            }
+                <li class="um-wa-empty">
+                    <i class="bi bi-chat-dots"></i>
+                    <span>No conversations yet</span>
+                </li>
+            }
+            @foreach (var c in Model.Conversations)
+            {
+                var ava = avatarPalette[Math.Abs(c.OtherName.GetHashCode()) % avatarPalette.Length];
+                var active = c.OtherUserId == Model.OtherUserId ? "active" : "";
+                <li>
+                    <a class="um-wa-conv @active @(c.Unread ? "unread" : "")"
+                       data-search="@($"{c.OtherName} {c.LastSubject} {c.LastPreview}".ToLowerInvariant())"
+                       asp-action="Thread" asp-route-id="@c.OtherUserId">
+                        <div class="um-avatar @ava">@Initials(c.OtherName)</div>
+                        <div class="um-wa-conv-body">
+                            <div class="um-wa-conv-row">
+                                <span class="um-wa-conv-name">@c.OtherName</span>
+                                <span class="um-wa-conv-time">@ShortTime(c.LastAtUtc)</span>
+                            </div>
+                            <div class="um-wa-conv-row">
+                                <span class="um-wa-conv-preview">@c.LastPreview</span>
+                                @if (c.Unread)
+                                {
+                                    <span class="um-wa-unread-badge">●</span>
+                                }
+                            </div>
                         </div>
+                    </a>
+                </li>
+            }
+        </ul>
+    </aside>
+
+    <section class="um-wa-main">
+        <header class="um-wa-header">
+            <div class="d-flex align-items-center gap-2 min-w-0">
+                <a class="d-lg-none um-wa-iconbtn" asp-action="Inbox" title="Back"><i class="bi bi-arrow-left"></i></a>
+                <div class="um-avatar avatar-lg @avatarCls">@Initials(Model.OtherUserName)</div>
+                <div class="min-w-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <h1 class="um-wa-name">@Model.OtherUserName</h1>
+                        @if (!string.IsNullOrEmpty(Model.OtherUserRole))
+                        {
+                            <span class="um-wa-role">@Model.OtherUserRole</span>
+                        }
+                    </div>
+                    <div class="um-wa-status">
+                        @if (last != null)
+                        {
+                            <span><i class="bi bi-circle-fill text-success" style="font-size:.55rem;"></i> last activity @ShortTime(last.SentAtUtc)</span>
+                        }
+                        else
+                        {
+                            <span>@(string.IsNullOrEmpty(Model.OtherUserEmail) ? "" : Model.OtherUserEmail)</span>
+                        }
                     </div>
                 </div>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <button type="button" class="um-wa-iconbtn" title="Search in chat" id="searchInChat"><i class="bi bi-search"></i></button>
+                <a class="um-wa-iconbtn d-none d-md-inline-flex" asp-action="Inbox" title="Inbox"><i class="bi bi-inbox"></i></a>
+            </div>
+        </header>
+
+        <div class="um-wa-stream" id="chatStream">
+            @if (!ordered.Any())
+            {
+                <div class="um-wa-empty-full">
+                    <i class="bi bi-chat-left-text"></i>
+                    <div class="fw-bold">No messages yet</div>
+                    <div class="small">Send your first message to start the conversation.</div>
+                </div>
+            }
+            else
+            {
+                DateTime? lastDay = null;
+                foreach (var m in ordered)
+                {
+                    var local = m.SentAtUtc.ToLocalTime();
+                    if (lastDay == null || lastDay.Value.Date != local.Date)
+                    {
+                        <div class="um-wa-day"><span>@HumanDay(local)</span></div>
+                        lastDay = local;
+                    }
+                    var rowCls = m.IsMine ? "row-mine" : "row-theirs";
+                    <div class="um-wa-row @rowCls">
+                        <div class="um-wa-bubble">
+                            @if (!string.IsNullOrWhiteSpace(m.Subject) && !m.Subject.Trim().Equals("Re: conversation", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <div class="um-wa-subj">@m.Subject</div>
+                            }
+                            <div class="um-wa-text">@m.Content</div>
+                            <div class="um-wa-meta">
+                                <span class="um-wa-time">@local.ToString("h:mm tt")</span>
+                                @if (m.IsMine)
+                                {
+                                    if (m.IsRead)
+                                    {
+                                        <i class="bi bi-check2-all um-wa-tick um-wa-tick-read" title="Read"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check2-all um-wa-tick" title="Sent"></i>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
             }
         </div>
-    }
+
+        <form class="um-wa-composer" asp-action="Reply" asp-route-id="@Model.OtherUserId" method="post" id="replyForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="subject" value="@(string.IsNullOrEmpty(threadSubject) ? "Re: conversation" : "Re: " + threadSubject)" />
+            <button type="button" class="um-wa-iconbtn" title="Emoji" disabled><i class="bi bi-emoji-smile"></i></button>
+            <button type="button" class="um-wa-iconbtn" title="Attach" disabled><i class="bi bi-paperclip"></i></button>
+            <textarea name="content" id="replyContent"
+                      maxlength="16000" required rows="1"
+                      placeholder="Type a message"></textarea>
+            <span class="um-wa-counter" id="replyCharCount" aria-hidden="true">0</span>
+            <button type="submit" class="um-wa-send" id="replyBtn" title="Send (Ctrl+Enter)">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </form>
+    </section>
 </div>
 
-<div class="mt-3 d-flex justify-content-end">
-    <a class="btn btn-primary" asp-action="Compose" asp-route-recipientId="@Model.OtherUserId"><i class="bi bi-reply-fill me-1"></i>Reply to @Model.OtherUserName</a>
-</div>
+@section Scripts {
+    <script>
+        (function () {
+            const stream = document.getElementById('chatStream');
+            if (stream) stream.scrollTop = stream.scrollHeight;
+
+            const ta = document.getElementById('replyContent');
+            const counter = document.getElementById('replyCharCount');
+            const form = document.getElementById('replyForm');
+            const btn = document.getElementById('replyBtn');
+
+            function autosize() {
+                if (!ta) return;
+                ta.style.height = 'auto';
+                ta.style.height = Math.min(140, ta.scrollHeight) + 'px';
+            }
+            function update() {
+                if (!ta) return;
+                if (counter) counter.textContent = (ta.value.length || 0);
+                if (btn) btn.disabled = ta.value.trim().length === 0;
+                autosize();
+            }
+            ta?.addEventListener('input', update);
+            update();
+
+            ta?.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    if (form && ta.value.trim().length > 0) form.submit();
+                }
+            });
+
+            const search = document.getElementById('convSearch');
+            const convs = document.querySelectorAll('#convList li');
+            search?.addEventListener('input', () => {
+                const q = (search.value || '').trim().toLowerCase();
+                convs.forEach(li => {
+                    const a = li.querySelector('.um-wa-conv');
+                    if (!a) return;
+                    const hay = a.dataset.search || '';
+                    li.style.display = (!q || hay.includes(q)) ? '' : 'none';
+                });
+            });
+
+            const sicb = document.getElementById('searchInChat');
+            sicb?.addEventListener('click', () => {
+                const q = prompt('Search in this conversation');
+                if (!q) return;
+                const needle = q.toLowerCase();
+                const rows = document.querySelectorAll('.um-wa-row');
+                let found = null;
+                rows.forEach(r => {
+                    const txt = r.innerText.toLowerCase();
+                    r.classList.toggle('um-wa-highlight', !!needle && txt.includes(needle));
+                    if (!found && needle && txt.includes(needle)) found = r;
+                });
+                if (found) found.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        })();
+    </script>
+}
