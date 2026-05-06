@@ -11,30 +11,16 @@
                     <span class="um-auth-logo-dot"><i class="bi bi-mortarboard-fill"></i></span>
                     UniManage
                 </a>
-                <span class="um-auth-badge mb-3"><i class="bi bi-stars"></i> Learning hub</span>
-                <h2 class="h3 mb-3">Welcome back to your learning space.</h2>
-                <p class="mb-0">Sign in to continue with your courses, assignments, and messages.</p>
-                <ul class="um-auth-features">
-                    <li>
-                        <span class="um-feature-ico"><i class="bi bi-calendar-check"></i></span>
-                        <div><strong>Track deadlines</strong><span>See submissions and due dates at a glance.</span></div>
-                    </li>
-                    <li>
-                        <span class="um-feature-ico"><i class="bi bi-journal-text"></i></span>
-                        <div><strong>Manage content</strong><span>Share lessons, materials, and feedback with clarity.</span></div>
-                    </li>
-                    <li>
-                        <span class="um-feature-ico"><i class="bi bi-chat-dots"></i></span>
-                        <div><strong>Stay connected</strong><span>Built-in messaging keeps everyone in sync.</span></div>
-                    </li>
-                </ul>
-                <div class="um-auth-footer">&copy; @DateTime.UtcNow.Year UniManage · Learning Management System</div>
+                <span class="um-auth-badge mb-3"><i class="bi bi-box-arrow-in-right"></i> Sign in</span>
+                <h2 class="h3 mb-3">Welcome back</h2>
+                <p class="mb-0">Sign in with your account to continue.</p>
+                <div class="um-auth-footer">Need an account? <a class="fw-semibold text-white text-decoration-none" asp-action="Register">Register</a></div>
             </div>
             <div class="col-lg-7">
                 <div class="card-body p-4 p-xl-5">
                     <div class="um-auth-head">
                         <h1 class="h3">Sign in</h1>
-                        <p>Welcome back — enter your credentials to continue.</p>
+                        <p>Enter your login details to continue.</p>
                     </div>
 
                     @if (TempData["Error"] is string errorMessage && !string.IsNullOrWhiteSpace(errorMessage))

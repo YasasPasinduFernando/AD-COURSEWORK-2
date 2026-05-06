@@ -3044,14 +3044,14 @@ html, body { overflow-x: hidden; }
    WhatsApp-style chat redesign (.um-wa-*)
    ============================================================ */
 :root {
-    --wa-green: #00a884;
-    --wa-green-dark: #008069;
-    --wa-bubble-out: #d9fdd3;
-    --wa-bubble-out-dark: #b6f0a4;
+    --wa-green: #2563eb;
+    --wa-green-dark: #1d4ed8;
+    --wa-bubble-out: #ffffff;
+    --wa-bubble-out-dark: #bfdbfe;
     --wa-bubble-in: #ffffff;
     --wa-tick-read: #53bdeb;
     --wa-tick-sent: #8696a0;
-    --wa-bg: #efeae2;
+    --wa-bg: #ffffff;
     --wa-side-bg: #ffffff;
     --wa-side-head: #f0f2f5;
     --wa-active: #f0f2f5;
@@ -3071,6 +3071,9 @@ html, body { overflow-x: hidden; }
     overflow: hidden;
     border: 1px solid var(--wa-border);
     box-shadow: 0 18px 48px rgba(15, 23, 42, .07);
+}
+.um-wa.um-wa-thread-only {
+    grid-template-columns: 1fr;
 }
 @media (max-width: 991.98px) {
     .um-wa { grid-template-columns: 1fr; height: calc(100vh - 6rem); }
@@ -3216,12 +3219,6 @@ html, body { overflow-x: hidden; }
     flex-direction: column;
     min-width: 0;
     background: var(--wa-bg);
-    /* WhatsApp's signature subtle doodle background — embedded SVG dot pattern */
-    background-image:
-        radial-gradient(rgba(17, 27, 33, .04) 1.2px, transparent 1.4px),
-        radial-gradient(rgba(17, 27, 33, .03) 1px, transparent 1.2px);
-    background-size: 30px 30px, 60px 60px;
-    background-position: 0 0, 15px 15px;
 }
 .um-wa-header {
     display: flex;
@@ -3310,6 +3307,7 @@ html, body { overflow-x: hidden; }
 }
 .um-wa-row.row-mine .um-wa-bubble {
     background: var(--wa-bubble-out);
+    border: 1px solid #dbe5f2;
     border-top-right-radius: 0;
     margin-right: 8px;
 }
@@ -3326,6 +3324,7 @@ html, body { overflow-x: hidden; }
 }
 .um-wa-row.row-theirs .um-wa-bubble {
     background: var(--wa-bubble-in);
+    border: 1px solid #dbe5f2;
     border-top-left-radius: 0;
     margin-left: 8px;
 }
@@ -3462,23 +3461,25 @@ html, body { overflow-x: hidden; }
     width: 2.6rem;
     height: 2.6rem;
     border-radius: 50%;
-    border: 0;
-    background: var(--wa-green);
+    border: 1px solid #1d4ed8;
+    background: #2563eb;
     color: #fff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background-color .12s ease, transform .1s ease;
-    box-shadow: 0 2px 6px rgba(0, 168, 132, .28);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, .28);
     flex-shrink: 0;
 }
 .um-wa-send:hover:not(:disabled) {
-    background: var(--wa-green-dark);
+    background: #1d4ed8;
+    border-color: #1e40af;
     transform: translateY(-1px);
 }
 .um-wa-send:disabled {
-    background: #b6c4cb;
+    background: #93a5c4;
+    border-color: #93a5c4;
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
