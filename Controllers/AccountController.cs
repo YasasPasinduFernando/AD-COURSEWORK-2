@@ -64,7 +64,8 @@ public class AccountController : Controller
             Email = model.Email,
             EmailConfirmed = true,
             FullName = model.FullName,
-            PhoneNumber = model.Phone
+            PhoneNumber = model.Phone,
+            DateOfBirth = model.DateOfBirth
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);

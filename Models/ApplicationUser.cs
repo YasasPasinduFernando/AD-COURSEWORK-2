@@ -12,6 +12,9 @@ public class ApplicationUser : IdentityUser
     [StringLength(30)]
     public override string? PhoneNumber { get; set; }
 
+    /// <summary>Optional date of birth (date only, no time).</summary>
+    public DateOnly? DateOfBirth { get; set; }
+
     public ICollection<Course> TeachingCourses { get; set; } = new List<Course>();
     public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
     public ICollection<Submission> Submissions { get; set; } = new List<Submission>();

@@ -36,6 +36,7 @@ public class ProfileController : Controller
             FullName = user.FullName,
             Email = user.Email ?? string.Empty,
             Phone = user.PhoneNumber,
+            DateOfBirth = user.DateOfBirth,
             Role = roles.FirstOrDefault() ?? string.Empty
         };
         return View(vm);
@@ -59,6 +60,7 @@ public class ProfileController : Controller
 
         user.FullName = model.FullName.Trim();
         user.PhoneNumber = string.IsNullOrWhiteSpace(model.Phone) ? null : model.Phone.Trim();
+        user.DateOfBirth = model.DateOfBirth;
 
         var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
