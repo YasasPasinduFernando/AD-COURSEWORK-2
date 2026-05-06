@@ -2622,6 +2622,10 @@ html, body { overflow-x: hidden; }
   gap: 0.35rem;
   backdrop-filter: blur(4px);
 }
+.um-flag-emoji {
+  font-size: 0.95rem;
+  line-height: 1;
+}
 .um-split-body .body-eyebrow {
   display: inline-block;
   font-size: 0.72rem;
