@@ -2820,9 +2820,9 @@ html, body { overflow-x: hidden; }
     color: var(--um-muted);
     font-size: .78rem;
     margin-top: .15rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
 }
 
 /* ============================================================
