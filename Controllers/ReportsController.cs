@@ -27,7 +27,7 @@ public class ReportsController : Controller
             return View();
 
         if (User.IsInRole(AppRoles.Lecturer))
-            return RedirectToAction(nameof(LecturerWorkload));
+            return View("LecturerIndex");
 
         return Forbid();
     }
@@ -35,10 +35,14 @@ public class ReportsController : Controller
     // ============================================================
     // Course popularity
     // ============================================================
-    [Authorize(Roles = AppRoles.Administrator)]
+    [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> CoursePopularity()
     {
-        var rows = await GetCoursePopularityAsync();
+        var lecturerScoped = User.IsInRole(AppRoles.Lecturer) && !User.IsInRole(AppRoles.Administrator);
+        var userId = _userManager.GetUserId(User)!;
+        var rows = lecturerScoped
+            ? await GetCoursePopularityForLecturerAsync(userId)
+            : await GetCoursePopularityAsync();
         return View(rows);
     }
 
@@ -86,10 +90,14 @@ public class ReportsController : Controller
     // ============================================================
     // Student performance
     // ============================================================
-    [Authorize(Roles = AppRoles.Administrator)]
+    [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> StudentPerformance()
     {
-        var rows = await GetStudentPerformanceAsync();
+        var lecturerScoped = User.IsInRole(AppRoles.Lecturer) && !User.IsInRole(AppRoles.Administrator);
+        var userId = _userManager.GetUserId(User)!;
+        var rows = lecturerScoped
+            ? await GetStudentPerformanceForLecturerAsync(userId)
+            : await GetStudentPerformanceAsync();
         return View(rows);
     }
 
@@ -351,6 +359,23 @@ public class ReportsController : Controller
             .ToListAsync();
     }
 
+    private async Task<List<ReportCoursePopularityRow>> GetCoursePopularityForLecturerAsync(string lecturerId)
+    {
+        return await _db.Courses
+            .AsNoTracking()
+            .Where(c => c.LecturerId == lecturerId)
+            .Select(c => new ReportCoursePopularityRow
+            {
+                Code = c.Code,
+                Name = c.Name,
+                EnrollmentCount = c.Enrollments.Count,
+                Capacity = c.EnrollmentLimit,
+                FillRate = c.EnrollmentLimit == 0 ? 0 : (double)c.Enrollments.Count / c.EnrollmentLimit
+            })
+            .OrderByDescending(r => r.EnrollmentCount)
+            .ToListAsync();
+    }
+
     private async Task<List<ReportStudentPerformanceRow>> GetStudentPerformanceAsync()
     {
         var students = await _userManager.GetUsersInRoleAsync(AppRoles.Student);
@@ -382,6 +407,106 @@ public class ReportsController : Controller
                 AveragePercent = avg
             };
         }).OrderByDescending(r => r.AveragePercent).ToList();
+    }
+
+    /// <summary>
+    /// Students enrolled in the lecturer's courses, with averages computed only from graded submissions
+    /// for assignments on those courses (no institution-wide or other lecturers' data).
+    /// </summary>
+    private async Task<List<ReportStudentPerformanceRow>> GetStudentPerformanceForLecturerAsync(string lecturerId)
+    {
+        var myCourseIds = await _db.Courses
+            .AsNoTracking()
+            .Where(c => c.LecturerId == lecturerId)
+            .Select(c => c.CourseId)
+            .ToListAsync();
+
+        if (myCourseIds.Count == 0)
+            return new List<ReportStudentPerformanceRow>();
+
+        var myAssignmentIds = await _db.Assignments
+            .AsNoTracking()
+            .Where(a => myCourseIds.Contains(a.CourseId))
+            .Select(a => a.AssignmentId)
+            .ToListAsync();
+
+        var studentIds = await _db.Enrollments
+            .AsNoTracking()
+            .Where(e => myCourseIds.Contains(e.CourseId))
+            .Select(e => e.StudentId)
+            .Distinct()
+            .ToListAsync();
+
+        if (studentIds.Count == 0)
+            return new List<ReportStudentPerformanceRow>();
+
+        if (myAssignmentIds.Count == 0)
+        {
+            var usersNoAssignments = await _db.Users
+                .AsNoTracking()
+                .Where(u => studentIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => (Name: u.FullName, Email: u.Email ?? ""));
+
+            return studentIds
+                .Select(id =>
+                {
+                    usersNoAssignments.TryGetValue(id, out var u);
+                    return new ReportStudentPerformanceRow
+                    {
+                        StudentName = u.Name ?? id,
+                        Email = u.Email,
+                        GradedCount = 0,
+                        AveragePercent = null
+                    };
+                })
+                .OrderBy(r => r.StudentName)
+                .ToList();
+        }
+
+        var graded = await (
+            from s in _db.Submissions.AsNoTracking()
+            join a in _db.Assignments.AsNoTracking() on s.AssignmentId equals a.AssignmentId
+            where studentIds.Contains(s.StudentId)
+                  && myAssignmentIds.Contains(s.AssignmentId)
+                  && s.Status == SubmissionStatus.Graded
+                  && s.Grade != null
+            select new { s.StudentId, s.Grade, a.MaxPoints }
+        ).ToListAsync();
+
+        var users = await _db.Users
+            .AsNoTracking()
+            .Where(u => studentIds.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id, u => (Name: u.FullName, Email: u.Email ?? ""));
+
+        return studentIds
+            .Select(id =>
+            {
+                var mine = graded.Where(x => x.StudentId == id).ToList();
+                users.TryGetValue(id, out var u);
+                var name = u.Name ?? id;
+                var email = u.Email;
+                if (mine.Count == 0)
+                {
+                    return new ReportStudentPerformanceRow
+                    {
+                        StudentName = name,
+                        Email = email,
+                        GradedCount = 0,
+                        AveragePercent = null
+                    };
+                }
+
+                var avg = mine.Average(x => (double)(x.Grade!.Value / x.MaxPoints * 100m));
+                return new ReportStudentPerformanceRow
+                {
+                    StudentName = name,
+                    Email = email,
+                    GradedCount = mine.Count,
+                    AveragePercent = avg
+                };
+            })
+            .OrderByDescending(r => r.AveragePercent)
+            .ToList();
     }
 
     private async Task<List<ReportLecturerWorkloadRow>> GetLecturerWorkloadAsync()
