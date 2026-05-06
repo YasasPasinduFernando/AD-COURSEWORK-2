@@ -104,7 +104,7 @@ public class MessagesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Reply(string id, string subject, string content, IFormFile? photo)
+    public async Task<IActionResult> Reply(string id, string content, IFormFile? photo)
     {
         var me = _userManager.GetUserId(User)!;
         if (!await CanCommunicateAsync(me, id))
@@ -119,11 +119,6 @@ public class MessagesController : Controller
         var body = (content ?? string.Empty).Trim();
         if (body.Length > 16000)
             body = body[..16000];
-
-        if (string.IsNullOrWhiteSpace(subject))
-            subject = "(no subject)";
-        if (subject.Length > 200)
-            subject = subject[..200];
 
         var imageToken = string.Empty;
         if (photo != null)
@@ -161,7 +156,7 @@ public class MessagesController : Controller
         {
             SenderId = me,
             ReceiverId = id,
-            Subject = subject.Trim(),
+            Subject = "conversation",
             Content = finalContent,
             SentAtUtc = DateTime.UtcNow,
             IsRead = false
