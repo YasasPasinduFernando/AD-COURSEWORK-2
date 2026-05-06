@@ -46,9 +46,6 @@
                     <div class="small text-muted">@Model.Conversations.Count conversation@(Model.Conversations.Count == 1 ? "" : "s")@(unreadTotal > 0 ? $" · {unreadTotal} unread" : "")</div>
                 </div>
             </div>
-            <a class="um-wa-iconbtn" asp-action="Compose" title="New message">
-                <i class="bi bi-pencil-square"></i>
-            </a>
         </div>
 
         <div class="um-wa-search">
@@ -95,7 +92,7 @@
     <section class="um-wa-main">
         <header class="um-wa-header">
             <div class="d-flex align-items-center gap-2 min-w-0">
-                <a class="d-lg-none um-wa-iconbtn" asp-action="Inbox" title="Back"><i class="bi bi-arrow-left"></i></a>
+                <a class="um-wa-iconbtn" asp-action="Inbox" title="Back to chats"><i class="bi bi-arrow-left"></i></a>
                 <div class="um-avatar avatar-lg @avatarCls">@Initials(Model.OtherUserName)</div>
                 <div class="min-w-0">
                     <div class="d-flex align-items-center gap-2">
@@ -116,10 +113,6 @@
                         }
                     </div>
                 </div>
-            </div>
-            <div class="d-flex align-items-center gap-1">
-                <button type="button" class="um-wa-iconbtn" title="Search in chat" id="searchInChat"><i class="bi bi-search"></i></button>
-                <a class="um-wa-iconbtn d-none d-md-inline-flex" asp-action="Inbox" title="Inbox"><i class="bi bi-inbox"></i></a>
             </div>
         </header>
 
@@ -265,20 +258,6 @@
                 });
             });
 
-            const sicb = document.getElementById('searchInChat');
-            sicb?.addEventListener('click', () => {
-                const q = prompt('Search in this conversation');
-                if (!q) return;
-                const needle = q.toLowerCase();
-                const rows = document.querySelectorAll('.um-wa-row');
-                let found = null;
-                rows.forEach(r => {
-                    const txt = r.innerText.toLowerCase();
-                    r.classList.toggle('um-wa-highlight', !!needle && txt.includes(needle));
-                    if (!found && needle && txt.includes(needle)) found = r;
-                });
-                if (found) found.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            });
         })();
     </script>
 }
