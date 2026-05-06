@@ -217,7 +217,10 @@
                                     </div>
                                     <div class="flex-grow-1 min-w-0">
                                         <div class="d-flex gap-2 align-items-center mb-1 flex-wrap">
-                                            <span class="badge text-bg-light border">@mt.CourseCode</span>
+                                            @if (!string.IsNullOrWhiteSpace(mt.CourseCode))
+                                            {
+                                                <span class="badge um-meet-code-badge">@mt.CourseCode</span>
+                                            }
                                             @if (canJoinNow)
                                             {
                                                 <span class="badge bg-success-subtle text-success-emphasis"><span class="um-pulse-dot"></span> Live now</span>
