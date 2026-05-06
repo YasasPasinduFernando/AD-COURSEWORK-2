@@ -300,7 +300,7 @@
                                 <tr>
                                     <td><span class="um-pill pill-info">@g.CourseCode</span></td>
                                     <td class="fw-medium">@g.Assignment</td>
-                                    <td><span class="um-pill @pillClass">@g.Grade / @g.MaxPoints · @pct%</span></td>
+                                    <td><span class="um-pill @pillClass">@($"{g.Grade:0.##} / {g.MaxPoints:0.##} · {pct}%")</span></td>
                                     <td class="small text-muted">@(string.IsNullOrWhiteSpace(g.FeedbackShort) ? "—" : g.FeedbackShort)</td>
                                 </tr>
                             }
