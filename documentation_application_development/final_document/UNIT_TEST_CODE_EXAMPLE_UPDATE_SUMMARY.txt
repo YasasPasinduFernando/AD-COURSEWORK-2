@@ -1,0 +1,46 @@
+UNIT TEST CODE EXAMPLE UPDATE SUMMARY
+UniManage – CS6004ES Application Development Coursework 2
+Date: 6 May 2026
+
+1. Current branch
+   - `unit-test` (branched from `main`).
+   - `git branch --show-current` = unit-test.
+   - Working tree status before this pass: clean.
+
+2. Test project created or updated
+   - `UniManage.Tests` (xUnit, .NET 8) already added to `AD COURSEWORK 2.sln`.
+   - Helper consolidated into `UniManage.Tests/Helpers/ValidationTestHelper.cs` (namespace `UniManage.Tests.Helpers`) with method `ValidateModel`.
+   - Per-view-model and per-utility test files merged into two consolidated classes to reduce noise.
+
+3. Test files added / replaced
+   - Added: `UniManage.Tests/Helpers/ValidationTestHelper.cs`.
+   - Added (consolidated): `UniManage.Tests/ViewModelValidationTests.cs` (covers `LoginViewModel`, `RegisterViewModel`, `CourseInputViewModel`, `AssignmentInputViewModel`, `MessageComposeViewModel`).
+   - Added (consolidated): `UniManage.Tests/InfrastructureUtilityTests.cs` (covers `CsvWriter`, `CalendarLink`, `MeetLinkGenerator`, `EmailTemplates.BuildPasswordResetEmail`, `SecurityHeadersMiddleware`, `SubmissionGradingRules`).
+   - Updated: `UniManage.Tests/AppRolesTests.cs` (renamed methods to match the requested style).
+   - Removed (now redundant): per-VM and per-utility test files (`LoginViewModelValidationTests.cs`, `RegisterViewModelValidationTests.cs`, `CourseInputViewModelValidationTests.cs`, `AssignmentInputViewModelValidationTests.cs`, `CsvWriterTests.cs`, `CalendarLinkTests.cs`, `EmailTemplatesTests.cs`, `SecurityHeadersMiddlewareTests.cs`, `SubmissionGradingRulesTests.cs`, root-level `ValidationTestHelper.cs`).
+
+4. Code examples document created
+   - `documentation_application_development/testing/UNIT_TEST_CODE_EXAMPLES.md` with five short snippets (ValidationTestHelper, AppRolesTests, LoginViewModel test, RegisterViewModel valid-input test, MeetLinkGenerator test). Each section lists file path, purpose, code block, and short explanation.
+
+5. Number of tests
+   - 28 passing test cases reported by `dotnet test` (5 of them are `[InlineData]` rows of one `[Theory]` method on `SubmissionGradingRules`).
+
+6. dotnet test result
+   - `Passed!  - Failed: 0, Passed: 28, Skipped: 0, Total: 28`
+   - Duration approximately 800 ms on the author machine (Debug build, net8.0).
+
+7. Documentation files updated on `unit-test`
+   - `documentation_application_development/testing/UNIT_TEST_EVIDENCE.md` (refreshed to match the new consolidated test classes and methods, branch policy reaffirmed).
+   - `documentation_application_development/testing/UNIT_TEST_CODE_EXAMPLES.md` (new).
+   - `documentation_application_development/final_document/UNIT_TEST_CODE_EXAMPLE_UPDATE_SUMMARY.txt` (this file).
+   - Chapter 15.10 of `Main_Application_Development_Report.md` was NOT changed on this branch. The `documentation` branch already contains Section 15.10 and Table 24; it should be re-synced from this evidence document by copying the updated `testing/` files when the next documentation pass runs on `documentation`.
+
+8. Remaining action: copy unit test evidence into main branch documentation
+   - Switch to `documentation` (or `main`, depending on which branch will publish the final Word/PDF) and copy the two files in `documentation_application_development/testing/` so the report appendix and the testing evidence file reflect the consolidated test list. For example:
+       git checkout documentation
+       git checkout unit-test -- documentation_application_development/testing/UNIT_TEST_EVIDENCE.md documentation_application_development/testing/UNIT_TEST_CODE_EXAMPLES.md
+       git commit -m "Sync unit-test evidence and code examples into documentation branch"
+   - Do NOT merge the entire `unit-test` branch into `documentation`; only the testing documentation files should travel.
+   - Merge `unit-test` into `main` only after a deliberate review when you want the test project to live on the main application line. Do not merge automatically.
+
+End of summary.

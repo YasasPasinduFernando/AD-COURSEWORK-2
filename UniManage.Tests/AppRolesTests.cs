@@ -7,23 +7,18 @@ namespace UniManage.Tests;
 public class AppRolesTests
 {
     [Fact]
-    public void Administrator_is_non_empty_stable_string()
+    public void AppRoles_ShouldContainExpectedRoleNames()
     {
         AppRoles.Administrator.Should().Be("Administrator");
-        AppRoles.Administrator.Should().NotBeNullOrWhiteSpace();
-    }
-
-    [Fact]
-    public void Lecturer_is_non_empty_stable_string()
-    {
         AppRoles.Lecturer.Should().Be("Lecturer");
-        AppRoles.Lecturer.Should().NotBeNullOrWhiteSpace();
+        AppRoles.Student.Should().Be("Student");
     }
 
     [Fact]
-    public void Student_is_non_empty_stable_string()
+    public void AppRoles_ShouldNotContainEmptyValues()
     {
-        AppRoles.Student.Should().Be("Student");
+        AppRoles.Administrator.Should().NotBeNullOrWhiteSpace();
+        AppRoles.Lecturer.Should().NotBeNullOrWhiteSpace();
         AppRoles.Student.Should().NotBeNullOrWhiteSpace();
     }
 }
