@@ -215,8 +215,8 @@
                                                 <span class="badge bg-success-subtle text-success-emphasis"><span class="um-pulse-dot"></span> Live now</span>
                                             }
                                         </div>
-                                        <div class="fw-bold text-dark text-truncate">@mt.Title</div>
-                                        <div class="small text-muted text-truncate"><i class="bi bi-person-video3 me-1"></i>@mt.LecturerName · @mt.DurationMinutes min</div>
+                                        <div class="fw-bold text-dark um-meet-title">@mt.Title</div>
+                                        <div class="small text-muted um-meet-meta"><i class="bi bi-person-video3 me-1"></i>@mt.LecturerName · @mt.DurationMinutes min</div>
                                         <a class="btn btn-sm @(canJoinNow ? "btn-success" : "btn-outline-primary") mt-2" asp-controller="Meetings" asp-action="Join" asp-route-id="@mt.MeetingId" target="_blank" rel="noopener">
                                             <i class="bi bi-box-arrow-up-right me-1"></i>Join
                                         </a>
