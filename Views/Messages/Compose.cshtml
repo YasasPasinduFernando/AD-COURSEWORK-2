@@ -12,7 +12,7 @@
         <div class="col-lg-8">
             <div class="um-hero-eyebrow">Messaging</div>
             <h1 style="font-size:1.55rem; margin-bottom:0.25rem;">New message</h1>
-            <p class="um-hero-sub mb-0">Reach out to a lecturer or classmate — they'll get an email notification if offline.</p>
+            <p class="um-hero-sub mb-0">Send a course-related message to an eligible recipient.</p>
         </div>
         <div class="col-lg-4 d-flex justify-content-lg-end">
             <a class="btn btn-outline-light" asp-action="Inbox"><i class="bi bi-arrow-left me-1"></i>Back to inbox</a>
@@ -20,92 +20,66 @@
     </div>
 </section>
 
-<div class="row g-4">
-    <div class="col-lg-4">
-        <div class="um-panel card border-0 h-100">
-            <div class="card-body">
-                <div class="um-section-title">Messaging tips</div>
-                <ul class="um-timeline mb-0">
-                    <li>
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Be clear &amp; concise</p>
-                        <div class="um-timeline-meta"><i class="bi bi-pencil-square me-1"></i>Use a descriptive subject so your recipient can find it easily.</div>
-                    </li>
-                    <li class="is-success">
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Stay professional</p>
-                        <div class="um-timeline-meta"><i class="bi bi-emoji-smile me-1"></i>Keep the tone respectful and constructive.</div>
-                    </li>
-                    <li class="is-warn">
-                        <span class="um-timeline-marker"></span>
-                        <p class="um-timeline-title">Give context</p>
-                        <div class="um-timeline-meta"><i class="bi bi-lightbulb me-1"></i>Mention the course code or assignment for faster replies.</div>
-                    </li>
-                </ul>
+<div class="um-panel card border-0">
+    <div class="card-body">
+        @if (recipientCount == 0)
+        {
+            <div class="um-inline-alert warn mb-3">
+                <i class="bi bi-exclamation-triangle"></i>
+                <div>
+                    <strong>No eligible recipients yet.</strong>
+                    <div class="small">Students: enrol in a course first. Lecturers: wait for enrolments to begin.</div>
+                </div>
             </div>
-        </div>
-    </div>
+            <a class="btn btn-outline-primary" asp-action="Inbox"><i class="bi bi-arrow-left me-1"></i>Back to inbox</a>
+        }
+        else
+        {
+            <div class="small text-muted mb-3">
+                <i class="bi bi-info-circle me-1"></i>Use a clear subject and include course context where relevant.
+            </div>
+            <form asp-action="Compose" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="col-lg-8">
-        <div class="um-panel card border-0">
-            <div class="card-body">
-                @if (recipientCount == 0)
-                {
-                    <div class="um-inline-alert warn mb-3">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <div>
-                            <strong>No eligible recipients yet.</strong>
-                            <div class="small">Students: enroll in a course first. Lecturers: wait for enrollments to begin.</div>
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">To</label>
+                    <div class="um-input-group">
+                        <span class="um-input-ico"><i class="bi bi-person-fill"></i></span>
+                        <select asp-for="RecipientId" asp-items="recipients" class="form-select">
+                            <option value="">Select recipient</option>
+                        </select>
                     </div>
-                    <a class="btn btn-outline-primary" asp-action="Inbox"><i class="bi bi-arrow-left me-1"></i>Back to inbox</a>
-                }
-                else
-                {
-                    <form asp-action="Compose" method="post">
-                        @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <span asp-validation-for="RecipientId" class="text-danger small"></span>
+                </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">To</label>
-                            <div class="um-input-group">
-                                <span class="um-input-ico"><i class="bi bi-person-fill"></i></span>
-                                <select asp-for="RecipientId" asp-items="recipients" class="form-select">
-                                    <option value="">Select recipient</option>
-                                </select>
-                            </div>
-                            <span asp-validation-for="RecipientId" class="text-danger small"></span>
-                        </div>
+                <div class="mb-3">
+                    <label asp-for="Subject" class="form-label small fw-semibold">Subject</label>
+                    <div class="um-input-group">
+                        <span class="um-input-ico"><i class="bi bi-card-heading"></i></span>
+                        <input asp-for="Subject" class="form-control" placeholder="e.g. Question about AD602 coursework" maxlength="200" />
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span asp-validation-for="Subject" class="text-danger small"></span>
+                        <span class="small text-muted" id="subjLen">0/200</span>
+                    </div>
+                </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Subject" class="form-label small fw-semibold">Subject</label>
-                            <div class="um-input-group">
-                                <span class="um-input-ico"><i class="bi bi-card-heading"></i></span>
-                                <input asp-for="Subject" class="form-control" placeholder="e.g. Question about CS101 assignment" maxlength="200" />
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span asp-validation-for="Subject" class="text-danger small"></span>
-                                <span class="small text-muted" id="subjLen">0/200</span>
-                            </div>
-                        </div>
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label small fw-semibold">Message</label>
+                    <textarea asp-for="Content" class="form-control" rows="9" maxlength="16000" placeholder="Write your message here..."></textarea>
+                    <div class="d-flex justify-content-between">
+                        <span asp-validation-for="Content" class="text-danger small"></span>
+                        <span class="small text-muted" id="contentLen">0 characters</span>
+                    </div>
+                </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Content" class="form-label small fw-semibold">Message</label>
-                            <textarea asp-for="Content" class="form-control" rows="9" maxlength="16000" placeholder="Write your message here..."></textarea>
-                            <div class="d-flex justify-content-between">
-                                <span asp-validation-for="Content" class="text-danger small"></span>
-                                <span class="small text-muted" id="contentLen">0 characters</span>
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-2 flex-wrap justify-content-end">
-                            <a class="btn btn-outline-secondary" asp-action="Inbox"><i class="bi bi-x-lg me-1"></i>Cancel</a>
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill me-1"></i>Send message</button>
-                        </div>
-                    </form>
-                }
-            </div>
-        </div>
+                <div class="d-flex gap-2 flex-wrap justify-content-end">
+                    <a class="btn btn-outline-secondary" asp-action="Inbox"><i class="bi bi-x-lg me-1"></i>Cancel</a>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill me-1"></i>Send message</button>
+                </div>
+            </form>
+        }
     </div>
 </div>
 

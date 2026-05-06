@@ -3361,6 +3361,19 @@ html, body { overflow-x: hidden; }
     word-break: break-word;
     padding-right: 50px;
 }
+.um-wa-image-wrap {
+    display: inline-block;
+    margin-top: .4rem;
+    border-radius: .7rem;
+    overflow: hidden;
+    border: 1px solid rgba(15, 23, 42, .12);
+}
+.um-wa-image {
+    display: block;
+    max-width: min(260px, 60vw);
+    max-height: 260px;
+    object-fit: cover;
+}
 .um-wa-meta {
     display: inline-flex;
     align-items: center;
@@ -3435,6 +3448,15 @@ html, body { overflow-x: hidden; }
     color: var(--wa-muted);
     margin: 0 .25rem;
     pointer-events: none;
+}
+.um-wa-photo-name {
+    align-self: center;
+    font-size: .72rem;
+    color: var(--wa-muted);
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .um-wa-send {
     width: 2.6rem;

@@ -139,6 +139,24 @@
                 foreach (var m in ordered)
                 {
                     var local = m.SentAtUtc.ToLocalTime();
+                    const string imageTokenPrefix = "[[img:";
+                    var rawContent = m.Content ?? string.Empty;
+                    string? imageUrl = null;
+                    var textContent = rawContent;
+                    var lines = rawContent.Replace("\r\n", "\n").Split('\n');
+                    if (lines.Length > 0)
+                    {
+                        var lastLine = lines[^1].Trim();
+                        if (lastLine.StartsWith(imageTokenPrefix, StringComparison.OrdinalIgnoreCase) && lastLine.EndsWith("]]", StringComparison.Ordinal))
+                        {
+                            var candidate = lastLine[imageTokenPrefix.Length..^2];
+                            if (!string.IsNullOrWhiteSpace(candidate) && candidate.StartsWith("/uploads/messages/", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imageUrl = candidate;
+                                textContent = string.Join('\n', lines.Take(lines.Length - 1)).Trim();
+                            }
+                        }
+                    }
                     if (lastDay == null || lastDay.Value.Date != local.Date)
                     {
                         <div class="um-wa-day"><span>@HumanDay(local)</span></div>
@@ -151,7 +169,16 @@
                             {
                                 <div class="um-wa-subj">@m.Subject</div>
                             }
-                            <div class="um-wa-text">@m.Content</div>
+                            @if (!string.IsNullOrWhiteSpace(textContent))
+                            {
+                                <div class="um-wa-text">@textContent</div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(imageUrl))
+                            {
+                                <a href="@imageUrl" target="_blank" rel="noopener noreferrer" class="um-wa-image-wrap">
+                                    <img src="@imageUrl" alt="Chat image" class="um-wa-image" />
+                                </a>
+                            }
                             <div class="um-wa-meta">
                                 <span class="um-wa-time">@local.ToString("h:mm tt")</span>
                                 @if (m.IsMine)
@@ -172,14 +199,15 @@
             }
         </div>
 
-        <form class="um-wa-composer" asp-action="Reply" asp-route-id="@Model.OtherUserId" method="post" id="replyForm">
+        <form class="um-wa-composer" asp-action="Reply" asp-route-id="@Model.OtherUserId" method="post" id="replyForm" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <input type="hidden" name="subject" value="@(string.IsNullOrEmpty(threadSubject) ? "Re: conversation" : "Re: " + threadSubject)" />
-            <button type="button" class="um-wa-iconbtn" title="Emoji" disabled><i class="bi bi-emoji-smile"></i></button>
-            <button type="button" class="um-wa-iconbtn" title="Attach" disabled><i class="bi bi-paperclip"></i></button>
+            <input type="file" id="photoInput" name="photo" accept="image/png,image/jpeg,image/gif,image/webp" class="d-none" />
+            <button type="button" class="um-wa-iconbtn" title="Upload photo" id="photoBtn"><i class="bi bi-image"></i></button>
             <textarea name="content" id="replyContent"
-                      maxlength="16000" required rows="1"
+                      maxlength="16000" rows="1"
                       placeholder="Type a message"></textarea>
+            <span class="um-wa-photo-name" id="photoName" aria-live="polite"></span>
             <span class="um-wa-counter" id="replyCharCount" aria-hidden="true">0</span>
             <button type="submit" class="um-wa-send" id="replyBtn" title="Send (Ctrl+Enter)">
                 <i class="bi bi-send-fill"></i>
@@ -198,6 +226,9 @@
             const counter = document.getElementById('replyCharCount');
             const form = document.getElementById('replyForm');
             const btn = document.getElementById('replyBtn');
+            const photoBtn = document.getElementById('photoBtn');
+            const photoInput = document.getElementById('photoInput');
+            const photoName = document.getElementById('photoName');
 
             function autosize() {
                 if (!ta) return;
@@ -207,10 +238,18 @@
             function update() {
                 if (!ta) return;
                 if (counter) counter.textContent = (ta.value.length || 0);
-                if (btn) btn.disabled = ta.value.trim().length === 0;
+                const hasText = ta.value.trim().length > 0;
+                const hasPhoto = !!(photoInput && photoInput.files && photoInput.files.length > 0);
+                if (btn) btn.disabled = !hasText && !hasPhoto;
                 autosize();
             }
             ta?.addEventListener('input', update);
+            photoBtn?.addEventListener('click', () => photoInput?.click());
+            photoInput?.addEventListener('change', () => {
+                const file = (photoInput.files && photoInput.files.length > 0) ? photoInput.files[0] : null;
+                if (photoName) photoName.textContent = file ? file.name : '';
+                update();
+            });
             update();
 
             ta?.addEventListener('keydown', e => {
