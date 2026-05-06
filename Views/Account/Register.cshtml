@@ -51,15 +51,23 @@
                         </div>
 
                         <div class="row g-3">
-                            <div class="col-md-7">
+                            <div class="col-md-6">
+                                <label asp-for="UserName" class="form-label fw-semibold"></label>
+                                <div class="um-input-group">
+                                    <i class="bi bi-at um-input-ico"></i>
+                                    <input asp-for="UserName" class="form-control" autocomplete="username" placeholder="your.username" />
+                                </div>
+                                <span asp-validation-for="UserName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
                                 <label asp-for="Email" class="form-label fw-semibold"></label>
                                 <div class="um-input-group">
                                     <i class="bi bi-envelope um-input-ico"></i>
-                                    <input asp-for="Email" class="form-control" autocomplete="username" placeholder="name@university.edu" />
+                                    <input asp-for="Email" class="form-control" autocomplete="email" placeholder="name@university.edu" />
                                 </div>
                                 <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-12">
                                 <label asp-for="Phone" class="form-label fw-semibold"></label>
                                 <div class="um-input-group">
                                     <i class="bi bi-telephone um-input-ico"></i>

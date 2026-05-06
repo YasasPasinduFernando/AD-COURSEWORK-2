@@ -9,11 +9,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace AD_COURSEWORK_2.Controllers;
 
 public class AccountController : Controller
 {
+    private static readonly Regex UsernameRegex = new("^[A-Za-z0-9._-]{3,30}$", RegexOptions.Compiled);
+
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IEmailService _emailService;
@@ -50,9 +53,38 @@ public class AccountController : Controller
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
+        model.UserName = model.UserName?.Trim() ?? string.Empty;
+        model.Email = model.Email?.Trim() ?? string.Empty;
+
         if (!RegisterViewModel.AllowedRoles.Contains(model.Role))
         {
             ModelState.AddModelError(nameof(model.Role), "Invalid role.");
+        }
+
+        if (!UsernameRegex.IsMatch(model.UserName))
+        {
+            ModelState.AddModelError(nameof(model.UserName), "Invalid username format. Use 3-30 letters, numbers, underscore (_), dot (.), or hyphen (-).");
+        }
+
+        if (model.UserName.Contains('@'))
+        {
+            ModelState.AddModelError(nameof(model.UserName), "Username must not be an email address.");
+        }
+
+        var existingByUserName = !string.IsNullOrWhiteSpace(model.UserName)
+            ? await _userManager.FindByNameAsync(model.UserName)
+            : null;
+        if (existingByUserName != null)
+        {
+            ModelState.AddModelError(nameof(model.UserName), "Username already exists.");
+        }
+
+        var existingByEmail = !string.IsNullOrWhiteSpace(model.Email)
+            ? await _userManager.FindByEmailAsync(model.Email)
+            : null;
+        if (existingByEmail != null)
+        {
+            ModelState.AddModelError(nameof(model.Email), "Email already exists.");
         }
 
         if (!ModelState.IsValid)
@@ -60,7 +92,7 @@ public class AccountController : Controller
 
         var user = new ApplicationUser
         {
-            UserName = model.Email,
+            UserName = model.UserName,
             Email = model.Email,
             EmailConfirmed = true,
             FullName = model.FullName,
@@ -73,7 +105,16 @@ public class AccountController : Controller
         {
             await _audit.LogAsync(AuditCategories.Auth, "Register failed", model.Email, success: false);
             foreach (var e in result.Errors)
-                ModelState.AddModelError(string.Empty, e.Description);
+            {
+                if (e.Code.Contains("DuplicateUserName", StringComparison.OrdinalIgnoreCase))
+                    ModelState.AddModelError(nameof(model.UserName), "Username already exists.");
+                else if (e.Code.Contains("DuplicateEmail", StringComparison.OrdinalIgnoreCase))
+                    ModelState.AddModelError(nameof(model.Email), "Email already exists.");
+                else if (e.Code.Contains("InvalidUserName", StringComparison.OrdinalIgnoreCase))
+                    ModelState.AddModelError(nameof(model.UserName), "Invalid username format.");
+                else
+                    ModelState.AddModelError(string.Empty, e.Description);
+            }
             return View(model);
         }
 
@@ -109,23 +150,27 @@ public class AccountController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var user = await _userManager.FindByEmailAsync(model.Email);
+        var identifier = model.LoginIdentifier?.Trim() ?? string.Empty;
+        var user = identifier.Contains('@')
+            ? await _userManager.FindByEmailAsync(identifier)
+            : await _userManager.FindByNameAsync(identifier);
+
         if (user == null)
         {
             await _audit.LogAsync(AuditCategories.Auth, "Login failed",
-                $"Unknown user: {model.Email}", success: false);
+                "Unknown email/username", success: false);
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
         }
 
         var result = await _signInManager.PasswordSignInAsync(
-            user, model.Password, model.RememberMe, lockoutOnFailure: true);
+            user.UserName!, model.Password, model.RememberMe, lockoutOnFailure: true);
 
         if (result.IsLockedOut)
         {
             await _audit.LogAsync(AuditCategories.Auth, "Login locked out",
-                $"{user.Email} - too many attempts",
-                success: false, userId: user.Id, userName: user.Email);
+                "Too many failed attempts",
+                success: false, userId: user.Id, userName: user.UserName ?? user.Email);
             ModelState.AddModelError(string.Empty,
                 "Account temporarily locked due to repeated failed attempts. Try again in 15 minutes.");
             return View(model);
@@ -134,14 +179,14 @@ public class AccountController : Controller
         if (!result.Succeeded)
         {
             await _audit.LogAsync(AuditCategories.Auth, "Login failed",
-                $"Wrong password: {user.Email}",
-                success: false, userId: user.Id, userName: user.Email);
+                "Invalid credentials",
+                success: false, userId: user.Id, userName: user.UserName ?? user.Email);
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
         }
 
         await _audit.LogAsync(AuditCategories.Auth, "Login success",
-            user.Email, userId: user.Id, userName: user.Email);
+            "Signed in", userId: user.Id, userName: user.UserName ?? user.Email);
 
         if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
         {
@@ -215,17 +260,33 @@ public class AccountController : Controller
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
-            await _audit.LogAsync(AuditCategories.Auth, "Google login rejected",
-                $"Unknown email: {email}", success: false);
-            TempData["Error"] = "Registration required. Your Google account is not linked to an LMS user.";
-            _logger.LogInformation("Google login rejected for unknown email {Email}", email);
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-            return RedirectToAction(nameof(AccessDenied));
+            var generatedUserName = await GenerateUniqueUserNameFromEmailAsync(email);
+            user = new ApplicationUser
+            {
+                UserName = generatedUserName,
+                Email = email,
+                EmailConfirmed = true,
+                FullName = name
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                await _audit.LogAsync(AuditCategories.Auth, "Google login create user failed", email, success: false);
+                TempData["Error"] = "Unable to create account from Google sign-in. Please contact support.";
+                await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                return RedirectToAction(nameof(Login), new { returnUrl });
+            }
+
+            await _userManager.AddToRoleAsync(user, AppRoles.Student);
+            await _audit.LogAsync(AuditCategories.Auth, "Google user created",
+                email, userId: user.Id, userName: user.Email);
+            _logger.LogInformation("Google user created for {Email}", email);
         }
 
         await _audit.LogAsync(AuditCategories.Auth, "Google login success",
             email, userId: user.Id, userName: email);
-        _logger.LogInformation("Google login success for {Email}, Name: {Name}, GoogleId: {GoogleUserId}", email, name, googleUserId);
+        _logger.LogInformation("Google login success for {Email}, Name: {Name}", email, name);
         await _signInManager.SignInAsync(user, isPersistent: false);
         await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -386,5 +447,32 @@ public class AccountController : Controller
             user.Email,
             "UniManage login alert",
             EmailTemplates.BuildLoginAlertEmail(user.FullName, DateTime.Now, ip, userAgent));
+    }
+
+    private async Task<string> GenerateUniqueUserNameFromEmailAsync(string email)
+    {
+        var prefix = email.Split('@', 2)[0].Trim().ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(prefix))
+            prefix = "user";
+
+        prefix = Regex.Replace(prefix, @"[^a-z0-9._-]", "-");
+        prefix = Regex.Replace(prefix, @"[-_.]{2,}", "-").Trim('-', '_', '.');
+        if (prefix.Length < 3)
+            prefix = prefix.PadRight(3, 'x');
+        if (prefix.Length > 30)
+            prefix = prefix[..30];
+
+        var candidate = prefix;
+        var counter = 1;
+        while (await _userManager.FindByNameAsync(candidate) != null)
+        {
+            var suffix = $"-{counter}";
+            var maxBaseLength = 30 - suffix.Length;
+            var basePart = prefix.Length > maxBaseLength ? prefix[..maxBaseLength] : prefix;
+            candidate = basePart + suffix;
+            counter++;
+        }
+
+        return candidate;
     }
 }

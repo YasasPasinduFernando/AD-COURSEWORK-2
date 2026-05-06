@@ -45,15 +45,15 @@
                     <form asp-action="Login" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="ReturnUrl" />
-                        <div asp-validation-summary="ModelOnly" class="um-inline-alert danger d-none"></div>
+                        <div asp-validation-summary="ModelOnly" class="um-inline-alert danger"></div>
 
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <label asp-for="LoginIdentifier" class="form-label fw-semibold"></label>
                             <div class="um-input-group">
-                                <i class="bi bi-envelope um-input-ico"></i>
-                                <input asp-for="Email" class="form-control" autocomplete="username" placeholder="name@university.edu" />
+                                <i class="bi bi-person-badge um-input-ico"></i>
+                                <input asp-for="LoginIdentifier" class="form-control" autocomplete="username" placeholder="name@university.edu or your.username" />
                             </div>
-                            <span asp-validation-for="Email" class="text-danger small"></span>
+                            <span asp-validation-for="LoginIdentifier" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-2">

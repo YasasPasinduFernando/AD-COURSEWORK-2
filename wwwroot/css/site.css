@@ -317,6 +317,13 @@ main.um-main {
   border-bottom-width: 1px;
 }
 
+.um-course-code {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
+  font-weight: 700;
+}
+
 .form-control:focus,
 .form-select:focus {
   border-color: var(--um-accent);
@@ -3492,6 +3499,13 @@ html, body { overflow-x: hidden; }
     margin-top: 2px;
     letter-spacing: .06em;
     text-transform: uppercase;
+}
+
+.um-meet-code-badge {
+    background: #eef2ff;
+    color: #1e3a8a;
+    border: 1px solid #c7d2fe;
+    font-weight: 700;
 }
 
 .um-pulse-dot {
