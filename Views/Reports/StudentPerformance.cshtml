@@ -1,7 +1,9 @@
 @model List<ReportStudentPerformanceRow>
 @using System.Text.Json
+@using AD_COURSEWORK_2.Models
 @{
     ViewData["Title"] = "Student performance";
+    var lecturerScoped = User.IsInRole(AppRoles.Lecturer) && !User.IsInRole(AppRoles.Administrator);
     var withGrades = Model.Where(r => r.AveragePercent.HasValue).Take(15).ToList();
     var labels = withGrades.Select(r => r.StudentName).ToList();
     var values = withGrades.Select(r => Math.Round(r.AveragePercent!.Value, 1)).ToList();
@@ -10,12 +12,24 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
     <div>
-        <h1 class="h3 mb-0">Student performance</h1>
-        <p class="text-muted small mb-0">Cohort overall average: <strong>@overallAvg.ToString("0.0")%</strong></p>
+        <h1 class="h3 mb-0">@(lecturerScoped ? "My students' performance" : "Student performance")</h1>
+        <p class="text-muted small mb-0">
+            @if (lecturerScoped)
+            {
+                <text>Students enrolled in your courses. Overall average (your assignments only): <strong>@overallAvg.ToString("0.0")%</strong></text>
+            }
+            else
+            {
+                <text>Cohort overall average: <strong>@overallAvg.ToString("0.0")%</strong></text>
+            }
+        </p>
     </div>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-success btn-sm" asp-action="StudentPerformanceCsv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
-        <a class="btn btn-danger btn-sm" asp-action="StudentPerformancePdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
+    <div class="d-flex gap-2 flex-wrap">
+        @if (!lecturerScoped)
+        {
+            <a class="btn btn-outline-success btn-sm" asp-action="StudentPerformanceCsv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+            <a class="btn btn-danger btn-sm" asp-action="StudentPerformancePdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
+        }
         <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
     </div>
 </div>
