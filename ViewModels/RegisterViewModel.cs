@@ -11,6 +11,11 @@ public class RegisterViewModel : IValidatableObject
     public string FullName { get; set; } = string.Empty;
 
     [Required]
+    [StringLength(30, MinimumLength = 3, ErrorMessage = "Username must be 3 to 30 characters.")]
+    [Display(Name = "Username")]
+    public string UserName { get; set; } = string.Empty;
+
+    [Required]
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 
@@ -45,5 +50,13 @@ public class RegisterViewModel : IValidatableObject
         var err = DateOfBirthRules.ValidateOptional(DateOfBirth);
         if (err != null)
             yield return new ValidationResult(err, new[] { nameof(DateOfBirth) });
+
+        var value = UserName?.Trim() ?? string.Empty;
+        if (value.Contains('@'))
+        {
+            yield return new ValidationResult(
+                "Username must not be an email address.",
+                new[] { nameof(UserName) });
+        }
     }
 }

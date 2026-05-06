@@ -488,7 +488,7 @@ public class DashboardController : Controller
             },
             Tone = a.Success ? "info" : "danger",
             Title = $"{a.Action}",
-            Detail = $"{a.UserName ?? "system"} · {a.Detail}",
+            Detail = BuildAdminActivityDetail(a),
             WhenUtc = a.CreatedAtUtc
         }).ToList();
 
@@ -511,6 +511,30 @@ public class DashboardController : Controller
     }
 
     private sealed record CalendarItem(DateTime WhenUtc, string Title, string Detail, DashboardCalendarEventKind Kind);
+
+    private static string BuildAdminActivityDetail(AuditLog log)
+    {
+        var actor = string.IsNullOrWhiteSpace(log.UserName) ? "system" : log.UserName!;
+        var detail = log.Detail?.Trim();
+        if (string.IsNullOrWhiteSpace(detail))
+            return actor;
+
+        // Hide noisy/sensitive auth details in dashboard feed.
+        if (string.Equals(log.Category, AuditCategories.Auth, StringComparison.OrdinalIgnoreCase))
+        {
+            if (string.Equals(log.Action, "Login failed", StringComparison.OrdinalIgnoreCase))
+                return $"{actor} · Invalid credentials";
+            if (string.Equals(log.Action, "Login success", StringComparison.OrdinalIgnoreCase))
+                return $"{actor} · Signed in";
+            if (string.Equals(log.Action, "Login locked out", StringComparison.OrdinalIgnoreCase))
+                return $"{actor} · Account locked";
+        }
+
+        if (string.Equals(detail, actor, StringComparison.OrdinalIgnoreCase))
+            return actor;
+
+        return $"{actor} · {detail}";
+    }
 
     private static DashboardCalendarModel BuildCalendar(int year, int month, IEnumerable<CalendarItem> items)
     {
