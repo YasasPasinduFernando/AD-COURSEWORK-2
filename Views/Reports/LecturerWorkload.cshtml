@@ -19,11 +19,9 @@
         <a class="btn btn-danger btn-sm" asp-action="LecturerWorkloadPdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
         @if (admin)
         {
-            <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
         }
         else
         {
-            <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Reports</a>
             <a class="btn btn-outline-secondary btn-sm" asp-controller="Dashboard" asp-action="Lecturer">Dashboard</a>
         }
     </div>
@@ -40,7 +38,7 @@
 
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-        <table class="table mb-0">
+        <table class="table table-um mb-0 align-middle">
             <thead class="table-light">
                 <tr>
                     <th>Lecturer</th>

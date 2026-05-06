@@ -8,6 +8,11 @@
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    var isHomePage = currentController.Equals("Home", StringComparison.OrdinalIgnoreCase)
+                     && currentAction.Equals("Index", StringComparison.OrdinalIgnoreCase);
+    var hasBuiltInBack = currentController.Equals("Messages", StringComparison.OrdinalIgnoreCase)
+                         && currentAction.Equals("Thread", StringComparison.OrdinalIgnoreCase);
+    var showGlobalBack = !isHomePage && !hasBuiltInBack;
     string NavClass(string controller, string? action = null)
     {
         var isActive = currentController.Equals(controller, StringComparison.OrdinalIgnoreCase)
@@ -152,6 +157,17 @@
 
     <main class="um-main py-4" id="main-content" tabindex="-1">
         <div class="container">
+            @if (showGlobalBack)
+            {
+                <div class="mb-3">
+                    <a class="um-page-back"
+                       href="@Url.Action("Index", "Dashboard")"
+                       onclick="if(window.history.length > 1){ window.history.back(); return false; }">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Back</span>
+                    </a>
+                </div>
+            }
             <partial name="_Alerts" />
             @RenderBody()
         </div>
