@@ -11,10 +11,17 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
       # ASP.NET Core maps this to ConnectionStrings:DefaultConnection.
-      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=unimanage;User=appuser;Password=apppassword;TreatTinyAsBoolean=true;CharSet=utf8mb4;
-      # Optional runtime secrets should also be supplied as environment variables:
-      # Email__Password: ""
-      # Authentication__Google__ClientSecret: ""
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=${MYSQL_DATABASE:-unimanage};User=${MYSQL_USER:-appuser};Password=${MYSQL_PASSWORD:-apppassword};TreatTinyAsBoolean=true;CharSet=utf8mb4;
+      # Set these in a server-side .env file or CI/CD secret store. Do not commit real credentials.
+      - Authentication__Google__ClientId=${GOOGLE_CLIENT_ID:-}
+      - Authentication__Google__ClientSecret=${GOOGLE_CLIENT_SECRET:-}
+      - Email__Host=${SMTP_HOST:-}
+      - Email__Port=${SMTP_PORT:-587}
+      - Email__EnableSsl=${SMTP_ENABLE_SSL:-true}
+      - Email__SenderName=${SMTP_SENDER_NAME:-UniManage LMS}
+      - Email__SenderEmail=${SMTP_SENDER_EMAIL:-}
+      - Email__Username=${SMTP_USERNAME:-}
+      - Email__Password=${SMTP_PASSWORD:-}
     ports:
       - "8080:80"
     restart: unless-stopped
@@ -22,16 +29,16 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      - MYSQL_DATABASE=unimanage
-      - MYSQL_USER=appuser
-      - MYSQL_PASSWORD=apppassword
-      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-unimanage}
+      - MYSQL_USER=${MYSQL_USER:-appuser}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-apppassword}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpassword}
     ports:
       - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -prootpassword"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
