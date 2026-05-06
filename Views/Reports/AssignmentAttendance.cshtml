@@ -15,7 +15,6 @@
     <div class="d-flex gap-2 flex-wrap">
         <a class="btn btn-outline-success btn-sm" asp-action="AssignmentAttendanceCsv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
         <a class="btn btn-danger btn-sm" asp-action="AssignmentAttendancePdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
-        <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
     </div>
 </div>
 
@@ -60,7 +59,7 @@
 
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-        <table class="table mb-0 align-middle">
+        <table class="table table-um mb-0 align-middle">
             <thead class="table-light">
                 <tr>
                     <th>Code</th>
@@ -82,7 +81,7 @@
                     var rate = (int)Math.Round(r.AttendanceRate);
                     var due = r.DueDateUtc.ToLocalTime();
                     <tr>
-                        <td><span class="badge bg-primary-subtle text-primary-emphasis">@r.CourseCode</span></td>
+                        <td><span class="badge um-course-code">@r.CourseCode</span></td>
                         <td class="fw-medium">@r.AssignmentTitle</td>
                         <td><small class="text-muted">@due.ToString("MMM d, yyyy")</small></td>
                         <td class="text-end">@r.Enrolled</td>
@@ -90,7 +89,7 @@
                         <td class="text-end fw-bold text-warning">@r.Missing</td>
                         <td style="min-width:200px;">
                             <div class="d-flex align-items-center gap-2">
-                                <div class="progress flex-grow-1" style="height:8px;">
+                                <div class="progress flex-grow-1 um-report-progress">
                                     <div class="progress-bar @(rate >= 75 ? "bg-success" : rate >= 50 ? "bg-primary" : rate >= 25 ? "bg-warning" : "bg-danger")"
                                          style="width:@(Math.Min(100, rate))%;"></div>
                                 </div>

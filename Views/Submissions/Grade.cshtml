@@ -1,6 +1,9 @@
+@using AD_COURSEWORK_2.Infrastructure
 @model GradeSubmissionViewModel
 @{
     ViewData["Title"] = "Grade submission";
+    var currentLetter = GradeBandHelper.ToLetter(Model.Grade, Model.MaxPoints);
+    var currentPercentage = GradeBandHelper.ToPercentage(Model.Grade, Model.MaxPoints);
 }
 
 <h1 class="h3 mb-1">Grade submission</h1>
@@ -29,11 +32,12 @@
                     <input type="hidden" asp-for="AssignmentId" />
                     <input type="hidden" asp-for="MaxPoints" />
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                    <p class="small text-muted">Maximum points: @Model.MaxPoints</p>
+                    <p class="small text-muted">Maximum points: @Model.MaxPoints.ToString("0.##")</p>
                     <div class="mb-3">
                         <label asp-for="Grade" class="form-label"></label>
                         <input asp-for="Grade" class="form-control" />
                         <span asp-validation-for="Grade" class="text-danger"></span>
+                        <div class="form-text">Band preview: <strong id="gradeBandPreview">@currentLetter</strong> (<span id="gradePercentPreview">@currentPercentage.ToString("0.##")</span>%)</div>
                     </div>
                     <div class="mb-3">
                         <label asp-for="Feedback" class="form-label"></label>
@@ -50,4 +54,32 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const gradeInput = document.getElementById('Grade');
+            const maxPoints = Number('@Model.MaxPoints'.replace(',', '.')) || 0;
+            const bandEl = document.getElementById('gradeBandPreview');
+            const pctEl = document.getElementById('gradePercentPreview');
+
+            function letterFromPercent(p) {
+                if (p >= 85) return 'A+';
+                if (p >= 75) return 'A';
+                if (p >= 65) return 'B';
+                if (p >= 55) return 'C';
+                if (p >= 45) return 'D';
+                return 'F';
+            }
+
+            function refreshPreview() {
+                if (!gradeInput || !bandEl || !pctEl || maxPoints <= 0) return;
+                const grade = Number((gradeInput.value || '0').replace(',', '.')) || 0;
+                const pct = Math.max(0, (grade / maxPoints) * 100);
+                pctEl.textContent = pct.toFixed(2).replace(/\.00$/, '');
+                bandEl.textContent = letterFromPercent(pct);
+            }
+
+            gradeInput?.addEventListener('input', refreshPreview);
+            refreshPreview();
+        })();
+    </script>
 }

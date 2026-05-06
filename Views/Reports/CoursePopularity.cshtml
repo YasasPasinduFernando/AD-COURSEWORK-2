@@ -30,7 +30,6 @@
             <a class="btn btn-outline-success btn-sm" asp-action="CoursePopularityCsv"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
             <a class="btn btn-danger btn-sm" asp-action="CoursePopularityPdf"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
         }
-        <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
     </div>
 </div>
 
@@ -45,7 +44,7 @@
 
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-        <table class="table mb-0">
+        <table class="table table-um mb-0 align-middle">
             <thead class="table-light">
                 <tr>
                     <th>Code</th>
@@ -64,13 +63,13 @@
                 {
                     var pct = (int)Math.Round(r.FillRate * 100);
                     <tr>
-                        <td><span class="badge bg-primary-subtle text-primary-emphasis">@r.Code</span></td>
+                        <td><span class="badge um-course-code">@r.Code</span></td>
                         <td>@r.Name</td>
                         <td>@r.EnrollmentCount</td>
                         <td>@r.Capacity</td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <div class="progress flex-grow-1" style="height: 6px;">
+                                <div class="progress flex-grow-1 um-report-progress">
                                     <div class="progress-bar @(pct >= 90 ? "bg-danger" : pct >= 60 ? "bg-warning" : "bg-success")" style="width:@(Math.Min(100, pct))%;"></div>
                                 </div>
                                 <span class="small">@pct%</span>

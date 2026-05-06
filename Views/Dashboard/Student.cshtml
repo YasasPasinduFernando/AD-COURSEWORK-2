@@ -1,5 +1,6 @@
 @model StudentDashboardViewModel
 @using System.Text.Json
+@using AD_COURSEWORK_2.Infrastructure
 @{
     ViewData["Title"] = "Student dashboard";
     var firstName = (User.Identity?.Name ?? "Student").Split(' ', '@')[0];
@@ -297,10 +298,13 @@
                             {
                                 var pct = g.Grade.HasValue && g.MaxPoints > 0 ? (int)Math.Round((double)(g.Grade!.Value / g.MaxPoints) * 100) : 0;
                                 var pillClass = pct >= 75 ? "pill-success" : pct >= 50 ? "pill-info" : pct > 0 ? "pill-warn" : "pill-muted";
+                                var letter = g.Grade.HasValue && g.MaxPoints > 0
+                                    ? GradeBandHelper.ToLetter(g.Grade.Value, g.MaxPoints)
+                                    : null;
                                 <tr>
                                     <td><span class="um-pill pill-info">@g.CourseCode</span></td>
                                     <td class="fw-medium">@g.Assignment</td>
-                                    <td><span class="um-pill @pillClass">@($"{g.Grade:0.##} / {g.MaxPoints:0.##} · {pct}%")</span></td>
+                                    <td><span class="um-pill @pillClass">@($"{g.Grade:0.##} / {g.MaxPoints:0.##} · {pct}%{(letter != null ? $" · {letter}" : "")}")</span></td>
                                     <td class="small text-muted">@(string.IsNullOrWhiteSpace(g.FeedbackShort) ? "—" : g.FeedbackShort)</td>
                                 </tr>
                             }

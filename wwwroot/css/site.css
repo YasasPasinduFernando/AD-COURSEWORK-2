@@ -317,11 +317,25 @@ main.um-main {
   border-bottom-width: 1px;
 }
 
+.table-um td {
+  vertical-align: middle;
+}
+
 .um-course-code {
   background-color: #dbeafe;
   color: #1e3a8a;
   border: 1px solid #bfdbfe;
   font-weight: 700;
+}
+
+.um-report-progress {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+.um-report-progress .progress-bar {
+  border-radius: 999px;
 }
 
 .form-control:focus,
@@ -621,6 +635,27 @@ footer.um-footer .text-muted {
 
 .um-footer-top i {
   font-size: 0.95rem;
+}
+
+.um-page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e3a8a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.um-page-back:hover,
+.um-page-back:focus {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1e3a8a;
 }
 
 @media (max-width: 576px) {

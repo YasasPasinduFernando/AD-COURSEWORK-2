@@ -1,5 +1,6 @@
 @model List<AD_COURSEWORK_2.Models.Assignment>
 @using AD_COURSEWORK_2.Models
+@using AD_COURSEWORK_2.Infrastructure
 @{
     ViewData["Title"] = "My assignments";
     var subs = (Dictionary<int, Submission>)ViewBag.Submissions!;
@@ -157,7 +158,7 @@ else
                         <span><i class="bi bi-trophy"></i>@a.MaxPoints pts</span>
                         @if (sub?.Grade.HasValue == true)
                         {
-                            <span><i class="bi bi-award"></i>Score: <strong>@sub.Grade / @a.MaxPoints</strong></span>
+                            <span><i class="bi bi-award"></i>Score: <strong>@sub.Grade.Value.ToString("0.##") / @a.MaxPoints.ToString("0.##") (@GradeBandHelper.ToLetter(sub.Grade.Value, a.MaxPoints))</strong></span>
                         }
                     </div>
                     <div class="mt-2 d-flex gap-2 flex-wrap">
