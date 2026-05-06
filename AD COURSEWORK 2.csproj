@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>AD_COURSEWORK_2</RootNamespace>
+    <!-- UniManage.Tests lives under this repo folder; SDK globs would compile its obj/**/*.cs and duplicate assembly attributes. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);UniManage.Tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

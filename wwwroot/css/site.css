@@ -45,10 +45,9 @@ body {
   flex-direction: column;
   font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--um-surface);
+  /* Phase C: single, faint navy radial (was 3 blobs in 3 colours) */
   background-image:
-    radial-gradient(900px 600px at -10% -20%, rgba(37, 99, 235, 0.08), transparent 60%),
-    radial-gradient(800px 500px at 110% 0%, rgba(139, 92, 246, 0.08), transparent 55%),
-    radial-gradient(900px 700px at 50% 120%, rgba(34, 211, 238, 0.07), transparent 60%);
+    radial-gradient(900px 600px at -10% -20%, rgba(30, 58, 138, 0.05), transparent 60%);
   color: var(--um-text);
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.005em;
@@ -58,6 +57,24 @@ h1, h2, h3, h4, h5, h6, .display-1, .display-2, .display-3, .display-4, .display
   font-family: "Plus Jakarta Sans", "Inter", sans-serif;
   letter-spacing: -0.02em;
   color: #0b1220;
+}
+
+/* Phase B: scoped white-heading override for dark hero/banner contexts.
+   Fixes the global heading colour (#0b1220) bleeding into the hero, welcome
+   banner, compact hero, CTA strip and login brand panel. */
+.um-home-hero h1,
+.um-home-hero h2,
+.um-home-hero h3,
+.um-welcome h2,
+.um-welcome h3,
+.um-hero-compact h1,
+.um-hero-compact h2,
+.um-cta-strip h1,
+.um-cta-strip h2,
+.um-login-brand h1,
+.um-login-brand h2,
+.um-login-brand h3 {
+  color: #ffffff;
 }
 
 .um-skip {
@@ -77,62 +94,110 @@ h1, h2, h3, h4, h5, h6, .display-1, .display-2, .display-3, .display-4, .display
   top: 0.75rem;
 }
 
+/* Phase A: calmer academic navy navbar (was 4-stop blue/cyan gradient) */
 .navbar-um {
-  background: linear-gradient(110deg, #0b1a44 0%, #1e3a8a 40%, #2563eb 75%, #22d3ee 130%) !important;
-  box-shadow: 0 10px 30px rgba(30, 58, 138, 0.18);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: saturate(140%) blur(6px);
+  background: linear-gradient(180deg, #0f1e44 0%, #15295a 100%) !important;
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.04), 0 8px 24px rgba(15, 23, 42, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
 }
 
 .navbar-um::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: radial-gradient(600px 160px at 20% -50%, rgba(255,255,255,0.18), transparent 60%);
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(147, 197, 253, 0.45) 50%, transparent 100%);
   pointer-events: none;
 }
 
 .navbar-um .navbar-brand::before {
   content: "";
   display: inline-block;
-  width: 0.6rem;
-  height: 0.6rem;
+  width: 0.55rem;
+  height: 0.55rem;
   margin-right: 0.55rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  background: #93c5fd;
+  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.25);
   vertical-align: middle;
 }
 
 .navbar-um .navbar-brand {
   letter-spacing: -0.02em;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
+  color: #ffffff !important;
 }
 
+/* Phase A: explicit default colour so links never look disabled */
 .navbar-um .nav-link {
+  position: relative;
   font-weight: 500;
   padding: 0.5rem 0.85rem !important;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
+  color: rgba(255, 255, 255, 0.88) !important;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .navbar-um .nav-link:hover,
 .navbar-um .nav-link:focus {
-  background-color: rgba(255, 255, 255, 0.12);
-  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff !important;
 }
 
+/* Phase A: refined active state — slim background pill + subtle accent underline */
 .navbar-um .nav-link.active {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #fff !important;
+  color: #ffffff !important;
   font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-um .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.1rem;
+  transform: translateX(-50%);
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 999px;
+  background: #93c5fd;
+}
+
+/* Phase A: small outline button used for "Sign in" so it never reads as disabled */
+.navbar-um .um-btn-signin {
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #ffffff !important;
+  background: transparent;
+  font-weight: 600;
+  padding: 0.32rem 0.95rem;
+  border-radius: 0.55rem;
+}
+
+.navbar-um .um-btn-signin:hover,
+.navbar-um .um-btn-signin:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+  color: #ffffff !important;
 }
 
 .navbar-um .btn-register {
-  border-radius: 2rem;
-  padding: 0.35rem 1.1rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-radius: 0.55rem;
+  padding: 0.35rem 1rem;
+  font-weight: 700;
+  background: #ffffff;
+  color: #0f1e44 !important;
+  border-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.navbar-um .btn-register:hover,
+.navbar-um .btn-register:focus {
+  background: #f1f5f9;
+  border-color: #f1f5f9;
+  color: #0f1e44 !important;
 }
 
 .navbar-um .btn-logout {
@@ -277,19 +342,23 @@ main.um-main {
   font-size: 0.8rem;
 }
 
+/* Phase C: flat solid primary (was diagonal blue gradient with heavy glow) */
 .btn-primary {
-  --bs-btn-bg: var(--um-primary-bright);
-  --bs-btn-border-color: var(--um-primary-bright);
-  --bs-btn-hover-bg: var(--um-primary);
-  --bs-btn-hover-border-color: var(--um-primary);
-  background-image: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
-  border: none;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+  --bs-btn-bg: #1e40af;
+  --bs-btn-border-color: #1e40af;
+  --bs-btn-hover-bg: #1e3a8a;
+  --bs-btn-hover-border-color: #1e3a8a;
+  background-image: none;
+  background-color: #1e40af;
+  border: 1px solid #1e40af;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
 .btn-primary:hover, .btn-primary:focus {
-  background-image: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.32);
+  background-image: none;
+  background-color: #1e3a8a;
+  border-color: #1e3a8a;
+  box-shadow: 0 2px 6px rgba(30, 58, 138, 0.18);
 }
 
 .btn-outline-primary {
@@ -490,20 +559,37 @@ main.um-main {
   color: var(--um-text);
 }
 
+/* Phase D: footer with stronger contrast and subtle accent line */
 footer.um-footer {
   flex-shrink: 0;
   background: var(--um-elevated);
   border-top: 1px solid var(--um-border);
   margin-top: auto;
+  position: relative;
+}
+
+footer.um-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(30, 58, 138, 0.25) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+footer.um-footer .text-muted {
+  color: #475569 !important;
 }
 
 footer.um-footer a {
-  color: var(--um-primary-bright);
-  font-weight: 500;
+  color: #1e3a8a;
+  font-weight: 600;
 }
 
 footer.um-footer a:hover {
-  color: var(--um-primary);
+  color: #0f1e44;
 }
 
 .um-alert {
@@ -956,11 +1042,11 @@ footer.um-footer a:hover {
   box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
 }
 
+/* Phase D: navy login brand panel (was navy/indigo/cyan + violet/pink conic) */
 .um-login-brand {
   background:
-    radial-gradient(500px 300px at 0% 0%, rgba(255,255,255,0.18), transparent 60%),
-    radial-gradient(400px 250px at 100% 100%, rgba(34,211,238,0.22), transparent 60%),
-    linear-gradient(140deg, #0b1a44 0%, #1e3a8a 45%, #6366f1 80%, #22d3ee 130%);
+    radial-gradient(500px 300px at 0% 0%, rgba(255,255,255,0.10), transparent 60%),
+    linear-gradient(140deg, #0b1a44 0%, #15295a 50%, #1e3a8a 100%);
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -972,9 +1058,9 @@ footer.um-footer a:hover {
   inset: auto -30% -30% auto;
   width: 320px;
   height: 320px;
-  background: conic-gradient(from 180deg, rgba(139,92,246,0.35), rgba(34,211,238,0.25), rgba(236,72,153,0.25), rgba(139,92,246,0.35));
-  filter: blur(70px);
-  opacity: 0.7;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.18), transparent 70%);
+  filter: blur(50px);
+  opacity: 0.6;
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1216,6 +1302,7 @@ footer.um-footer a:hover {
    ============================================================ */
 
 /* Welcome hero banner shown at top of every dashboard */
+/* Phase C: navy welcome banner (was navy/indigo/cyan + violet/pink conic) */
 .um-welcome {
   position: relative;
   overflow: hidden;
@@ -1224,10 +1311,9 @@ footer.um-footer a:hover {
   color: #fff;
   margin-bottom: 1.5rem;
   background:
-    radial-gradient(800px 360px at 90% -20%, rgba(255,255,255,0.22), transparent 55%),
-    radial-gradient(600px 300px at -10% 120%, rgba(34,211,238,0.25), transparent 55%),
-    linear-gradient(130deg, #0b1a44 0%, #1e3a8a 45%, #4f46e5 80%, #22d3ee 130%);
-  box-shadow: var(--um-shadow-lg);
+    radial-gradient(800px 360px at 90% -20%, rgba(255,255,255,0.12), transparent 55%),
+    linear-gradient(135deg, #0b1a44 0%, #15295a 50%, #1e3a8a 100%);
+  box-shadow: var(--um-shadow-md);
   border: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -1237,8 +1323,8 @@ footer.um-footer a:hover {
   inset: -20% -10% auto auto;
   width: 55%;
   height: 150%;
-  background: conic-gradient(from 210deg at 50% 50%, rgba(139,92,246,0.28), rgba(34,211,238,0.22), rgba(236,72,153,0.22), rgba(139,92,246,0.28));
-  filter: blur(60px);
+  background: radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.18), transparent 65%);
+  filter: blur(40px);
   opacity: 0.55;
   pointer-events: none;
 }
@@ -1773,7 +1859,7 @@ footer.um-footer a:hover {
    Shared primitives for catalog, assignments, messages pages
    ============================================================ */
 
-/* Compact page hero — smaller variant of .um-welcome, consistent across inner pages */
+/* Phase C: compact page hero — calm navy (was rainbow conic) */
 .um-hero-compact {
   position: relative;
   overflow: hidden;
@@ -1782,10 +1868,9 @@ footer.um-footer a:hover {
   color: #fff;
   margin-bottom: 1.25rem;
   background:
-    radial-gradient(700px 280px at 95% -30%, rgba(255,255,255,0.25), transparent 55%),
-    radial-gradient(500px 240px at -10% 130%, rgba(34,211,238,0.25), transparent 55%),
-    linear-gradient(130deg, #0b1a44 0%, #1e3a8a 45%, #4f46e5 80%, #22d3ee 130%);
-  box-shadow: var(--um-shadow-md);
+    radial-gradient(700px 280px at 95% -30%, rgba(255,255,255,0.14), transparent 55%),
+    linear-gradient(135deg, #0b1a44 0%, #15295a 50%, #1e3a8a 100%);
+  box-shadow: var(--um-shadow);
   border: 1px solid rgba(255,255,255,0.08);
 }
 .um-hero-compact::after {
@@ -1794,8 +1879,8 @@ footer.um-footer a:hover {
   inset: -30% -10% auto auto;
   width: 50%;
   height: 180%;
-  background: conic-gradient(from 210deg at 50% 50%, rgba(139,92,246,0.3), rgba(34,211,238,0.2), rgba(236,72,153,0.22), rgba(139,92,246,0.3));
-  filter: blur(50px);
+  background: radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.14), transparent 65%);
+  filter: blur(40px);
   opacity: 0.5;
   pointer-events: none;
 }
@@ -2238,7 +2323,7 @@ html, body { overflow-x: hidden; }
 /* Hero with background image and gradient overlay */
 .um-home-hero {
   position: relative;
-  min-height: 78vh;
+  min-height: 72vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2249,28 +2334,27 @@ html, body { overflow-x: hidden; }
   color: #fff;
   padding: 5rem 1rem;
   background-size: cover;
-  background-position: center;
+  background-position: center 30%;
   background-repeat: no-repeat;
 }
+/* Phase B: navy/indigo overlay (was rainbow violet/cyan/pink) */
 .um-home-hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(900px 420px at 90% 10%, rgba(139,92,246,0.45), transparent 65%),
-    radial-gradient(700px 420px at -10% 110%, rgba(34,211,238,0.35), transparent 60%),
-    linear-gradient(130deg, rgba(11,26,68,0.92) 0%, rgba(30,58,138,0.82) 45%, rgba(79,70,229,0.78) 80%, rgba(34,211,238,0.72) 130%);
+    linear-gradient(135deg, rgba(6, 18, 45, 0.55), rgba(15, 35, 80, 0.42) 55%, rgba(37, 99, 235, 0.20));
   z-index: -1;
 }
 .um-home-hero::after {
   content: "";
   position: absolute;
   inset: -20% -10% auto auto;
-  width: 60%;
-  height: 160%;
-  background: conic-gradient(from 210deg at 50% 50%, rgba(139,92,246,0.25), rgba(34,211,238,0.2), rgba(236,72,153,0.22), rgba(139,92,246,0.25));
-  filter: blur(80px);
-  opacity: 0.5;
+  width: 55%;
+  height: 140%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.08), transparent 70%);
+  filter: blur(32px);
+  opacity: 0.35;
   pointer-events: none;
   z-index: -1;
 }
@@ -2301,19 +2385,22 @@ html, body { overflow-x: hidden; }
   letter-spacing: -0.025em;
   line-height: 1.1;
   margin-bottom: 1.25rem;
+  text-shadow: 0 2px 12px rgba(7, 14, 36, 0.35);
 }
+/* Phase B: refined blue/white highlight (was gold/pink/cyan rainbow) */
 .um-home-hero h1 .hero-grad {
-  background: linear-gradient(135deg, #fbbf24, #f472b6 50%, #22d3ee);
+  background: linear-gradient(135deg, #bfdbfe 0%, #ffffff 50%, #c7d2fe 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .um-home-hero .hero-lead {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.88);
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.92);
   max-width: 620px;
   margin: 0 auto 2rem auto;
   line-height: 1.6;
+  text-shadow: 0 1px 8px rgba(7, 14, 36, 0.30);
 }
 .um-home-hero .hero-actions {
   display: flex;
@@ -2328,7 +2415,7 @@ html, body { overflow-x: hidden; }
   justify-content: center;
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(255,255,255,0.18);
 }
 .um-home-hero .hero-stats > div { text-align: center; }
 .um-home-hero .hero-stats .h-num {
@@ -2354,13 +2441,14 @@ html, body { overflow-x: hidden; }
 /* 4-up feature tiles (just below hero) */
 .um-feat-row {
   margin-bottom: 3.5rem;
-  margin-top: -7rem;
+  margin-top: -5.5rem;
   position: relative;
   z-index: 5;
 }
 @media (max-width: 991.98px) {
   .um-feat-row { margin-top: -3rem; }
 }
+/* Phase C: softer feature tile (was --um-shadow-lg + -6px hover, very floaty) */
 .um-feat-tile {
   position: relative;
   background: var(--um-elevated);
@@ -2369,13 +2457,13 @@ html, body { overflow-x: hidden; }
   padding: 1.6rem 1.35rem;
   text-align: center;
   height: 100%;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  box-shadow: var(--um-shadow-lg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--um-shadow);
 }
 .um-feat-tile:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 45px -18px rgba(15,23,42,0.35);
-  border-color: rgba(99,102,241,0.35);
+  transform: translateY(-3px);
+  box-shadow: var(--um-shadow-md);
+  border-color: rgba(30, 58, 138, 0.25);
 }
 .um-feat-tile .feat-icon {
   width: 3.25rem;
@@ -2466,21 +2554,23 @@ html, body { overflow-x: hidden; }
   position: relative;
   border-radius: var(--um-radius-lg);
   overflow: hidden;
-  box-shadow: var(--um-shadow-lg);
+  box-shadow: var(--um-shadow-md);
   aspect-ratio: 4 / 3;
+  border: 1px solid #dbe5f2;
 }
 .um-split-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  object-position: center 35%;
+  transition: transform 0.45s ease;
 }
-.um-split-image:hover img { transform: scale(1.04); }
+.um-split-image:hover img { transform: scale(1.02); }
 .um-split-image::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, transparent 55%, rgba(79,70,229,0.22) 100%);
+  background: linear-gradient(160deg, transparent 60%, rgba(30,58,138,0.16) 100%);
   pointer-events: none;
 }
 .um-split-badge {
@@ -2494,7 +2584,7 @@ html, body { overflow-x: hidden; }
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #4338ca;
+  color: #1e3a8a;
   box-shadow: var(--um-shadow-sm);
   display: inline-flex;
   align-items: center;
@@ -2507,10 +2597,7 @@ html, body { overflow-x: hidden; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  background: var(--um-gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #1e3a8a;
   margin-bottom: 0.5rem;
 }
 .um-split-body h2 {
@@ -2553,7 +2640,7 @@ html, body { overflow-x: hidden; }
   color: #fff;
   font-size: 0.9rem;
   background: var(--um-gradient-primary);
-  box-shadow: 0 5px 12px -4px rgba(79,70,229,0.45);
+  box-shadow: 0 4px 10px -4px rgba(30,58,138,0.35);
 }
 .um-split-list li.i-violet .list-icon { background: var(--um-gradient-violet); }
 .um-split-list li.i-emerald .list-icon { background: var(--um-gradient-emerald); }
@@ -2567,6 +2654,7 @@ html, body { overflow-x: hidden; }
 }
 
 /* Bottom CTA strip */
+/* Phase C: navy-only CTA strip (was navy/indigo/cyan with violet/pink conic) */
 .um-cta-strip {
   position: relative;
   overflow: hidden;
@@ -2576,19 +2664,18 @@ html, body { overflow-x: hidden; }
   text-align: center;
   margin-bottom: 2rem;
   background:
-    radial-gradient(700px 300px at 80% 0%, rgba(255,255,255,0.2), transparent 55%),
-    radial-gradient(600px 260px at 10% 110%, rgba(34,211,238,0.3), transparent 55%),
-    linear-gradient(130deg, #0b1a44 0%, #4f46e5 55%, #22d3ee 130%);
-  box-shadow: var(--um-shadow-lg);
-  border: 1px solid rgba(255,255,255,0.1);
+    radial-gradient(700px 300px at 80% 0%, rgba(255,255,255,0.12), transparent 55%),
+    linear-gradient(135deg, #0b1a44 0%, #15295a 55%, #1e3a8a 100%);
+  box-shadow: var(--um-shadow-md);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .um-cta-strip::before {
   content: "";
   position: absolute;
   inset: -20% -10%;
-  background: conic-gradient(from 210deg at 50% 50%, rgba(139,92,246,0.28), rgba(34,211,238,0.22), rgba(236,72,153,0.22), rgba(139,92,246,0.28));
-  filter: blur(60px);
-  opacity: 0.4;
+  background: radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.18), transparent 65%);
+  filter: blur(40px);
+  opacity: 0.5;
   pointer-events: none;
 }
 .um-cta-strip > * { position: relative; z-index: 1; }
@@ -2599,10 +2686,36 @@ html, body { overflow-x: hidden; }
   margin: 0 0 0.75rem 0;
 }
 .um-cta-strip p {
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.90);
   max-width: 620px;
   margin: 0 auto 1.5rem auto;
   font-size: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .um-home-hero {
+    min-height: 64vh;
+    padding: 4rem 1rem;
+    background-position: center 24%;
+  }
+
+  .um-home-hero .hero-lead {
+    font-size: 1rem;
+  }
+
+  .um-home-hero .hero-stats {
+    gap: 1.35rem;
+    margin-top: 2.2rem;
+    padding-top: 1.4rem;
+  }
+
+  .um-split-image {
+    aspect-ratio: 16 / 11;
+  }
+
+  .um-split-image img {
+    object-position: center 28%;
+  }
 }
 .um-cta-strip .cta-actions {
   display: inline-flex;
