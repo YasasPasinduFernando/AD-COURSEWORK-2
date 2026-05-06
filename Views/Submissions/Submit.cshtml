@@ -1,7 +1,11 @@
+@using AD_COURSEWORK_2.Infrastructure
 @model SubmissionSubmitViewModel
 @{
     ViewData["Title"] = $"{Model.CourseCode} – {Model.AssignmentTitle}";
     var graded = Model.Status == "Graded";
+    var letter = Model.Grade.HasValue && Model.MaxPoints.HasValue && Model.MaxPoints.Value > 0
+        ? GradeBandHelper.ToLetter(Model.Grade.Value, Model.MaxPoints.Value)
+        : null;
 }
 
 <h1 class="h3 mb-1">@Model.AssignmentTitle</h1>
@@ -46,7 +50,7 @@ else
     <div class="card-body">
         <h2 class="h6">Status & feedback</h2>
         <p class="mb-1"><strong>Status:</strong> @Model.Status</p>
-        <p class="mb-1"><strong>Grade:</strong> @(Model.Grade?.ToString() ?? "—")</p>
+        <p class="mb-1"><strong>Grade:</strong> @(Model.Grade?.ToString("0.##") ?? "—")@if (letter != null){<text> (@letter)</text>}</p>
         <p class="mb-1"><strong>Feedback:</strong></p>
         <p class="text-muted mb-3">@(string.IsNullOrWhiteSpace(Model.Feedback) ? "—" : Model.Feedback)</p>
         @if (Model.SubmissionId is int fileId && fileId > 0 && !string.IsNullOrEmpty(Model.ExistingFileName))

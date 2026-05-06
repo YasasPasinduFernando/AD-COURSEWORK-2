@@ -194,7 +194,7 @@ public class DashboardController : Controller
                 Icon = "bi-award",
                 Tone = "success",
                 Title = $"Graded: {g.Assignment}",
-                Detail = $"{g.CourseCode} · {g.Grade}/{g.MaxPoints}",
+                Detail = $"{g.CourseCode} · {g.Grade:0.##}/{g.MaxPoints:0.##}",
                 WhenUtc = g.GradedAtUtc ?? DateTime.UtcNow
             });
         }

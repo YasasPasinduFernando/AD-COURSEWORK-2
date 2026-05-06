@@ -1,5 +1,6 @@
 @model StudentDashboardViewModel
 @using System.Text.Json
+@using AD_COURSEWORK_2.Infrastructure
 @{
     ViewData["Title"] = "Student dashboard";
     var firstName = (User.Identity?.Name ?? "Student").Split(' ', '@')[0];
@@ -215,8 +216,8 @@
                                                 <span class="badge bg-success-subtle text-success-emphasis"><span class="um-pulse-dot"></span> Live now</span>
                                             }
                                         </div>
-                                        <div class="fw-bold text-dark text-truncate">@mt.Title</div>
-                                        <div class="small text-muted text-truncate"><i class="bi bi-person-video3 me-1"></i>@mt.LecturerName · @mt.DurationMinutes min</div>
+                                        <div class="fw-bold text-dark um-meet-title">@mt.Title</div>
+                                        <div class="small text-muted um-meet-meta"><i class="bi bi-person-video3 me-1"></i>@mt.LecturerName · @mt.DurationMinutes min</div>
                                         <a class="btn btn-sm @(canJoinNow ? "btn-success" : "btn-outline-primary") mt-2" asp-controller="Meetings" asp-action="Join" asp-route-id="@mt.MeetingId" target="_blank" rel="noopener">
                                             <i class="bi bi-box-arrow-up-right me-1"></i>Join
                                         </a>
@@ -297,10 +298,13 @@
                             {
                                 var pct = g.Grade.HasValue && g.MaxPoints > 0 ? (int)Math.Round((double)(g.Grade!.Value / g.MaxPoints) * 100) : 0;
                                 var pillClass = pct >= 75 ? "pill-success" : pct >= 50 ? "pill-info" : pct > 0 ? "pill-warn" : "pill-muted";
+                                var letter = g.Grade.HasValue && g.MaxPoints > 0
+                                    ? GradeBandHelper.ToLetter(g.Grade.Value, g.MaxPoints)
+                                    : null;
                                 <tr>
                                     <td><span class="um-pill pill-info">@g.CourseCode</span></td>
                                     <td class="fw-medium">@g.Assignment</td>
-                                    <td><span class="um-pill @pillClass">@g.Grade / @g.MaxPoints · @pct%</span></td>
+                                    <td><span class="um-pill @pillClass">@($"{g.Grade:0.##} / {g.MaxPoints:0.##} · {pct}%{(letter != null ? $" · {letter}" : "")}")</span></td>
                                     <td class="small text-muted">@(string.IsNullOrWhiteSpace(g.FeedbackShort) ? "—" : g.FeedbackShort)</td>
                                 </tr>
                             }

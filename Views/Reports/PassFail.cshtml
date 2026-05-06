@@ -22,7 +22,6 @@
         </form>
         <a class="btn btn-outline-success btn-sm" asp-action="PassFailCsv" asp-route-passMark="@Model.PassMark"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
         <a class="btn btn-danger btn-sm" asp-action="PassFailPdf" asp-route-passMark="@Model.PassMark"><i class="bi bi-filetype-pdf me-1"></i>PDF</a>
-        <a class="btn btn-outline-secondary btn-sm" asp-action="Index">Back</a>
     </div>
 </div>
 
@@ -67,7 +66,7 @@
 
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-        <table class="table mb-0 align-middle">
+        <table class="table table-um mb-0 align-middle">
             <thead class="table-light">
                 <tr>
                     <th>Code</th>
@@ -88,14 +87,14 @@
                 {
                     var pct = (int)Math.Round(r.PassRate);
                     <tr>
-                        <td><span class="badge bg-primary-subtle text-primary-emphasis">@r.CourseCode</span></td>
+                        <td><span class="badge um-course-code">@r.CourseCode</span></td>
                         <td class="fw-medium">@r.CourseName</td>
                         <td class="text-end">@r.GradedCount</td>
                         <td class="text-end fw-bold text-success">@r.PassCount</td>
                         <td class="text-end fw-bold text-danger">@r.FailCount</td>
                         <td style="min-width:200px;">
                             <div class="d-flex align-items-center gap-2">
-                                <div class="progress flex-grow-1" style="height:8px;">
+                                <div class="progress flex-grow-1 um-report-progress">
                                     <div class="progress-bar @(pct >= 75 ? "bg-success" : pct >= 50 ? "bg-primary" : pct >= 25 ? "bg-warning" : "bg-danger")"
                                          style="width:@(Math.Min(100, pct))%;"></div>
                                 </div>

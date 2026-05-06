@@ -1,3 +1,4 @@
+using System.Globalization;
 using AD_COURSEWORK_2.Data;
 using AD_COURSEWORK_2.Infrastructure;
 using AD_COURSEWORK_2.Models;
@@ -12,6 +13,11 @@ namespace AD_COURSEWORK_2.Controllers;
 [Authorize(Roles = $"{AppRoles.Student},{AppRoles.Lecturer}")]
 public class MessagesController : Controller
 {
+    private static readonly HashSet<string> AllowedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".gif", ".webp"
+    };
+    private const long MaxImageBytes = 5 * 1024 * 1024;
     private readonly ApplicationDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IAuditLogger _audit;
@@ -98,37 +104,65 @@ public class MessagesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Reply(string id, string subject, string content)
+    public async Task<IActionResult> Reply(string id, string content, IFormFile? photo)
     {
         var me = _userManager.GetUserId(User)!;
         if (!await CanCommunicateAsync(me, id))
             return Forbid();
 
-        if (string.IsNullOrWhiteSpace(content))
+        if (string.IsNullOrWhiteSpace(content) && photo == null)
         {
-            TempData["Error"] = "Message content cannot be empty.";
+            TempData["Error"] = "Message content or photo is required.";
             return RedirectToAction(nameof(Thread), new { id });
         }
 
-        if (content.Length > 16000)
-            content = content[..16000];
+        var body = (content ?? string.Empty).Trim();
+        if (body.Length > 16000)
+            body = body[..16000];
 
-        if (string.IsNullOrWhiteSpace(subject))
-            subject = "(no subject)";
-        if (subject.Length > 200)
-            subject = subject[..200];
+        var imageToken = string.Empty;
+        if (photo != null)
+        {
+            var ext = Path.GetExtension(photo.FileName);
+            if (!AllowedImageExtensions.Contains(ext))
+            {
+                TempData["Error"] = "Only JPG, PNG, GIF, and WEBP images are allowed.";
+                return RedirectToAction(nameof(Thread), new { id });
+            }
+            if (photo.Length <= 0 || photo.Length > MaxImageBytes)
+            {
+                TempData["Error"] = "Image size must be between 1 byte and 5 MB.";
+                return RedirectToAction(nameof(Thread), new { id });
+            }
+
+            var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "messages");
+            Directory.CreateDirectory(uploadsRoot);
+            var fileName = $"{DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture)}_{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
+            var absolutePath = Path.Combine(uploadsRoot, fileName);
+
+            await using (var stream = System.IO.File.Create(absolutePath))
+            {
+                await photo.CopyToAsync(stream);
+            }
+
+            imageToken = $"[[img:/uploads/messages/{fileName}]]";
+        }
+
+        var finalContent = body;
+        if (!string.IsNullOrEmpty(imageToken))
+            finalContent = string.IsNullOrWhiteSpace(finalContent) ? imageToken : $"{finalContent}\n{imageToken}";
 
         _db.Messages.Add(new Message
         {
             SenderId = me,
             ReceiverId = id,
-            Subject = subject.Trim(),
-            Content = content.Trim(),
+            Subject = "conversation",
+            Content = finalContent,
             SentAtUtc = DateTime.UtcNow,
             IsRead = false
         });
         await _db.SaveChangesAsync();
-        await _audit.LogAsync(AuditCategories.Profile, "Send message", $"to={id} chars={content.Length}");
+        await _audit.LogAsync(AuditCategories.Profile, "Send message", $"to={id} chars={finalContent.Length}");
 
         TempData["Success"] = "Message sent.";
         return RedirectToAction(nameof(Thread), new { id });

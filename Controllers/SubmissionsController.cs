@@ -94,6 +94,7 @@ public class SubmissionsController : Controller
             TextContent = submission.TextContent,
             ExistingFileName = submission.StoredFileName,
             Status = submission.Status.ToString(),
+            MaxPoints = assignment.MaxPoints,
             Grade = submission.Grade,
             Feedback = submission.Feedback
         };
@@ -157,6 +158,7 @@ public class SubmissionsController : Controller
             model.DueDateUtc = assignment.DueDateUtc;
             model.ExistingFileName = submission.StoredFileName;
             model.Status = submission.Status.ToString();
+            model.MaxPoints = assignment.MaxPoints;
             model.Grade = submission.Grade;
             model.Feedback = submission.Feedback;
             return View(model);
@@ -176,6 +178,7 @@ public class SubmissionsController : Controller
                 model.AssignmentTitle = assignment.Title;
                 model.DueDateUtc = assignment.DueDateUtc;
                 model.ExistingFileName = submission.StoredFileName;
+                model.MaxPoints = assignment.MaxPoints;
                 return View(model);
             }
 
