@@ -10,6 +10,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
+      - ForwardedHeaders__TrustAllProxies=${FORWARDED_HEADERS_TRUST_ALL:-true}
       # ASP.NET Core maps this to ConnectionStrings:DefaultConnection.
       - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=${MYSQL_DATABASE:-unimanage};User=${MYSQL_USER:-appuser};Password=${MYSQL_PASSWORD:-apppassword};TreatTinyAsBoolean=true;CharSet=utf8mb4;
       # Set these in a server-side .env file or CI/CD secret store. Do not commit real credentials.

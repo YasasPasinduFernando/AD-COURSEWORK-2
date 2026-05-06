@@ -20,6 +20,7 @@ public class AccountController : Controller
     private readonly ILogger<AccountController> _logger;
     private readonly IConfiguration _configuration;
     private readonly IAuditLogger _audit;
+    private readonly IWebHostEnvironment _env;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
@@ -27,7 +28,8 @@ public class AccountController : Controller
         IEmailService emailService,
         ILogger<AccountController> logger,
         IConfiguration configuration,
-        IAuditLogger audit)
+        IAuditLogger audit,
+        IWebHostEnvironment env)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -35,6 +37,7 @@ public class AccountController : Controller
         _logger = logger;
         _configuration = configuration;
         _audit = audit;
+        _env = env;
     }
 
     [HttpGet]
@@ -167,6 +170,29 @@ public class AccountController : Controller
         }
 
         var redirectUrl = Url.Action(nameof(GoogleCallback), "Account", new { returnUrl });
+        const string googleCallbackPath = "/signin-google2";
+        var diagnosticCallbackUrl =
+            $"{Request.Scheme}://{Request.Host.ToUriComponent()}{Request.PathBase}{googleCallbackPath}";
+
+        if (_env.IsDevelopment())
+        {
+            _logger.LogInformation(
+                "Google OAuth challenge generated. Scheme={Scheme}, Host={Host}, CallbackPath={CallbackPath}, RedirectUri={RedirectUri}",
+                Request.Scheme,
+                Request.Host.Value,
+                googleCallbackPath,
+                diagnosticCallbackUrl);
+        }
+        else
+        {
+            _logger.LogDebug(
+                "Google OAuth challenge generated. Scheme={Scheme}, Host={Host}, CallbackPath={CallbackPath}, RedirectUri={RedirectUri}",
+                Request.Scheme,
+                Request.Host.Value,
+                googleCallbackPath,
+                diagnosticCallbackUrl);
+        }
+
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(
             GoogleDefaults.AuthenticationScheme,
             redirectUrl!);
