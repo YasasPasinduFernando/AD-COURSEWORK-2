@@ -8,13 +8,13 @@
 <section class="um-full-bleed um-home-hero" style="background-image: url('/images/landing/campus-students-hero.jpg');" aria-labelledby="hero-title">
     <div class="hero-inner">
         <span class="um-hero-eyebrow"><i class="bi bi-mortarboard-fill me-2"></i>University Course Management System</span>
-        <h1 id="hero-title">Welcome to <span class="hero-grad">UniManage</span></h1>
-        <p class="hero-lead">A role-based academic management platform for courses, enrolments, assignments, grading, messaging and dashboards.</p>
+        <h1 id="hero-title">Welcome to UniManage</h1>
+        <p class="hero-lead">A role-based academic management platform developed to support courses, enrolments, assignments, grading, messaging and dashboards.</p>
         <div class="hero-actions">
             @if (SignInManager.IsSignedIn(User))
             {
                 <a asp-controller="Dashboard" asp-action="Index" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-speedometer2 me-1"></i>Open dashboard</a>
-                <a href="#features" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-arrow-down me-1"></i>Explore features</a>
+                <a href="#features" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-arrow-down me-1"></i>View features</a>
             }
             else
             {
@@ -40,36 +40,36 @@
         <div class="col-md-6 col-lg-3">
             <div class="um-feat-tile">
                 <div class="feat-icon"><i class="bi bi-mortarboard-fill"></i></div>
-                <h3>Smart enrollment</h3>
-                <p>Prerequisite-aware registration with seat limits and duplicate checks.</p>
+                <h3>Course enrolment</h3>
+                <p>Students can browse available courses and enrol where prerequisites and seat limits allow.</p>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="um-feat-tile feat-emerald">
                 <div class="feat-icon"><i class="bi bi-journal-check"></i></div>
                 <h3>Assignments &amp; grading</h3>
-                <p>Publish tasks, collect submissions and grade with structured feedback.</p>
+                <p>Lecturers can publish assignments, review submissions and record grades with feedback.</p>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="um-feat-tile feat-violet">
                 <div class="feat-icon"><i class="bi bi-speedometer2"></i></div>
                 <h3>Role-based dashboards</h3>
-                <p>Tailored insights for students, lecturers and administrators.</p>
+                <p>Students, lecturers and administrators each see information relevant to their role.</p>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="um-feat-tile feat-amber">
                 <div class="feat-icon"><i class="bi bi-chat-dots-fill"></i></div>
-                <h3>Secure messaging</h3>
-                <p>Thread-based conversations between students, lecturers and admins.</p>
+                <h3>Course communication</h3>
+                <p>Students and lecturers can communicate through course-related messaging.</p>
             </div>
         </div>
     </div>
 </section>
 
 <section class="um-section-intro" id="about">
-    <span class="section-eyebrow">About us</span>
+    <span class="section-eyebrow">About the project</span>
     <h2>Core academic functions in one platform</h2>
     <p>UniManage brings together course management, student enrolment, assignment submission, grading, reporting and internal communication for students, lecturers and administrators.</p>
 </section>
@@ -81,20 +81,20 @@
     </div>
     <div class="um-split-body">
         <span class="body-eyebrow">Role-based academic workflows</span>
-        <h2 id="edu-title">Designed for students, lecturers and administrators.</h2>
-        <p class="lead">The system separates access by user role so each user only sees the tools and information relevant to their academic responsibilities.</p>
+        <h2 id="edu-title">Designed for students, lecturers and administrators</h2>
+        <p class="lead">The system separates access by user role so that each user only sees the tools and information needed for their academic responsibilities.</p>
         <ul class="um-split-list">
             <li>
                 <span class="list-icon"><i class="bi bi-shield-check"></i></span>
-                <span><strong>Controlled access</strong>Role-based permissions help protect academic records and system actions.</span>
+                <span><strong>Controlled access</strong> Role-based permissions help protect academic records and system actions.</span>
             </li>
             <li class="i-emerald">
                 <span class="list-icon"><i class="bi bi-graph-up-arrow"></i></span>
-                <span><strong>Actionable insights</strong>Dashboards and reports summarise enrolments, submissions, grades and lecturer workload.</span>
+                <span><strong>Academic reporting</strong> Dashboards and reports summarise enrolments, submissions, grades and lecturer workload.</span>
             </li>
             <li class="i-violet">
                 <span class="list-icon"><i class="bi bi-lightning-charge-fill"></i></span>
-                <span><strong>Fast &amp; modern</strong>Built with ASP.NET Core MVC, Razor Views, Bootstrap and Entity Framework Core.</span>
+                <span><strong>ASP.NET Core implementation</strong> The application is developed using ASP.NET Core MVC, Razor Views, Entity Framework Core and Bootstrap.</span>
             </li>
         </ul>
         <a href="#roles" class="btn btn-primary"><i class="bi bi-arrow-down me-1"></i>See it in action</a>
@@ -107,9 +107,9 @@
         <span class="um-split-badge"><i class="bi bi-clipboard2-check"></i>End-to-end workflow</span>
     </div>
     <div class="um-split-body">
-        <span class="body-eyebrow">WHY UNIMANAGE</span>
+        <span class="body-eyebrow">Why UniManage</span>
         <h2 id="workflow-title">A clearer workflow from enrolment to grading.</h2>
-        <p class="lead">Students can browse courses, enrol, submit assignments and view feedback, while lecturers can manage course materials, grade submissions and communicate with enrolled students.</p>
+        <p class="lead">Students can browse courses, enrol, submit assignments and view feedback. Lecturers can manage course materials, grade submissions and communicate with enrolled students.</p>
         <ul class="um-split-list">
             <li class="i-amber">
                 <span class="list-icon"><i class="bi bi-person-workspace"></i></span>
@@ -222,8 +222,8 @@
         <h2 id="cta-title">Get started with UniManage</h2>
         <p>Create an account or sign in to access the academic management features available for your role.</p>
         <div class="cta-actions">
-            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-rocket-takeoff me-1"></i>Create your account</a>
-            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-box-arrow-in-right me-1"></i>I already have an account</a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-rocket-takeoff me-1"></i>Get started</a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-box-arrow-in-right me-1"></i>Sign in</a>
         </div>
     </section>
 }

@@ -491,19 +491,19 @@ main.um-main {
   position: absolute;
   inset: auto 0 0 0;
   height: 3px;
-  background: var(--um-gradient-primary);
+  background: #1e3a8a;
   opacity: 0.8;
 }
 
 .um-role-card:hover {
   border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: var(--um-shadow-md);
-  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
 }
 
-.um-role-card.role-student::before { background: var(--um-gradient-primary); }
-.um-role-card.role-lecturer::before { background: var(--um-gradient-violet); }
-.um-role-card.role-admin::before { background: var(--um-gradient-emerald); }
+.um-role-card.role-student::before { background: #1e3a8a; }
+.um-role-card.role-lecturer::before { background: #4f46e5; }
+.um-role-card.role-admin::before { background: #0f766e; }
 
 .um-role-icon {
   width: 2.5rem;
@@ -2426,10 +2426,7 @@ html, body { overflow-x: hidden; }
 }
 /* Phase B: refined blue/white highlight (was gold/pink/cyan rainbow) */
 .um-home-hero h1 .hero-grad {
-  background: linear-gradient(135deg, #bfdbfe 0%, #ffffff 50%, #c7d2fe 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #ffffff;
 }
 .um-home-hero .hero-lead {
   font-size: 1.05rem;
@@ -2459,10 +2456,7 @@ html, body { overflow-x: hidden; }
   font-size: 2rem;
   font-weight: 800;
   line-height: 1;
-  background: linear-gradient(135deg, #fff, #c7d2fe);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #ffffff;
   display: block;
 }
 .um-home-hero .hero-stats .h-label {
@@ -2498,27 +2492,27 @@ html, body { overflow-x: hidden; }
   box-shadow: var(--um-shadow);
 }
 .um-feat-tile:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--um-shadow-md);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
   border-color: rgba(30, 58, 138, 0.25);
 }
 .um-feat-tile .feat-icon {
   width: 3.25rem;
   height: 3.25rem;
   border-radius: 0.85rem;
-  background: var(--um-gradient-primary);
+  background: #1e3a8a;
   color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 1.35rem;
   margin-bottom: 0.85rem;
-  box-shadow: 0 10px 22px -10px rgba(79,70,229,0.5);
+  box-shadow: 0 4px 10px rgba(30, 58, 138, 0.18);
 }
-.um-feat-tile.feat-violet .feat-icon { background: var(--um-gradient-violet); }
-.um-feat-tile.feat-emerald .feat-icon { background: var(--um-gradient-emerald); }
-.um-feat-tile.feat-amber .feat-icon { background: var(--um-gradient-amber); }
-.um-feat-tile.feat-rose .feat-icon { background: var(--um-gradient-rose); }
+.um-feat-tile.feat-violet .feat-icon { background: #4f46e5; }
+.um-feat-tile.feat-emerald .feat-icon { background: #0f766e; }
+.um-feat-tile.feat-amber .feat-icon { background: #b45309; }
+.um-feat-tile.feat-rose .feat-icon { background: #be123c; }
 .um-feat-tile h3 {
   font-size: 1.05rem;
   font-weight: 700;
@@ -3483,6 +3477,7 @@ html, body { overflow-x: hidden; }
     background: linear-gradient(135deg, #ffffff 0%, #f9fbff 100%);
     transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
     height: 100%;
+    min-width: 0;
 }
 .um-meet-card:hover {
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
@@ -3536,6 +3531,19 @@ html, body { overflow-x: hidden; }
     color: #1e3a8a;
     border: 1px solid #c7d2fe;
     font-weight: 700;
+}
+
+.um-meet-title {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+    margin-bottom: 0.15rem;
+}
+
+.um-meet-meta {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
 }
 
 .um-pulse-dot {
