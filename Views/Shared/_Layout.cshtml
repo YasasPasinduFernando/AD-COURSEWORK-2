@@ -100,6 +100,7 @@
                             @if (User.IsInRole(AppRoles.Administrator))
                             {
                                 <li class="nav-item"><a class="@NavClass("Courses", "Index")" asp-controller="Courses" asp-action="Index">Courses</a></li>
+                                <li class="nav-item"><a class="@NavClass("AdminUsers", "Index")" asp-controller="AdminUsers" asp-action="Index">Users</a></li>
                                 <li class="nav-item"><a class="@NavClass("Meetings")" asp-controller="Meetings" asp-action="Index"><i class="bi bi-camera-video me-1"></i>Meetings</a></li>
                                 <li class="nav-item"><a class="@NavClass("Reports", "Index")" asp-controller="Reports" asp-action="Index">Reports</a></li>
                                 <li class="nav-item"><a class="@NavClass("AuditLogs", "Index")" asp-controller="AuditLogs" asp-action="Index">Audit</a></li>
