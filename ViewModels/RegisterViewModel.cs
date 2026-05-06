@@ -3,7 +3,7 @@ using AD_COURSEWORK_2.Models;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
-public class RegisterViewModel
+public class RegisterViewModel : IValidatableObject
 {
     [Required]
     [StringLength(200)]
@@ -17,6 +17,10 @@ public class RegisterViewModel
     [Phone]
     [StringLength(30)]
     public string? Phone { get; set; }
+
+    [DataType(DataType.Date)]
+    [Display(Name = "Date of birth (optional)")]
+    public DateOnly? DateOfBirth { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
@@ -35,4 +39,11 @@ public class RegisterViewModel
 
     public static IEnumerable<string> AllowedRoles { get; } =
         new[] { AppRoles.Student, AppRoles.Lecturer };
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var err = DateOfBirthRules.ValidateOptional(DateOfBirth);
+        if (err != null)
+            yield return new ValidationResult(err, new[] { nameof(DateOfBirth) });
+    }
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
-public class ProfileViewModel
+public class ProfileViewModel : IValidatableObject
 {
     [Required]
     [StringLength(200)]
@@ -16,9 +16,20 @@ public class ProfileViewModel
     [StringLength(30)]
     public string? Phone { get; set; }
 
+    [DataType(DataType.Date)]
+    [Display(Name = "Date of birth (optional)")]
+    public DateOnly? DateOfBirth { get; set; }
+
     public string Role { get; set; } = string.Empty;
 
     public DateTime? JoinedUtc { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var err = DateOfBirthRules.ValidateOptional(DateOfBirth);
+        if (err != null)
+            yield return new ValidationResult(err, new[] { nameof(DateOfBirth) });
+    }
 }
 
 public class ChangePasswordViewModel
