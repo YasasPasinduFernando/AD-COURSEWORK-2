@@ -4,8 +4,6 @@
     var avatarPalette = new[] { "", "avatar-violet", "avatar-emerald", "avatar-amber", "avatar-rose" };
     var avatarCls = avatarPalette[Math.Abs(Model.OtherUserName.GetHashCode()) % avatarPalette.Length];
     var ordered = Model.Messages.OrderBy(m => m.SentAtUtc).ToList();
-    var last = ordered.LastOrDefault();
-    var unreadTotal = Model.Conversations.Count(c => c.Unread);
 
     static string Initials(string name)
     {
@@ -16,79 +14,9 @@
         return $"{parts[0][0]}{parts[^1][0]}".ToUpperInvariant();
     }
 
-    static string HumanDay(DateTime d)
-    {
-        var t = d.Date;
-        if (t == DateTime.Today) return "Today";
-        if (t == DateTime.Today.AddDays(-1)) return "Yesterday";
-        if ((DateTime.Today - t).TotalDays < 7) return t.ToString("dddd");
-        return t.ToString("MMMM d, yyyy");
-    }
-
-    static string ShortTime(DateTime atUtc)
-    {
-        var local = atUtc.ToLocalTime();
-        var span = DateTime.Now.Date - local.Date;
-        if (span.TotalDays == 0) return local.ToString("h:mm tt");
-        if (span.TotalDays == 1) return "Yesterday";
-        if (span.TotalDays < 7) return local.ToString("dddd");
-        return local.ToString("MMM d");
-    }
 }
 
-<div class="um-wa">
-    <aside class="um-wa-side">
-        <div class="um-wa-side-head">
-            <div class="d-flex align-items-center gap-2 min-w-0">
-                <div class="um-avatar avatar-sm avatar-emerald">@Initials(User.Identity?.Name ?? "Me")</div>
-                <div class="min-w-0">
-                    <div class="fw-bold text-truncate">Chats</div>
-                    <div class="small text-muted">@Model.Conversations.Count conversation@(Model.Conversations.Count == 1 ? "" : "s")@(unreadTotal > 0 ? $" · {unreadTotal} unread" : "")</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="um-wa-search">
-            <i class="bi bi-search"></i>
-            <input type="search" id="convSearch" placeholder="Search or start new chat" />
-        </div>
-
-        <ul class="um-wa-conv-list" id="convList">
-            @if (!Model.Conversations.Any())
-            {
-                <li class="um-wa-empty">
-                    <i class="bi bi-chat-dots"></i>
-                    <span>No conversations yet</span>
-                </li>
-            }
-            @foreach (var c in Model.Conversations)
-            {
-                var ava = avatarPalette[Math.Abs(c.OtherName.GetHashCode()) % avatarPalette.Length];
-                var active = c.OtherUserId == Model.OtherUserId ? "active" : "";
-                <li>
-                    <a class="um-wa-conv @active @(c.Unread ? "unread" : "")"
-                       data-search="@($"{c.OtherName} {c.LastSubject} {c.LastPreview}".ToLowerInvariant())"
-                       asp-action="Thread" asp-route-id="@c.OtherUserId">
-                        <div class="um-avatar @ava">@Initials(c.OtherName)</div>
-                        <div class="um-wa-conv-body">
-                            <div class="um-wa-conv-row">
-                                <span class="um-wa-conv-name">@c.OtherName</span>
-                                <span class="um-wa-conv-time">@ShortTime(c.LastAtUtc)</span>
-                            </div>
-                            <div class="um-wa-conv-row">
-                                <span class="um-wa-conv-preview">@c.LastPreview</span>
-                                @if (c.Unread)
-                                {
-                                    <span class="um-wa-unread-badge">●</span>
-                                }
-                            </div>
-                        </div>
-                    </a>
-                </li>
-            }
-        </ul>
-    </aside>
-
+<div class="um-wa um-wa-thread-only">
     <section class="um-wa-main">
         <header class="um-wa-header">
             <div class="d-flex align-items-center gap-2 min-w-0">
@@ -100,16 +28,6 @@
                         @if (!string.IsNullOrEmpty(Model.OtherUserRole))
                         {
                             <span class="um-wa-role">@Model.OtherUserRole</span>
-                        }
-                    </div>
-                    <div class="um-wa-status">
-                        @if (last != null)
-                        {
-                            <span><i class="bi bi-circle-fill text-success" style="font-size:.55rem;"></i> last activity @ShortTime(last.SentAtUtc)</span>
-                        }
-                        else
-                        {
-                            <span>@(string.IsNullOrEmpty(Model.OtherUserEmail) ? "" : Model.OtherUserEmail)</span>
                         }
                     </div>
                 </div>
@@ -127,7 +45,6 @@
             }
             else
             {
-                DateTime? lastDay = null;
                 foreach (var m in ordered)
                 {
                     var local = m.SentAtUtc.ToLocalTime();
@@ -149,11 +66,6 @@
                             }
                         }
                     }
-                    if (lastDay == null || lastDay.Value.Date != local.Date)
-                    {
-                        <div class="um-wa-day"><span>@HumanDay(local)</span></div>
-                        lastDay = local;
-                    }
                     var rowCls = m.IsMine ? "row-mine" : "row-theirs";
                     <div class="um-wa-row @rowCls">
                         <div class="um-wa-bubble">
@@ -169,17 +81,6 @@
                             }
                             <div class="um-wa-meta">
                                 <span class="um-wa-time">@local.ToString("h:mm tt")</span>
-                                @if (m.IsMine)
-                                {
-                                    if (m.IsRead)
-                                    {
-                                        <i class="bi bi-check2-all um-wa-tick um-wa-tick-read" title="Read"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-check2-all um-wa-tick" title="Sent"></i>
-                                    }
-                                }
                             </div>
                         </div>
                     </div>
@@ -244,18 +145,6 @@
                     e.preventDefault();
                     if (form && ta.value.trim().length > 0) form.submit();
                 }
-            });
-
-            const search = document.getElementById('convSearch');
-            const convs = document.querySelectorAll('#convList li');
-            search?.addEventListener('input', () => {
-                const q = (search.value || '').trim().toLowerCase();
-                convs.forEach(li => {
-                    const a = li.querySelector('.um-wa-conv');
-                    if (!a) return;
-                    const hay = a.dataset.search || '';
-                    li.style.display = (!q || hay.includes(q)) ? '' : 'none';
-                });
             });
 
         })();
