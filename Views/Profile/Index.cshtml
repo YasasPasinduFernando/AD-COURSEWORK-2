@@ -26,6 +26,13 @@
                         <span asp-validation-for="Phone" class="text-danger small"></span>
                     </div>
 
+                    <div class="mb-3">
+                        <label asp-for="DateOfBirth" class="form-label fw-semibold"></label>
+                        <input asp-for="DateOfBirth" class="form-control" type="date" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                        <p class="form-text small text-muted mb-0">Optional. You can add or change this later.</p>
+                    </div>
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label asp-for="Email" class="form-label fw-semibold"></label>

@@ -21,7 +21,13 @@ public static class DbInitializer
                 await roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        async Task<ApplicationUser?> EnsureUserAsync(string email, string fullName, string phone, string password, string role)
+        async Task<ApplicationUser?> EnsureUserAsync(
+            string email,
+            string fullName,
+            string phone,
+            string password,
+            string role,
+            DateOnly? dateOfBirth = null)
         {
             var user = await userManager.FindByEmailAsync(email);
             if (user != null)
@@ -33,7 +39,8 @@ public static class DbInitializer
                 Email = email,
                 EmailConfirmed = true,
                 FullName = fullName,
-                PhoneNumber = phone
+                PhoneNumber = phone,
+                DateOfBirth = dateOfBirth
             };
             var result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
@@ -44,8 +51,8 @@ public static class DbInitializer
         }
 
         await EnsureUserAsync("admin@unimanage.local", "System Admin", "0100000000", "Admin123!", AppRoles.Administrator);
-        var lecturer = await EnsureUserAsync("lecturer@unimanage.local", "Dr. Jane Lecturer", "0100000001", "Lecturer123!", AppRoles.Lecturer);
-        var student = await EnsureUserAsync("student@unimanage.local", "Alex Student", "0100000002", "Student123!", AppRoles.Student);
+        var lecturer = await EnsureUserAsync("lecturer@unimanage.local", "Dr. Jane Lecturer", "0100000001", "Lecturer123!", AppRoles.Lecturer, new DateOnly(1982, 4, 12));
+        var student = await EnsureUserAsync("student@unimanage.local", "Alex Student", "0100000002", "Student123!", AppRoles.Student, new DateOnly(2004, 8, 20));
 
         if (lecturer == null || student == null)
             return;
