@@ -5,7 +5,6 @@
     var avatarCls = avatarPalette[Math.Abs(Model.OtherUserName.GetHashCode()) % avatarPalette.Length];
     var ordered = Model.Messages.OrderBy(m => m.SentAtUtc).ToList();
     var last = ordered.LastOrDefault();
-    var threadSubject = ordered.LastOrDefault(m => !string.IsNullOrWhiteSpace(m.Subject))?.Subject ?? "";
     var unreadTotal = Model.Conversations.Count(c => c.Unread);
 
     static string Initials(string name)
@@ -165,10 +164,6 @@
                     var rowCls = m.IsMine ? "row-mine" : "row-theirs";
                     <div class="um-wa-row @rowCls">
                         <div class="um-wa-bubble">
-                            @if (!string.IsNullOrWhiteSpace(m.Subject) && !m.Subject.Trim().Equals("Re: conversation", StringComparison.OrdinalIgnoreCase))
-                            {
-                                <div class="um-wa-subj">@m.Subject</div>
-                            }
                             @if (!string.IsNullOrWhiteSpace(textContent))
                             {
                                 <div class="um-wa-text">@textContent</div>
@@ -201,7 +196,6 @@
 
         <form class="um-wa-composer" asp-action="Reply" asp-route-id="@Model.OtherUserId" method="post" id="replyForm" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
-            <input type="hidden" name="subject" value="@(string.IsNullOrEmpty(threadSubject) ? "Re: conversation" : "Re: " + threadSubject)" />
             <input type="file" id="photoInput" name="photo" accept="image/png,image/jpeg,image/gif,image/webp" class="d-none" />
             <button type="button" class="um-wa-iconbtn" title="Upload photo" id="photoBtn"><i class="bi bi-image"></i></button>
             <textarea name="content" id="replyContent"
