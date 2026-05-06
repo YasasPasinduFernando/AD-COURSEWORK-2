@@ -5,11 +5,11 @@
     ViewData["Title"] = "UniManage";
 }
 
-<section class="um-full-bleed um-home-hero" style="background-image: url('/assets/images/lms-campus-2.jpg');" aria-labelledby="hero-title">
+<section class="um-full-bleed um-home-hero" style="background-image: url('/images/landing/campus-students-hero.jpg');" aria-labelledby="hero-title">
     <div class="hero-inner">
-        <span class="um-hero-eyebrow"><i class="bi bi-mortarboard-fill me-2"></i>Learning management reimagined</span>
+        <span class="um-hero-eyebrow"><i class="bi bi-mortarboard-fill me-2"></i>University Course Management System</span>
         <h1 id="hero-title">Welcome to <span class="hero-grad">UniManage</span></h1>
-        <p class="hero-lead">A modern, end-to-end Learning Management System built for Sri Lankan universities — courses, assignments, messaging and dashboards in one place.</p>
+        <p class="hero-lead">A role-based academic management platform for courses, enrolments, assignments, grading, messaging and dashboards.</p>
         <div class="hero-actions">
             @if (SignInManager.IsSignedIn(User))
             {
@@ -70,31 +70,31 @@
 
 <section class="um-section-intro" id="about">
     <span class="section-eyebrow">About us</span>
-    <h2>Everything your campus needs, <span class="accent-underline">beautifully organised</span></h2>
-    <p>UniManage brings courses, enrollments, materials, assignments and real-time messaging together — so students, lecturers and administrators stay productive, engaged and informed across every academic term.</p>
+    <h2>Core academic functions in one platform</h2>
+    <p>UniManage brings together course management, student enrolment, assignment submission, grading, reporting and internal communication for students, lecturers and administrators.</p>
 </section>
 
 <section class="um-split-section" aria-labelledby="edu-title">
     <div class="um-split-image">
-        <img src="~/assets/images/lms-campus-1.jpg" alt="University students collaborating" />
+        <img src="~/images/landing/students-study-group.jpg" alt="Students discussing coursework together on campus" />
         <span class="um-split-badge"><i class="bi bi-stars"></i>Built for Sri Lankan unis</span>
     </div>
     <div class="um-split-body">
-        <span class="body-eyebrow">Welcome to education</span>
-        <h2 id="edu-title">A learning platform that grows with your institution.</h2>
-        <p class="lead">From first-year intakes to final exams, UniManage supports the full academic journey with role-aware workflows, structured course management and deep analytics.</p>
+        <span class="body-eyebrow">Role-based academic workflows</span>
+        <h2 id="edu-title">Designed for students, lecturers and administrators.</h2>
+        <p class="lead">The system separates access by user role so each user only sees the tools and information relevant to their academic responsibilities.</p>
         <ul class="um-split-list">
             <li>
                 <span class="list-icon"><i class="bi bi-shield-check"></i></span>
-                <span><strong>Controlled access</strong>Role-based permissions keep every action safe and auditable.</span>
+                <span><strong>Controlled access</strong>Role-based permissions help protect academic records and system actions.</span>
             </li>
             <li class="i-emerald">
                 <span class="list-icon"><i class="bi bi-graph-up-arrow"></i></span>
-                <span><strong>Actionable insights</strong>Live dashboards and reports surface the metrics that matter most.</span>
+                <span><strong>Actionable insights</strong>Dashboards and reports summarise enrolments, submissions, grades and lecturer workload.</span>
             </li>
             <li class="i-violet">
                 <span class="list-icon"><i class="bi bi-lightning-charge-fill"></i></span>
-                <span><strong>Fast &amp; modern</strong>Built on ASP.NET Core with a clean, responsive UI for every screen.</span>
+                <span><strong>Fast &amp; modern</strong>Built with ASP.NET Core MVC, Razor Views, Bootstrap and Entity Framework Core.</span>
             </li>
         </ul>
         <a href="#roles" class="btn btn-primary"><i class="bi bi-arrow-down me-1"></i>See it in action</a>
@@ -103,13 +103,13 @@
 
 <section class="um-split-section reverse" aria-labelledby="workflow-title">
     <div class="um-split-image">
-        <img src="~/assets/images/lms-campus-3.jpg" alt="Students on campus" />
+        <img src="~/images/landing/students-campus-digital.jpg" alt="Students using digital learning resources on campus" />
         <span class="um-split-badge"><i class="bi bi-clipboard2-check"></i>End-to-end workflow</span>
     </div>
     <div class="um-split-body">
-        <span class="body-eyebrow">Why UniManage</span>
-        <h2 id="workflow-title">Every stakeholder gets exactly what they need.</h2>
-        <p class="lead">Stop juggling spreadsheets, emails and file shares. UniManage replaces all of that with one reliable, role-aware hub for the entire academic community.</p>
+        <span class="body-eyebrow">WHY UNIMANAGE</span>
+        <h2 id="workflow-title">A clearer workflow from enrolment to grading.</h2>
+        <p class="lead">Students can browse courses, enrol, submit assignments and view feedback, while lecturers can manage course materials, grade submissions and communicate with enrolled students.</p>
         <ul class="um-split-list">
             <li class="i-amber">
                 <span class="list-icon"><i class="bi bi-person-workspace"></i></span>
@@ -167,8 +167,8 @@
 <section class="mb-5" aria-labelledby="modules-heading">
     <div class="um-section-intro">
         <span class="section-eyebrow">Core modules</span>
-        <h2>An <span class="accent-underline">end-to-end</span> academic workflow</h2>
-        <p>Every module is tightly integrated — enrollments flow into assignments, assignments become submissions, submissions produce grades, and grades power dashboards.</p>
+        <h2>Main system modules</h2>
+        <p>Each module supports a specific academic process, from course setup and enrolment through to assessment, reporting and messaging.</p>
     </div>
     <div class="row g-3" id="courses">
         <div class="col-md-6 col-lg-4">
@@ -219,8 +219,8 @@
 @if (!SignInManager.IsSignedIn(User))
 {
     <section class="um-cta-strip" aria-labelledby="cta-title">
-        <h2 id="cta-title">Ready to modernise your learning experience?</h2>
-        <p>Join UniManage today and get instant access to courses, assignments, messaging and a dashboard tailored to your role.</p>
+        <h2 id="cta-title">Get started with UniManage</h2>
+        <p>Create an account or sign in to access the academic management features available for your role.</p>
         <div class="cta-actions">
             <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4 shadow"><i class="bi bi-rocket-takeoff me-1"></i>Create your account</a>
             <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-box-arrow-in-right me-1"></i>I already have an account</a>
