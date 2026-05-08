@@ -9,29 +9,29 @@ namespace UniManage.Tests;
 public class ViewModelValidationTests
 {
     [Fact]
-    public void LoginViewModel_WithMissingEmailAndPassword_ShouldBeInvalid()
+    public void LoginViewModel_WithMissingIdentifierAndPassword_ShouldBeInvalid()
     {
         var model = new LoginViewModel();
 
         var results = ValidationTestHelper.ValidateModel(model);
 
         results.Should().NotBeEmpty();
-        results.Should().Contain(r => r.MemberNames.Contains(nameof(LoginViewModel.Email)));
+        results.Should().Contain(r => r.MemberNames.Contains(nameof(LoginViewModel.LoginIdentifier)));
         results.Should().Contain(r => r.MemberNames.Contains(nameof(LoginViewModel.Password)));
     }
 
     [Fact]
-    public void LoginViewModel_WithInvalidEmailFormat_ShouldBeInvalid()
+    public void LoginViewModel_WithIdentifierAndPassword_ShouldBeValid()
     {
         var model = new LoginViewModel
         {
-            Email = "not-an-email",
+            LoginIdentifier = "student01",
             Password = "AnyPassword1!"
         };
 
         var results = ValidationTestHelper.ValidateModel(model);
 
-        results.Should().Contain(r => r.MemberNames.Contains(nameof(LoginViewModel.Email)));
+        results.Should().BeEmpty();
     }
 
     [Fact]
@@ -40,6 +40,7 @@ public class ViewModelValidationTests
         var model = new RegisterViewModel
         {
             FullName = "Test Student",
+            UserName = "student01",
             Email = "student@test.com",
             Password = "Password123!",
             ConfirmPassword = "Password123!",
@@ -57,6 +58,7 @@ public class ViewModelValidationTests
         var model = new RegisterViewModel
         {
             FullName = string.Empty,
+            UserName = string.Empty,
             Email = string.Empty,
             Password = string.Empty,
             ConfirmPassword = string.Empty,
@@ -66,6 +68,7 @@ public class ViewModelValidationTests
         var results = ValidationTestHelper.ValidateModel(model);
 
         results.Should().Contain(r => r.MemberNames.Contains(nameof(RegisterViewModel.FullName)));
+        results.Should().Contain(r => r.MemberNames.Contains(nameof(RegisterViewModel.UserName)));
         results.Should().Contain(r => r.MemberNames.Contains(nameof(RegisterViewModel.Email)));
         results.Should().Contain(r => r.MemberNames.Contains(nameof(RegisterViewModel.Password)));
         results.Should().Contain(r => r.MemberNames.Contains(nameof(RegisterViewModel.Role)));
@@ -77,6 +80,7 @@ public class ViewModelValidationTests
         var model = new RegisterViewModel
         {
             FullName = "Test Student",
+            UserName = "student01",
             Email = "student@test.com",
             Password = "Password123!",
             ConfirmPassword = "DifferentPassword!",
@@ -94,6 +98,7 @@ public class ViewModelValidationTests
         var model = new RegisterViewModel
         {
             FullName = "Test Student",
+            UserName = "student01",
             Email = "student@test.com",
             Password = "Short1!",
             ConfirmPassword = "Short1!",
