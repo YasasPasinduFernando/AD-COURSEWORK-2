@@ -155,7 +155,7 @@ else
                     <div class="um-assn-meta">
                         <span><i class="bi bi-bookmark"></i>@a.Course.Code</span>
                         <span><i class="bi bi-clock"></i>@due.ToString("h:mm tt")</span>
-                        <span><i class="bi bi-trophy"></i>@a.MaxPoints pts</span>
+                        <span><i class="bi bi-trophy"></i>@a.MaxPoints.ToString("0.##") pts</span>
                         @if (sub?.Grade.HasValue == true)
                         {
                             <span><i class="bi bi-award"></i>Score: <strong>@sub.Grade.Value.ToString("0.##") / @a.MaxPoints.ToString("0.##") (@GradeBandHelper.ToLetter(sub.Grade.Value, a.MaxPoints))</strong></span>
@@ -166,7 +166,10 @@ else
                         @{
                             var statusPill = status == "Graded" ? "pill-success" : status == "Submitted" ? "pill-info" : "pill-warn";
                         }
-                        <span class="um-pill @statusPill">@status</span>
+                        @if (!string.Equals(dueChipText, status, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="um-pill @statusPill">@status</span>
+                        }
                     </div>
                 </div>
                 <div class="um-assn-actions">
