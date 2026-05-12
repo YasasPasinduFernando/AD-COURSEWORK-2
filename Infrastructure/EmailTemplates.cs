@@ -27,6 +27,7 @@ public static class EmailTemplates
     {
         var name = SafeName(fullName);
         var roleSafe = HtmlEncoder.Default.Encode(role ?? string.Empty);
+        var joinedLocal = SriLankaNow().ToString("dddd, dd MMMM yyyy HH:mm");
 
         var body = new StringBuilder()
             .Append(P($"Hi <strong>{name}</strong>,"))
@@ -35,7 +36,7 @@ public static class EmailTemplates
             {
                 ("Name", name),
                 ("Role", roleSafe),
-                ("Joined", HtmlEncoder.Default.Encode(DateTime.Now.ToString("f")))
+                ("Joined", HtmlEncoder.Default.Encode($"{joinedLocal} SLT"))
             }))
             .Append(P("You can now sign in and start exploring your personalized dashboard."))
             .ToString();
@@ -446,6 +447,36 @@ public static class EmailTemplates
     {
         var v = string.IsNullOrWhiteSpace(name) ? "there" : name!;
         return HtmlEncoder.Default.Encode(v);
+    }
+
+    private static DateTime SriLankaNow()
+    {
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, SriLankaTimeZone);
+    }
+
+    private static TimeZoneInfo SriLankaTimeZone { get; } = ResolveSriLankaTimeZone();
+
+    private static TimeZoneInfo ResolveSriLankaTimeZone()
+    {
+        foreach (var id in new[] { "Asia/Colombo", "Sri Lanka Standard Time" })
+        {
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(id);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+            }
+            catch (InvalidTimeZoneException)
+            {
+            }
+        }
+
+        return TimeZoneInfo.CreateCustomTimeZone(
+            "Sri Lanka Time",
+            TimeSpan.FromHours(5.5),
+            "Sri Lanka Time",
+            "Sri Lanka Time");
     }
 
     private static string P(string innerHtml) =>
