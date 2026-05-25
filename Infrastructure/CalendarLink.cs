@@ -3,11 +3,8 @@ using System.Text;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
-/// <summary>
-/// Generates RFC 5545 (.ics / iCalendar) content and deep-link URLs to add an
-/// event to Google Calendar / Outlook / Yahoo. No external API calls or
-/// OAuth required — works with every modern calendar app.
-/// </summary>
+// Generates .ics calendar content and calendar deep-link URLs for meeting events.
+// It works without external calendar API calls or OAuth.
 public static class CalendarLink
 {
     private const string ProductId = "-//UniManage//University Course Management System//EN";
@@ -23,10 +20,7 @@ public static class CalendarLink
         string? OrganizerEmail,
         string? Url);
 
-    /// <summary>
-    /// Build a complete .ics document for the given event. Suitable for
-    /// download or as an email attachment of type text/calendar.
-    /// </summary>
+    // Builds a complete .ics document suitable for download or email attachment.
     public static string BuildIcs(CalendarEvent e)
     {
         var sb = new StringBuilder();
@@ -72,10 +66,8 @@ public static class CalendarLink
         return sb.ToString();
     }
 
-    /// <summary>
-    /// Build a one-click "Add to Google Calendar" deep-link URL.
-    /// Opens the prefilled new-event dialog in the user's Google Calendar.
-    /// </summary>
+    // Builds a one-click "Add to Google Calendar" deep-link URL.
+    // Opens the prefilled new-event dialog in the user's Google Calendar.
     public static string GoogleCalendarUrl(CalendarEvent e)
     {
         var dates = $"{FormatUtc(e.StartUtc)}/{FormatUtc(e.EndUtc)}";
@@ -97,9 +89,7 @@ public static class CalendarLink
         return "https://calendar.google.com/calendar/render?" + string.Join("&", qs);
     }
 
-    /// <summary>
-    /// Build a one-click "Add to Outlook (Office 365 / live.com)" deep-link.
-    /// </summary>
+    // Builds a one-click "Add to Outlook (Office 365 / live.com)" deep-link.
     public static string OutlookCalendarUrl(CalendarEvent e)
     {
         var qs = new List<string>

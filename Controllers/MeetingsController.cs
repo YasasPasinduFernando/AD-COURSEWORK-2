@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Manages course meeting schedules, meeting links, calendar exports, and student notifications.
 [Authorize]
 public class MeetingsController : Controller
 {
@@ -33,6 +34,8 @@ public class MeetingsController : Controller
         _logger = logger;
     }
 
+    // Displays meetings visible to the current user based on administrator,
+    // lecturer, or enrolled-student permissions.
     public async Task<IActionResult> Index()
     {
         var userId = _userManager.GetUserId(User)!;
@@ -79,6 +82,7 @@ public class MeetingsController : Controller
         return View(rows);
     }
 
+    // Displays the lecturer form for scheduling a new course meeting.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> Create(int? courseId = null)
     {
@@ -90,6 +94,8 @@ public class MeetingsController : Controller
         });
     }
 
+    // Creates a lecturer-owned course meeting after validating course ownership,
+    // meeting link rules, schedule time, and optional student notification.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -105,6 +111,7 @@ public class MeetingsController : Controller
 
         if (model.AutoGenerate || string.IsNullOrWhiteSpace(model.MeetingUrl))
         {
+            // Auto-generation provides a usable meeting URL when the lecturer does not supply one.
             model.MeetingUrl = MeetLinkGenerator.GenerateGoogleMeetUrl();
         }
         else if (!MeetLinkGenerator.IsValidMeetingUrl(model.MeetingUrl))
@@ -151,6 +158,7 @@ public class MeetingsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Displays the lecturer edit form for an existing meeting.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -178,6 +186,7 @@ public class MeetingsController : Controller
         return View(vm);
     }
 
+    // Updates an existing meeting after validating lecturer ownership and meeting link rules.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -233,6 +242,7 @@ public class MeetingsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Deletes a meeting owned by the currently signed-in lecturer.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -254,6 +264,7 @@ public class MeetingsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Redirects an authorized user to the external meeting URL after validating access and URL safety.
     public async Task<IActionResult> Join(int id)
     {
         var userId = _userManager.GetUserId(User);
@@ -283,10 +294,8 @@ public class MeetingsController : Controller
         return Redirect(meeting.MeetingUrl);
     }
 
-    /// <summary>
-    /// Returns a downloadable .ics file. Anyone in the course can download
-    /// (lecturer, admin, enrolled student) and import to any calendar app.
-    /// </summary>
+    // Returns a downloadable .ics file. Anyone in the course can download
+    // (lecturer, admin, enrolled student) and import to any calendar app.
     [AllowAnonymous]
     public async Task<IActionResult> Ics(int id, string? token = null)
     {

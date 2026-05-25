@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Data;
 
+// Configures the Entity Framework Core database context for Identity tables
+// and UniManage domain tables used by courses, enrollments, submissions, and reports.
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -20,6 +22,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Meeting> Meetings => Set<Meeting>();
 
+    // Defines database relationships, indexes, delete behavior, and long-text fields
+    // for the main academic management entities.
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -28,6 +32,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         {
             e.Property(x => x.Description).HasColumnType("longtext");
             e.HasIndex(x => x.Code).IsUnique();
+            // Course ownership is restricted so deleting a lecturer does not remove course history.
             e.HasOne(x => x.Lecturer)
                 .WithMany(x => x.TeachingCourses)
                 .HasForeignKey(x => x.LecturerId)
@@ -40,6 +45,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Enrollment>(e =>
         {
+            // A student can hold only one enrollment record per course.
             e.HasIndex(x => new { x.StudentId, x.CourseId }).IsUnique();
             e.HasOne(x => x.Student)
                 .WithMany(x => x.Enrollments)
@@ -64,6 +70,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         {
             e.Property(x => x.TextContent).HasColumnType("longtext");
             e.Property(x => x.Feedback).HasColumnType("longtext");
+            // A student submits at most one record for each assignment.
             e.HasIndex(x => new { x.AssignmentId, x.StudentId }).IsUnique();
             e.HasOne(x => x.Assignment)
                 .WithMany(x => x.Submissions)

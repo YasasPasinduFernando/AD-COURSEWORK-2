@@ -1,5 +1,6 @@
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Classifies dashboard calendar events by the academic activity they represent.
 public enum DashboardCalendarEventKind
 {
     Deadline = 0,
@@ -9,6 +10,7 @@ public enum DashboardCalendarEventKind
     Meeting = 4
 }
 
+// Groups calendar events by day for dashboard month views.
 public class DashboardCalendarModel
 {
     public int Year { get; set; }
@@ -16,6 +18,7 @@ public class DashboardCalendarModel
     public Dictionary<DateOnly, List<DashboardCalendarEvent>> EventsByDay { get; set; } = new();
 }
 
+// Represents a single academic event displayed in the dashboard calendar.
 public class DashboardCalendarEvent
 {
     public string Title { get; set; } = string.Empty;
@@ -23,6 +26,7 @@ public class DashboardCalendarEvent
     public DashboardCalendarEventKind Kind { get; set; } = DashboardCalendarEventKind.Deadline;
 }
 
+// Summarizes a student's submission status for an assignment within a course details page.
 public class CourseStudentSubmissionRow
 {
     public int AssignmentId { get; set; }
@@ -33,12 +37,14 @@ public class CourseStudentSubmissionRow
     public decimal MaxPoints { get; set; }
 }
 
+// Represents one label-value data point used by dashboard charts and trends.
 public class TrendPoint
 {
     public string Label { get; set; } = string.Empty;
     public double Value { get; set; }
 }
 
+// Represents a recent dashboard activity item with visual tone and timestamp.
 public class ActivityFeedItem
 {
     public string Icon { get; set; } = "bi-clock-history";
@@ -48,6 +54,7 @@ public class ActivityFeedItem
     public DateTime WhenUtc { get; set; }
 }
 
+// Provides the data needed to display an upcoming meeting on dashboards.
 public class UpcomingMeetingRow
 {
     public int MeetingId { get; set; }
@@ -60,6 +67,8 @@ public class UpcomingMeetingRow
     public bool IsMine { get; set; }
 }
 
+// Aggregates student-specific dashboard data including enrolled courses,
+// deadlines, grades, calendar items, activity, and upcoming meetings.
 public class StudentDashboardViewModel
 {
     public List<EnrolledCourseRow> EnrolledCourses { get; set; } = new();
@@ -104,6 +113,8 @@ public class StudentDashboardViewModel
     }
 }
 
+// Aggregates lecturer-specific dashboard data including teaching courses,
+// submission workload, calendar items, activity, and upcoming meetings.
 public class LecturerDashboardViewModel
 {
     public List<CourseSummary> Courses { get; set; } = new();
@@ -139,6 +150,8 @@ public class LecturerDashboardViewModel
     }
 }
 
+// Aggregates administrator dashboard totals, role counts, enrollment trends,
+// popular courses, and recent audit activity.
 public class AdminDashboardViewModel
 {
     public int UserCount { get; set; }
@@ -164,6 +177,7 @@ public class AdminDashboardViewModel
     }
 }
 
+// Represents course popularity data used by report pages and exports.
 public class ReportCoursePopularityRow
 {
     public string Code { get; set; } = string.Empty;
@@ -173,6 +187,7 @@ public class ReportCoursePopularityRow
     public double FillRate { get; set; }
 }
 
+// Represents student performance data calculated from graded submissions.
 public class ReportStudentPerformanceRow
 {
     public string StudentName { get; set; } = string.Empty;
@@ -181,6 +196,7 @@ public class ReportStudentPerformanceRow
     public double? AveragePercent { get; set; }
 }
 
+// Represents lecturer workload data across courses, assignments, and submissions.
 public class ReportLecturerWorkloadRow
 {
     public string LecturerName { get; set; } = string.Empty;
@@ -190,6 +206,7 @@ public class ReportLecturerWorkloadRow
     public int SubmissionCount { get; set; }
 }
 
+// Represents a single enrollment event used in enrollment timeline reports.
 public class ReportEnrollmentRow
 {
     public DateTime DateUtc { get; set; }
@@ -198,6 +215,7 @@ public class ReportEnrollmentRow
     public string CourseName { get; set; } = string.Empty;
 }
 
+// Represents pass/fail statistics for graded submissions in a course.
 public class ReportPassFailRow
 {
     public string CourseCode { get; set; } = string.Empty;
@@ -209,6 +227,7 @@ public class ReportPassFailRow
     public double AveragePercent { get; set; }
 }
 
+// Aggregates pass/fail report rows and overall summary statistics.
 public class ReportPassFailViewModel
 {
     public List<ReportPassFailRow> Rows { get; set; } = new();
@@ -219,6 +238,7 @@ public class ReportPassFailViewModel
     public double OverallPassRate => TotalGraded > 0 ? (double)TotalPass * 100 / TotalGraded : 0;
 }
 
+// Represents assignment attendance and missing-submission metrics for a single assignment.
 public class ReportAttendanceRow
 {
     public int AssignmentId { get; set; }
@@ -231,6 +251,7 @@ public class ReportAttendanceRow
     public double AttendanceRate => Enrolled > 0 ? (double)Submitted * 100 / Enrolled : 0;
 }
 
+// Aggregates assignment attendance report rows and overall attendance totals.
 public class ReportAttendanceViewModel
 {
     public List<ReportAttendanceRow> Rows { get; set; } = new();

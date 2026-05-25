@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Represents lecturer input for creating and editing course assignments.
 public class AssignmentInputViewModel
 {
     public int? AssignmentId { get; set; }

@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Represents administrator input for creating or editing course records,
+// including lecturer assignment, capacity, credits, and prerequisites.
 public class CourseInputViewModel
 {
     public int? CourseId { get; set; }

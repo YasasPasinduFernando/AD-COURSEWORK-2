@@ -1,5 +1,7 @@
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Provides the data required to display a course row in the student course
+// browsing page, including enrollment state and blocking reasons.
 public class CourseBrowseRowViewModel
 {
     public int CourseId { get; set; }

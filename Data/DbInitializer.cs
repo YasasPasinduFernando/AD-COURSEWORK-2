@@ -4,8 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Data;
 
+// Applies pending migrations and creates the baseline roles, users, courses,
+// assignments, enrollments, submissions, and meetings used for coursework demonstration.
 public static class DbInitializer
 {
+    // Seeds the database with required Identity roles and representative academic data
+    // when the application starts.
     public static async Task SeedAsync(IServiceProvider services)
     {
         using var scope = services.CreateScope();
@@ -15,6 +19,7 @@ public static class DbInitializer
 
         await context.Database.MigrateAsync();
 
+        // Roles are required before any seeded user can be assigned permissions.
         foreach (var role in new[] { AppRoles.Student, AppRoles.Lecturer, AppRoles.Administrator })
         {
             if (!await roleManager.RoleExistsAsync(role))

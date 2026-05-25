@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Handles student coursework submission, lecturer grading, and protected file download actions.
 public class SubmissionsController : Controller
 {
     private readonly ApplicationDbContext _db;
@@ -34,6 +35,7 @@ public class SubmissionsController : Controller
         _logger = logger;
     }
 
+    // Displays all submissions for a lecturer-owned assignment.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> ForAssignment(int id)
     {
@@ -52,6 +54,7 @@ public class SubmissionsController : Controller
         return View(assignment);
     }
 
+    // Displays the student submission page and creates an initial submission record when required.
     [Authorize(Roles = AppRoles.Student)]
     public async Task<IActionResult> Submit(int id)
     {
@@ -102,6 +105,8 @@ public class SubmissionsController : Controller
         return View(vm);
     }
 
+    // Saves student coursework text or uploaded files after confirming course enrollment
+    // and preventing edits to already graded submissions.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Student)]
@@ -168,6 +173,7 @@ public class SubmissionsController : Controller
 
         if (model.File != null && model.File.Length > 0)
         {
+            // Uploaded submission files are stored through the central file store to enforce size and type checks.
             UploadedFileStore.TryDelete(_env, "submissions", submission.StoredFileName);
             var saved = await UploadedFileStore.SaveAsync(_env, model.File, "submissions");
             if (saved == null)
@@ -233,6 +239,7 @@ public class SubmissionsController : Controller
         }
     }
 
+    // Displays the lecturer grading form for a submission belonging to a lecturer-owned course.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> Grade(int id)
     {
@@ -263,6 +270,7 @@ public class SubmissionsController : Controller
         return View(vm);
     }
 
+    // Saves lecturer grade and feedback after validating ownership and grade range constraints.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -341,6 +349,7 @@ public class SubmissionsController : Controller
         }
     }
 
+    // Downloads a course material file after verifying administrator, lecturer, or enrolled-student access.
     [Authorize]
     public async Task<IActionResult> CourseMaterialFile(int id)
     {
@@ -373,6 +382,7 @@ public class SubmissionsController : Controller
         return File(stream, material.ContentType ?? "application/octet-stream", material.StoredFileName);
     }
 
+    // Downloads a submission attachment when the requester is the owner, course lecturer, or administrator.
     [Authorize]
     public async Task<IActionResult> SubmissionFile(int id)
     {

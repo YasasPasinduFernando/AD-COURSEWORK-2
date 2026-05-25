@@ -3,8 +3,10 @@ using System.Text;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
+// Builds UTF-8 CSV exports for report data using invariant formatting and CSV-safe escaping.
 public static class CsvWriter
 {
+    // Creates a downloadable CSV byte array from column headers and row values.
     public static byte[] Build(IEnumerable<string> headers, IEnumerable<IEnumerable<object?>> rows)
     {
         var sb = new StringBuilder();

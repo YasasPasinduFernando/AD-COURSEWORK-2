@@ -3,6 +3,8 @@ using AD_COURSEWORK_2.Models;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Captures public registration input and validates profile, username, role,
+// password confirmation, and date-of-birth rules.
 public class RegisterViewModel : IValidatableObject
 {
     [Required]

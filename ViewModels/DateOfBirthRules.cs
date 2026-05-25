@@ -1,6 +1,6 @@
 namespace AD_COURSEWORK_2.ViewModels;
 
-/// <summary>Shared validation for optional date-of-birth fields.</summary>
+// Shared validation for optional date-of-birth fields.
 public static class DateOfBirthRules
 {
     public static string? ValidateOptional(DateOnly? dob)

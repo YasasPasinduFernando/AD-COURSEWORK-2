@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Provides lecturer grading input together with submitted work details and maximum point constraints.
 public class GradeSubmissionViewModel
 {
     public int SubmissionId { get; set; }

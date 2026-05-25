@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Handles local and external authentication workflows, account registration,
+// password reset, logout, and access-denied responses.
 public class AccountController : Controller
 {
     private static readonly Regex UsernameRegex = new("^[A-Za-z0-9._-]{3,30}$", RegexOptions.Compiled);
@@ -40,6 +42,7 @@ public class AccountController : Controller
         _audit = audit;
     }
 
+    // Displays the public registration form for new student or lecturer accounts.
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Register()
@@ -47,6 +50,8 @@ public class AccountController : Controller
         return View(new RegisterViewModel());
     }
 
+    // Creates a new account after validating role, username, email uniqueness,
+    // password requirements, and optional profile data.
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -131,6 +136,7 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Dashboard");
     }
 
+    // Displays the sign-in form and optional Google authentication error feedback.
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login(string? returnUrl = null, string? googleError = null)
@@ -141,6 +147,8 @@ public class AccountController : Controller
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
+    // Authenticates a user by email or username, applies lockout rules,
+    // records audit activity, and redirects to the requested local URL or dashboard.
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -199,6 +207,7 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Dashboard");
     }
 
+    // Starts the Google external sign-in challenge when Google OAuth settings are configured.
     [HttpGet]
     [AllowAnonymous]
     public IActionResult LoginWithGoogle(string? returnUrl = null)
@@ -207,6 +216,7 @@ public class AccountController : Controller
         var clientSecret = _configuration["Authentication:Google:ClientSecret"];
         if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
         {
+            // Google authentication remains optional when OAuth settings are not provided.
             TempData["Error"] = "Google login is not configured yet.";
             return RedirectToAction(nameof(Login), new { returnUrl });
         }
@@ -219,6 +229,8 @@ public class AccountController : Controller
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
+    // Completes Google authentication, creates a student account when needed,
+    // signs the user in, and redirects to the dashboard or local return URL.
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GoogleCallback(string? returnUrl = null, string? remoteError = null)
@@ -301,6 +313,7 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Dashboard");
     }
 
+    // Signs out the current user from local and external authentication schemes.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize]
@@ -316,6 +329,7 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    // Displays the access denied page for authenticated users without required permissions.
     [HttpGet]
     [AllowAnonymous]
     public IActionResult AccessDenied()
@@ -324,6 +338,7 @@ public class AccountController : Controller
         return View();
     }
 
+    // Displays the password reset request form.
     [HttpGet]
     [AllowAnonymous]
     public IActionResult ForgotPassword()
@@ -331,6 +346,7 @@ public class AccountController : Controller
         return View(new ForgotPasswordViewModel());
     }
 
+    // Generates a password reset token and sends a reset link when the submitted email exists.
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -375,6 +391,7 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Login));
     }
 
+    // Displays the password reset form using the email and token supplied in the reset link.
     [HttpGet]
     [AllowAnonymous]
     public IActionResult ResetPassword(string email, string token)
@@ -389,6 +406,7 @@ public class AccountController : Controller
         });
     }
 
+    // Resets a user's password using an Identity reset token and clears failed access count on success.
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]

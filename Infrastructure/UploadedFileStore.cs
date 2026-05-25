@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
+// Stores uploaded coursework files using safe generated filenames and validates
+// file size, extension, content type, and path safety.
 public static class UploadedFileStore
 {
     private const long MaxBytes = 15 * 1024 * 1024;
@@ -46,6 +48,7 @@ public static class UploadedFileStore
         "video/mp4"
     };
 
+    // Validates and stores an uploaded file under a controlled uploads subfolder.
     public static async Task<(string StoredName, string? ContentType, long Size)?> SaveAsync(
         IWebHostEnvironment env,
         IFormFile file,
@@ -62,6 +65,7 @@ public static class UploadedFileStore
         if (!AllowedExtensions.Contains(ext))
             return null;
 
+        // Content type is checked when supplied by the client, while the extension list remains authoritative.
         if (!string.IsNullOrWhiteSpace(file.ContentType)
             && !AllowedContentTypes.Contains(file.ContentType))
         {
@@ -80,6 +84,7 @@ public static class UploadedFileStore
         return (stored, file.ContentType, file.Length);
     }
 
+    // Resolves a stored upload name to a physical path after rejecting path traversal input.
     public static string? GetPhysicalPath(IWebHostEnvironment env, string subfolder, string? storedName)
     {
         if (string.IsNullOrWhiteSpace(storedName))
@@ -92,6 +97,7 @@ public static class UploadedFileStore
         return File.Exists(path) ? path : null;
     }
 
+    // Deletes a previously stored upload when the stored filename is valid and present.
     public static void TryDelete(IWebHostEnvironment env, string subfolder, string? storedName)
     {
         var path = GetPhysicalPath(env, subfolder, storedName);
@@ -99,5 +105,6 @@ public static class UploadedFileStore
             File.Delete(path);
     }
 
+    // Exposes allowed upload extensions for display or validation feedback.
     public static IEnumerable<string> GetAllowedExtensions() => AllowedExtensions;
 }

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
+// Sends HTML email notifications through SMTP for account, submission,
+// grading, material, and meeting workflows.
 public class SmtpEmailService : IEmailService
 {
     private readonly EmailSettings _settings;
@@ -16,9 +18,11 @@ public class SmtpEmailService : IEmailService
         _logger = logger;
     }
 
+    // Sends an HTML email without attachments.
     public Task SendAsync(string toEmail, string subject, string htmlBody)
         => SendAsync(toEmail, subject, htmlBody, Array.Empty<EmailAttachment>());
 
+    // Sends an HTML email and optional in-memory attachments, such as calendar invites.
     public async Task SendAsync(
         string toEmail,
         string subject,
@@ -30,6 +34,7 @@ public class SmtpEmailService : IEmailService
             string.IsNullOrWhiteSpace(_settings.Username) ||
             string.IsNullOrWhiteSpace(_settings.Password))
         {
+            // Email is optional in local coursework runs, so incomplete SMTP settings skip delivery safely.
             _logger.LogWarning("SMTP email skipped because Email settings are incomplete.");
             return;
         }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Manages lecturer assignment creation and student assignment listings.
 public class AssignmentsController : Controller
 {
     private readonly ApplicationDbContext _db;
@@ -19,6 +20,7 @@ public class AssignmentsController : Controller
         _userManager = userManager;
     }
 
+    // Displays assignments for a course owned by the currently signed-in lecturer.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> ForCourse(int id)
     {
@@ -43,12 +45,14 @@ public class AssignmentsController : Controller
         return View(list);
     }
 
+    // Displays the lecturer form for creating an assignment in a selected course.
     [Authorize(Roles = AppRoles.Lecturer)]
     public IActionResult Create(int courseId)
     {
         return View(new AssignmentInputViewModel { CourseId = courseId });
     }
 
+    // Creates a course assignment after confirming lecturer ownership and validating form input.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -81,6 +85,7 @@ public class AssignmentsController : Controller
         return RedirectToAction(nameof(ForCourse), new { id = model.CourseId });
     }
 
+    // Displays the edit form for an assignment owned by the current lecturer.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -105,6 +110,7 @@ public class AssignmentsController : Controller
         return View(vm);
     }
 
+    // Updates assignment details after validating lecturer ownership and model state.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -135,6 +141,7 @@ public class AssignmentsController : Controller
         return RedirectToAction(nameof(ForCourse), new { id = a.CourseId });
     }
 
+    // Deletes an assignment from a lecturer-owned course.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]
@@ -155,6 +162,7 @@ public class AssignmentsController : Controller
         return RedirectToAction(nameof(ForCourse), new { id = courseId });
     }
 
+    // Displays assignments available to the current student based on enrolled courses.
     [Authorize(Roles = AppRoles.Student)]
     public async Task<IActionResult> Mine()
     {

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Handles student course browsing and enrollment actions.
 [Authorize(Roles = AppRoles.Student)]
 public class EnrollmentsController : Controller
 {
@@ -23,6 +24,8 @@ public class EnrollmentsController : Controller
         _audit = audit;
     }
 
+    // Displays the course browsing page for students and prepares enrollment status,
+    // capacity information, and prerequisite availability for each course.
     public async Task<IActionResult> Browse()
     {
         var userId = _userManager.GetUserId(User)!;
@@ -54,6 +57,7 @@ public class EnrollmentsController : Controller
                 block = "Course is full.";
             else if (c.PrerequisiteId.HasValue)
             {
+                // Prerequisite availability is evaluated from the student's current enrollments.
                 var hasPrereq = enrolledIds.Contains(c.PrerequisiteId.Value);
                 if (!hasPrereq)
                 {
@@ -88,6 +92,8 @@ public class EnrollmentsController : Controller
         return View(rows);
     }
 
+    // Handles student enrollment for a selected course after validating duplicate
+    // enrollment, course capacity, and prerequisite requirements.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Enroll(int id)
@@ -110,6 +116,7 @@ public class EnrollmentsController : Controller
             return RedirectToAction(nameof(Browse));
         }
 
+        // Capacity is checked immediately before saving to avoid over-enrollment.
         if (course.Enrollments.Count >= course.EnrollmentLimit)
         {
             TempData["Error"] = "This course has reached its enrollment limit.";

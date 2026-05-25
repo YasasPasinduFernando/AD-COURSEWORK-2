@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Provides assignment context and student submission input for text and file-based coursework submission.
 public class SubmissionSubmitViewModel
 {
     public int? SubmissionId { get; set; }

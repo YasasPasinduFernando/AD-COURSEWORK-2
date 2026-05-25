@@ -3,16 +3,19 @@ using System.Text;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
+// Generates simple meeting links and validates supported external meeting URLs.
 public static class MeetLinkGenerator
 {
     private const string Alphabet = "abcdefghijkmnopqrstuvwxyz";
 
+    // Creates a Google Meet-style URL for lecturer-scheduled sessions.
     public static string GenerateGoogleMeetUrl()
     {
         var code = $"{RandomChunk(3)}-{RandomChunk(4)}-{RandomChunk(3)}";
         return $"https://meet.google.com/{code}";
     }
 
+    // Validates that a meeting URL uses an accepted video meeting provider.
     public static bool IsValidMeetingUrl(string url)
     {
         if (string.IsNullOrWhiteSpace(url)) return false;

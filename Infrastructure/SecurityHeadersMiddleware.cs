@@ -1,5 +1,7 @@
 namespace AD_COURSEWORK_2.Infrastructure;
 
+// Adds browser security headers that reduce common web risks such as
+// clickjacking, MIME sniffing, and overly broad browser permissions.
 public sealed class SecurityHeadersMiddleware
 {
     private readonly RequestDelegate _next;
@@ -9,6 +11,7 @@ public sealed class SecurityHeadersMiddleware
         _next = next;
     }
 
+    // Applies the security header set before passing the request to the next middleware.
     public async Task InvokeAsync(HttpContext context)
     {
         var headers = context.Response.Headers;
@@ -20,6 +23,7 @@ public sealed class SecurityHeadersMiddleware
         headers["X-XSS-Protection"] = "0";
         headers["Cross-Origin-Opener-Policy"] = "same-origin";
 
+        // The CSP is intentionally restrictive while still allowing the project's known UI assets.
         const string csp =
             "default-src 'self'; " +
             "img-src 'self' data: https:; " +
@@ -38,6 +42,7 @@ public sealed class SecurityHeadersMiddleware
     }
 }
 
+// Provides the extension method used to register security headers in the ASP.NET Core pipeline.
 public static class SecurityHeadersMiddlewareExtensions
 {
     public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder app)

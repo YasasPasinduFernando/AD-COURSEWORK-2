@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Manages course administration, lecturer course views, course details,
+// and lecturer material uploads.
 public class CoursesController : Controller
 {
     private readonly ApplicationDbContext _db;
@@ -34,6 +36,7 @@ public class CoursesController : Controller
         _audit = audit;
     }
 
+    // Displays the administrator course list with search and pagination support.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> Index(string? q = null, int page = 1, int pageSize = 10)
     {
@@ -74,6 +77,7 @@ public class CoursesController : Controller
         return View(items);
     }
 
+    // Displays courses assigned to the currently signed-in lecturer.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> MyCourses()
     {
@@ -90,6 +94,7 @@ public class CoursesController : Controller
         return View(list);
     }
 
+    // Displays course details while enforcing lecturer ownership and student enrollment access.
     [Authorize]
     public async Task<IActionResult> Details(int id)
     {
@@ -110,6 +115,7 @@ public class CoursesController : Controller
 
         if (User.IsInRole(AppRoles.Student))
         {
+            // Students may only view details for courses where they already hold enrollment.
             var isEnrolled = await _db.Enrollments.AnyAsync(e => e.CourseId == id && e.StudentId == userId);
             if (!isEnrolled)
                 return Forbid();
@@ -136,6 +142,7 @@ public class CoursesController : Controller
         return View(course);
     }
 
+    // Displays the administrator form for creating a new course.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> Create()
     {
@@ -143,6 +150,8 @@ public class CoursesController : Controller
         return View(new CourseInputViewModel());
     }
 
+    // Creates a course after validating lecturer assignment, prerequisite selection,
+    // and unique course code requirements.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Administrator)]
@@ -186,6 +195,7 @@ public class CoursesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Displays the administrator edit form for an existing course.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> Edit(int id)
     {
@@ -208,6 +218,7 @@ public class CoursesController : Controller
         return View(vm);
     }
 
+    // Updates a course after validating lecturer, prerequisite, and duplicate-code constraints.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Administrator)]
@@ -258,6 +269,7 @@ public class CoursesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Displays the administrator confirmation page before deleting a course.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> Delete(int id)
     {
@@ -270,6 +282,7 @@ public class CoursesController : Controller
         return View(course);
     }
 
+    // Deletes a course record after administrator confirmation.
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Administrator)]
@@ -287,6 +300,7 @@ public class CoursesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Allows the assigned lecturer to upload course material after file validation.
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = AppRoles.Lecturer)]

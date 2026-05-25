@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Generates administrative and lecturer report data and exports selected reports
+// in PDF or CSV format for academic and operational review.
 [Authorize]
 public class ReportsController : Controller
 {
@@ -21,6 +23,7 @@ public class ReportsController : Controller
         _userManager = userManager;
     }
 
+    // Routes administrators and lecturers to the correct report landing page.
     public IActionResult Index()
     {
         if (User.IsInRole(AppRoles.Administrator))
@@ -35,6 +38,7 @@ public class ReportsController : Controller
     // ============================================================
     // Course popularity
     // ============================================================
+    // Displays course popularity metrics, scoped to lecturer-owned courses when applicable.
     [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> CoursePopularity()
     {
@@ -46,6 +50,7 @@ public class ReportsController : Controller
         return View(rows);
     }
 
+    // Exports administrator course popularity data as a CSV file.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> CoursePopularityCsv()
     {
@@ -56,6 +61,7 @@ public class ReportsController : Controller
         return File(bytes, "text/csv", $"course-popularity-{DateTime.UtcNow:yyyyMMddHHmm}.csv");
     }
 
+    // Exports administrator course popularity data as a formatted PDF report.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> CoursePopularityPdf()
     {
@@ -63,6 +69,7 @@ public class ReportsController : Controller
         var totalEnroll = rows.Sum(r => r.EnrollmentCount);
         var totalCap = rows.Sum(r => r.Capacity);
         var avgFill = rows.Count > 0 ? rows.Average(r => r.FillRate) * 100 : 0;
+        // PDF reports share a common branded layout with summary chips and tabular data.
         var pdf = PdfReport.Build(
             "Course Popularity",
             "Enrollment headcount and fill rate per course.",
@@ -90,6 +97,7 @@ public class ReportsController : Controller
     // ============================================================
     // Student performance
     // ============================================================
+    // Displays student performance metrics, scoped to a lecturer's students when applicable.
     [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> StudentPerformance()
     {
@@ -101,6 +109,7 @@ public class ReportsController : Controller
         return View(rows);
     }
 
+    // Exports administrator student performance data as a CSV file.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> StudentPerformanceCsv()
     {
@@ -111,6 +120,7 @@ public class ReportsController : Controller
         return File(bytes, "text/csv", $"student-performance-{DateTime.UtcNow:yyyyMMddHHmm}.csv");
     }
 
+    // Exports administrator student performance data as a formatted PDF report.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> StudentPerformancePdf()
     {
@@ -143,6 +153,7 @@ public class ReportsController : Controller
     // ============================================================
     // Lecturer workload
     // ============================================================
+    // Displays lecturer workload metrics for administrators or the current lecturer.
     [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> LecturerWorkload()
     {
@@ -150,6 +161,7 @@ public class ReportsController : Controller
         return View(rows);
     }
 
+    // Exports lecturer workload data as a CSV file.
     [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> LecturerWorkloadCsv()
     {
@@ -160,6 +172,7 @@ public class ReportsController : Controller
         return File(bytes, "text/csv", $"lecturer-workload-{DateTime.UtcNow:yyyyMMddHHmm}.csv");
     }
 
+    // Exports lecturer workload data as a formatted PDF report.
     [Authorize(Roles = $"{AppRoles.Administrator},{AppRoles.Lecturer}")]
     public async Task<IActionResult> LecturerWorkloadPdf()
     {
@@ -189,6 +202,7 @@ public class ReportsController : Controller
     // ============================================================
     // Enrollments timeline
     // ============================================================
+    // Displays the administrator enrollment timeline report.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> Enrollments()
     {
@@ -196,6 +210,7 @@ public class ReportsController : Controller
         return View(rows);
     }
 
+    // Exports enrollment timeline data as a CSV file.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> EnrollmentsCsv()
     {
@@ -206,6 +221,7 @@ public class ReportsController : Controller
         return File(bytes, "text/csv", $"enrollments-{DateTime.UtcNow:yyyyMMddHHmm}.csv");
     }
 
+    // Exports enrollment timeline data as a formatted PDF report.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> EnrollmentsPdf()
     {
@@ -234,6 +250,7 @@ public class ReportsController : Controller
     // ============================================================
     // NEW: Pass / Fail analysis
     // ============================================================
+    // Displays pass/fail analysis using a configurable pass mark.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> PassFail(int passMark = 50)
     {
@@ -242,6 +259,7 @@ public class ReportsController : Controller
         return View(vm);
     }
 
+    // Exports pass/fail analysis as a CSV file.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> PassFailCsv(int passMark = 50)
     {
@@ -257,6 +275,7 @@ public class ReportsController : Controller
         return File(bytes, "text/csv", $"pass-fail-{passMark}pct-{DateTime.UtcNow:yyyyMMddHHmm}.csv");
     }
 
+    // Exports pass/fail analysis as a formatted PDF report.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> PassFailPdf(int passMark = 50)
     {
@@ -290,6 +309,7 @@ public class ReportsController : Controller
     // ============================================================
     // NEW: Assignment attendance (turn-in rate)
     // ============================================================
+    // Displays assignment attendance and missing-submission metrics.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> AssignmentAttendance()
     {
@@ -297,6 +317,7 @@ public class ReportsController : Controller
         return View(vm);
     }
 
+    // Exports assignment attendance data as a CSV file.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> AssignmentAttendanceCsv()
     {
@@ -311,6 +332,7 @@ public class ReportsController : Controller
         return File(bytes, "text/csv", $"assignment-attendance-{DateTime.UtcNow:yyyyMMddHHmm}.csv");
     }
 
+    // Exports assignment attendance data as a formatted PDF report.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> AssignmentAttendancePdf()
     {
@@ -409,10 +431,8 @@ public class ReportsController : Controller
         }).OrderByDescending(r => r.AveragePercent).ToList();
     }
 
-    /// <summary>
-    /// Students enrolled in the lecturer's courses, with averages computed only from graded submissions
-    /// for assignments on those courses (no institution-wide or other lecturers' data).
-    /// </summary>
+    // Students enrolled in the lecturer's courses, with averages computed only from graded submissions
+    // for assignments on those courses (no institution-wide or other lecturers' data).
     private async Task<List<ReportStudentPerformanceRow>> GetStudentPerformanceForLecturerAsync(string lecturerId)
     {
         var myCourseIds = await _db.Courses

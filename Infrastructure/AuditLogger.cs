@@ -4,6 +4,8 @@ using System.Security.Claims;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
+// Records important user and system actions in the audit log, including
+// authentication events, enrollment actions, submissions, grading, and profile updates.
 public sealed class AuditLogger : IAuditLogger
 {
     private readonly ApplicationDbContext _db;
@@ -17,6 +19,8 @@ public sealed class AuditLogger : IAuditLogger
         _logger = logger;
     }
 
+    // Writes an audit log entry with request context while preventing logging failures
+    // from interrupting the primary user workflow.
     public async Task LogAsync(string category, string action, string? detail = null, bool success = true,
         string? userId = null, string? userName = null)
     {
@@ -31,6 +35,7 @@ public sealed class AuditLogger : IAuditLogger
             var ip = ctx?.Connection.RemoteIpAddress?.ToString();
             var ua = ctx?.Request.Headers.UserAgent.ToString();
 
+            // Values are truncated before storage to respect model limits and keep audit rows compact.
             var entry = new AuditLog
             {
                 CreatedAtUtc = DateTime.UtcNow,

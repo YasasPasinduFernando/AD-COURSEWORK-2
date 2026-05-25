@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Provides administrator access to audit log search, filtering, and pagination.
 [Authorize(Roles = AppRoles.Administrator)]
 public class AuditLogsController : Controller
 {
@@ -16,6 +17,7 @@ public class AuditLogsController : Controller
         _db = db;
     }
 
+    // Displays audit log entries filtered by category or search text for administrative review.
     public async Task<IActionResult> Index(string? category = null, string? q = null, int page = 1, int pageSize = 25)
     {
         if (page < 1) page = 1;

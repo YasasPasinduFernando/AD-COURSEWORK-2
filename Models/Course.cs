@@ -3,14 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AD_COURSEWORK_2.Models;
 
+// Represents a university course, including its lecturer, enrollment limit,
+// prerequisite relationship, assignments, materials, and enrolled students.
 public class Course
 {
     public int CourseId { get; set; }
 
+    // Short institutional code used to identify the course in dashboards and reports.
     [Required]
     [StringLength(20)]
     public string Code { get; set; } = string.Empty;
 
+    // Human-readable course title displayed to students and lecturers.
     [Required]
     [StringLength(200)]
     public string Name { get; set; } = string.Empty;
@@ -24,12 +28,14 @@ public class Course
     [Range(1, 10000)]
     public int EnrollmentLimit { get; set; }
 
+    // Identity user identifier for the lecturer responsible for this course.
     [Required]
     public string LecturerId { get; set; } = string.Empty;
 
     [ForeignKey(nameof(LecturerId))]
     public ApplicationUser Lecturer { get; set; } = null!;
 
+    // Optional course that must be enrolled before this course can be joined.
     public int? PrerequisiteId { get; set; }
 
     [ForeignKey(nameof(PrerequisiteId))]

@@ -4,11 +4,8 @@ public interface IEmailService
 {
     Task SendAsync(string toEmail, string subject, string htmlBody);
 
-    /// <summary>
-    /// Send an HTML email with one or more in-memory attachments.
-    /// Used for delivering .ics calendar invites alongside the HTML body so
-    /// Gmail / Outlook / Apple Mail can offer "Add to calendar" automatically.
-    /// </summary>
+    // Sends an HTML email with one or more in-memory attachments.
+    // This supports .ics calendar invites together with the HTML body.
     Task SendAsync(
         string toEmail,
         string subject,

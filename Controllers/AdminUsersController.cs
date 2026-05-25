@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Provides administrator-only user account management, including role assignment,
+// account locking, profile editing, and safe deletion controls.
 [Authorize(Roles = AppRoles.Administrator)]
 public class AdminUsersController : Controller
 {
@@ -28,6 +30,7 @@ public class AdminUsersController : Controller
         _audit = audit;
     }
 
+    // Displays a searchable and paginated list of user accounts for administration.
     public async Task<IActionResult> Index(string? q = null, int page = 1, int pageSize = 20)
     {
         if (page < 1) page = 1;
@@ -88,12 +91,14 @@ public class AdminUsersController : Controller
         return View(vm);
     }
 
+    // Displays the administrator form for creating a user account.
     [HttpGet]
     public IActionResult Create()
     {
         return View(new AdminUserCreateViewModel());
     }
 
+    // Creates a user account after validating identity fields, role selection, and uniqueness.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdminUserCreateViewModel model)
@@ -148,6 +153,7 @@ public class AdminUsersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Displays the administrator edit form for a selected user while protecting the final administrator account.
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
@@ -179,6 +185,7 @@ public class AdminUsersController : Controller
         return View(vm);
     }
 
+    // Updates user profile and role information while preserving required administrator access.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(AdminUserEditViewModel model)
@@ -259,6 +266,7 @@ public class AdminUsersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Locks or unlocks a user account while preventing self-lockout and last-admin lockout.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleLock(string id)
@@ -303,6 +311,7 @@ public class AdminUsersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Deletes a non-administrator user account when the current administrator is allowed to remove it.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(string id)

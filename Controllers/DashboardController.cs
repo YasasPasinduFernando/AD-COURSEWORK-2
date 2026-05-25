@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Builds role-specific dashboards for students, lecturers, and administrators.
 [Authorize]
 public class DashboardController : Controller
 {
@@ -20,8 +21,10 @@ public class DashboardController : Controller
         _userManager = userManager;
     }
 
+    // Selects the correct dashboard route based on the authenticated user's role.
     public IActionResult Index()
     {
+        // Role checks decide the landing page without exposing unrelated dashboard data.
         if (User.IsInRole(AppRoles.Administrator))
             return RedirectToAction(nameof(Administrator));
         if (User.IsInRole(AppRoles.Lecturer))
@@ -31,6 +34,8 @@ public class DashboardController : Controller
         return RedirectToAction("Login", "Account");
     }
 
+    // Displays the student dashboard with enrolled courses, deadlines, grades,
+    // messages, calendar activity, and upcoming meetings.
     [Authorize(Roles = AppRoles.Student)]
     public async Task<IActionResult> Student()
     {
@@ -241,6 +246,8 @@ public class DashboardController : Controller
         return View(vm);
     }
 
+    // Displays the lecturer dashboard with teaching workload, submissions,
+    // course activity, calendar events, and upcoming meetings.
     [Authorize(Roles = AppRoles.Lecturer)]
     public async Task<IActionResult> Lecturer()
     {
@@ -420,6 +427,8 @@ public class DashboardController : Controller
         return View(vm);
     }
 
+    // Displays the administrator dashboard with system totals, role counts,
+    // popular courses, enrollment trends, and recent audit activity.
     [Authorize(Roles = AppRoles.Administrator)]
     public async Task<IActionResult> Administrator()
     {

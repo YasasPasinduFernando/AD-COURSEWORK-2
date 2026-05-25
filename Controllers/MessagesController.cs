@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Supports direct messaging between students and lecturers who share course relationships.
 [Authorize(Roles = $"{AppRoles.Student},{AppRoles.Lecturer}")]
 public class MessagesController : Controller
 {
@@ -29,6 +30,7 @@ public class MessagesController : Controller
         _audit = audit;
     }
 
+    // Displays conversation summaries for the current student or lecturer.
     public async Task<IActionResult> Inbox()
     {
         var me = _userManager.GetUserId(User)!;
@@ -36,6 +38,7 @@ public class MessagesController : Controller
         return View(rows);
     }
 
+    // Marks all unread messages for the current user as read.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MarkAllRead()
@@ -57,6 +60,7 @@ public class MessagesController : Controller
         return RedirectToAction(nameof(Inbox));
     }
 
+    // Displays a conversation thread with an allowed communication partner.
     public async Task<IActionResult> Thread(string id)
     {
         var me = _userManager.GetUserId(User)!;
@@ -102,6 +106,7 @@ public class MessagesController : Controller
         return View(vm);
     }
 
+    // Adds a reply to an existing conversation and optionally attaches a validated image.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Reply(string id, string content, IFormFile? photo)
@@ -123,6 +128,7 @@ public class MessagesController : Controller
         var imageToken = string.Empty;
         if (photo != null)
         {
+            // Message image uploads are limited to common web image types and a smaller size limit.
             var ext = Path.GetExtension(photo.FileName);
             if (!AllowedImageExtensions.Contains(ext))
             {
@@ -168,6 +174,7 @@ public class MessagesController : Controller
         return RedirectToAction(nameof(Thread), new { id });
     }
 
+    // Displays the message composition form with recipients limited by course relationships.
     public async Task<IActionResult> Compose(string? recipientId = null)
     {
         var me = _userManager.GetUserId(User)!;
@@ -176,6 +183,7 @@ public class MessagesController : Controller
         return View(vm);
     }
 
+    // Sends a new direct message after validating the selected recipient is allowed.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Compose(MessageComposeViewModel model)

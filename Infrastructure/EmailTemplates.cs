@@ -3,11 +3,8 @@ using System.Text.Encodings.Web;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
-/// <summary>
-/// Builds branded, email-client-safe HTML for all UniManage emails.
-/// Every method returns a complete HTML document with inline styles so it
-/// renders consistently in Gmail, Outlook, Apple Mail, and mobile clients.
-/// </summary>
+// Builds branded HTML email bodies for account, meeting, submission, grade, and material notifications.
+// The templates use inline styles so common email clients render them consistently.
 public static class EmailTemplates
 {
     private const string BrandName = "UniManage";
@@ -23,6 +20,7 @@ public static class EmailTemplates
     private const string ColorWarn = "#b45309";
     private const string ColorDanger = "#be123c";
 
+    // Builds the welcome message sent after a user account is created.
     public static string BuildWelcomeEmail(string fullName, string role)
     {
         var name = SafeName(fullName);
@@ -53,6 +51,7 @@ public static class EmailTemplates
             footerExtras: "If you did not create this account, please ignore this email or contact your administrator.");
     }
 
+    // Builds a security notification for successful account sign-in events.
     public static string BuildLoginAlertEmail(string fullName, DateTime whenLocal, string ipAddress, string? userAgent = null)
     {
         var name = SafeName(fullName);
@@ -84,6 +83,7 @@ public static class EmailTemplates
             footerExtras: "You're receiving this email because login alerts are enabled for your account.");
     }
 
+    // Builds the password reset email containing a single-use reset link.
     public static string BuildPasswordResetEmail(string fullName, string resetUrl)
     {
         var name = SafeName(fullName);
@@ -108,6 +108,7 @@ public static class EmailTemplates
             footerExtras: "For your security, we never email your existing password. This link expires automatically.");
     }
 
+    // Builds a meeting invitation email with calendar links and meeting details.
     public static string BuildMeetingInviteEmail(
         string fullName,
         string courseCode,
@@ -191,6 +192,7 @@ public static class EmailTemplates
         return sb.ToString();
     }
 
+    // Builds the notification sent to a lecturer when a student submits coursework.
     public static string BuildSubmissionReceivedEmail(
         string lecturerFullName,
         string studentName,
@@ -237,6 +239,7 @@ public static class EmailTemplates
             footerExtras: "You're receiving this because you teach this course on UniManage.");
     }
 
+    // Builds the notification sent to a student after a lecturer releases a grade.
     public static string BuildGradeReleasedEmail(
         string studentFullName,
         string courseCode,
@@ -297,6 +300,7 @@ public static class EmailTemplates
             footerExtras: "You're receiving this email because you submitted to this assignment on UniManage.");
     }
 
+    // Builds the notification sent to enrolled students when new course material is uploaded.
     public static string BuildMaterialUploadEmail(
         string fullName,
         string courseCode,

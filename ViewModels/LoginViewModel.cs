@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AD_COURSEWORK_2.ViewModels;
 
+// Provides credentials and redirect information required for email or username login.
 public class LoginViewModel
 {
     [Required]

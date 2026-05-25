@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AD_COURSEWORK_2.Controllers;
 
+// Manages authenticated user profile display, profile updates, and password changes.
 [Authorize]
 public class ProfileController : Controller
 {
@@ -24,6 +25,7 @@ public class ProfileController : Controller
         _audit = audit;
     }
 
+    // Displays the current user's profile information and assigned role.
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -42,6 +44,7 @@ public class ProfileController : Controller
         return View(vm);
     }
 
+    // Updates editable profile fields for the current user after validation.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(ProfileViewModel model)
@@ -82,12 +85,14 @@ public class ProfileController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Displays the authenticated user's password change form.
     [HttpGet]
     public IActionResult ChangePassword()
     {
         return View(new ChangePasswordViewModel());
     }
 
+    // Changes the current user's password and refreshes the sign-in session on success.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)

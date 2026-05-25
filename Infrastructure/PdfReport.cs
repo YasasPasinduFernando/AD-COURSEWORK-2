@@ -4,11 +4,8 @@ using QuestPDF.Infrastructure;
 
 namespace AD_COURSEWORK_2.Infrastructure;
 
-/// <summary>
-/// Branded PDF report generator. Each report is a single document with
-/// a UniManage cover header (gradient bar, brand mark, eyebrow, title,
-/// subtitle), summary chip row, table of data, and a page footer.
-/// </summary>
+// Builds branded PDF report documents with header, summary chips, table data, and footer.
+// Reports use a shared layout for administrative and lecturer exports.
 public static class PdfReport
 {
     private const string BrandName = "UniManage";
@@ -23,8 +20,10 @@ public static class PdfReport
     private const string ColorHeader = "#1e3a8a";
     private const string ColorRowAlt = "#f8fafc";
 
+    // Represents a small summary statistic displayed near the top of a PDF report.
     public sealed record Chip(string Label, string Value, string? Tone = null);
 
+    // Defines the tabular content and layout metadata used when rendering a report table.
     public sealed class TableSpec
     {
         public required string[] Headers { get; init; }
@@ -33,6 +32,7 @@ public static class PdfReport
         public bool[]? RightAlign { get; init; }
     }
 
+    // Builds a complete PDF report document containing header, summary chips, table content, and footer.
     public static byte[] Build(
         string title,
         string subtitle,
