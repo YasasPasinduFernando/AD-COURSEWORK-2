@@ -215,7 +215,7 @@ public class AccountController : Controller
         }
 
         var redirectUrl = Url.Action(nameof(GoogleCallback), "Account", new { returnUrl });
-        const string googleCallbackPath = "/signin-google2";
+        const string googleCallbackPath = "/signin-google";
         var diagnosticCallbackUrl =
             $"{Request.Scheme}://{Request.Host.ToUriComponent()}{Request.PathBase}{googleCallbackPath}";
 

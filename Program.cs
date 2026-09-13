@@ -59,7 +59,7 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
         options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = googleClientId;
         options.ClientSecret = googleClientSecret;
-        options.CallbackPath = "/signin-google2";
+        options.CallbackPath = "/signin-google";
         options.Events.OnRemoteFailure = context =>
         {
             var error = Uri.EscapeDataString(context.Failure?.Message ?? "Google login failed.");

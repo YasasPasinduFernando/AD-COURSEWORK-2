@@ -113,18 +113,6 @@ h1, h2, h3, h4, h5, h6, .display-1, .display-2, .display-3, .display-4, .display
   pointer-events: none;
 }
 
-.navbar-um .navbar-brand::before {
-  content: "";
-  display: inline-block;
-  width: 0.55rem;
-  height: 0.55rem;
-  margin-right: 0.55rem;
-  border-radius: 999px;
-  background: #93c5fd;
-  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.25);
-  vertical-align: middle;
-}
-
 .navbar-um .navbar-brand {
   letter-spacing: -0.02em;
   font-size: 1.3rem;
